@@ -1,3 +1,4 @@
+ACCURACY
 CHANGES
 BENCHMARK
 BUGS
@@ -28,6 +29,7 @@ lib/Math/Big.pm
 lib/Math/String/Charset.pm
 lib/Math/String/Sequence.pm
 bench/str_cache.pl
+t/accuracy.t			# test accuracy/precision settings in MBI/MBF
 t/bigfrcpm.t
 t/bigintpm.t
 t/bigintcpm.t
@@ -37,6 +39,6 @@ t/sequence.t
 t/stringpm.t
 t/romanpm.t
 t/bigpm.t
-t/fi_mixed.t
+t/fi_mixed.t			# test operation with mixed operand types
 test.pl
 

@@ -23,7 +23,7 @@ provided helpfull feedback.
  Some thoughts about using Bit::Vector as under-the-hood package for BigInt:
 
 Bit::Vector (BV) provides fast calculation routines in C, but some (possible)
-problems remain. 
+problems remain. (Note: The same "problems" apply to other math packages in C)
 
 + Representation:
 
@@ -55,16 +55,19 @@ average. F.i. factorial() is now about 2.6 times faster than with the old code
 
 BV also has two's-complement as negative numbers. This means neg() takes a
 O(N) time going trough the entire number instead of simple flipping the sign.
-Since every subtract uses neg, this can be costly. It is probably better to
-still have an "external" sign and use only positive BV's in calculation, this
-also would let us keep the current implementation.
+(In new code, sub uses neg(), but with two-complement there is no overhead)
+
+It is probably still better to still have an "external" sign and use only
+positive BV's in calculation, this also would let us keep the current
+implementation.
 
 + Auto-extend:
 
 BV does not extend the operands automatically on overflow. So a wrapper must
-extend the operand prior to the op, then do the calculation and the shrink
+extend the operand prior to the op, then do the calculation and then shrink
 the result (normalisation) properly. (Or find out beforehand wether an overflow
-would be possible, or ask B::V afterwards if an overflow happened)
+would be possible, or ask B::V afterwards if an overflow happened, depending
+on what B::V can deliver)
 
 For add/sub:
 
@@ -72,13 +75,14 @@ For add/sub:
  + add
  + shrink
 
-For mul: max ($x->length(), $y->length())*2+1 etc
+For mul: max ($x->length(), $y->length())*2+1, mul, shrink, etc
 
 All the wrappers overhead would make it pretty slow for small numbers, probably
 even slower than it is now. So the real performance boost will come only for
 really long numbers like 2**654321. It remains to be seen were the tradeoff
 will occur, f.i. when the numbers must get insanly big to pay off, it is better
-to use the old way.
+to use the old way, but if it is faster for relatively small numbers like
+1234567890123456789, that is the way to go.
 
 Of course I have not tried anything yet. Stand by...
 

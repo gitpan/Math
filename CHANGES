@@ -1,7 +1,7 @@
 This file contains all the CHANGES and bugfixes from original BigInt/BigFloat
 to the rewritten one. For a complete list of changes see HISTORY:
 
-v1.31:
+v1.33:
 
  general:
   + It is subsequent faster than the original
@@ -14,10 +14,10 @@ v1.31:
  caveats:
   + bstr() and stringify now drop the leading '+' (to make overloaded cmp work
     as expected when cmp'aring to scalars and other objects (read: bugfix)
- input:
   + spaces are no longer allowed in a number (but may precede or follow it)
-  + _ (underscores) are now valid between any two digits
-  + integers of the form 1E2, 1.23E2 etc are now valid input for BigInt.pm
+ input:
+  + underscores are now valid between any two digits
+  + integers of the form 1E2, 1.23E2 etc are now valid inputs for BigInt.pm
  bugs and buglets fixed over Mark's original:
   + 0**0 gave NaN instead of 1
   + -1**y gave -1 instead of +1 for even y
@@ -29,13 +29,16 @@ v1.31:
     other subclasses of Math::BigInt)
   + $a = new Math::BigInt; creates now a +0, while "" still gives a NaN
     This supresses all warnings on undef arguments. Wether this is better...	
-  + import would always use "Math::BigInt" and give only one arg to new() as
-    well as clash with Exporter
+  + import would always use "Math::BigInt" and clash with Exporter
   + use Math::BigInt qw(bneg); $a = bneg('1234'); etc did not work at all
   + $x->xxx() now modifies $x in all cases of modifiers and actually returns
     the same $x (e.g. not a plain scalar or a different reference). All
     testing routines leave $x alone. bpow(), fround(), ffround() etc were
     broken in this regard.
+ accuracy and precision:
+  + there is now support for both accuracy (significant digits) and precision
+    (fixed number of digits after dot), which is turned off by default
+  + objects/numbers now can have a local accuracy/precision
  internal fixes:
   + uses a blessed hash ref instead scalar ref (easier subclassable)
   + my instead of local
@@ -56,6 +59,7 @@ v1.31:
   + mantissa(), exponent(), parts(), length(), copy()
   + bgcd accepts now lists
   + blcm (also accepts lists)
+  + fmod() (Thanx J. Peacock) and fdiv() in list context
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

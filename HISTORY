@@ -38,6 +38,7 @@ Math::String:
 2001-03-25 1.08: added: support for caching of string form
 2001-04-13 1.09: as_number: returns now Math::BigInt
 2001-05-07 1.10: finally got rid of C&P of overload section
+2001-05-13 1.11: added accuracy/precision/fallback/rnd_mode and tests for this
 
 ############################################################################## 
 Math::String::Charset:
@@ -101,6 +102,22 @@ Math::BigFloat:
  		 new: .xxx, -.xxx, +.xxx etc are valid inputs, while
                  '.', 'x x x' and 'Exxx' are now invalid
                  finally got rid of C&P of overload section and clone()
+2000-05-09 1.11: bug bcmp() (1e-08 was < 0, aka fractions were broken)
+2000-05-11 1.12 Tels
+ * taken over testsuite from John P.
+ * added tests for compare with fraction
+ * fixed fcmp/fround/ffround
+ * added accuracy/precision/fallback/round_mode
+ * bsstr('NaN') returned 'NaNeNaN'
+2000-07-09 1.13 Tels:
+ * adjusted fdiv() so that it now works proper with old testcases
+ * (except a few nits, see testsuite and ACCURACY)
+ * fdiv() in listmode (uses non-working fmod())
+ * fixed/test A/P after each op
+ * $x->accuracy(), $x->precision() actually round $x to the value A/P
+ * fixed fpow(), added tests for it
+ * hexadecimal integer input
+ * is_one() for -1 was wrongly true, tests for is_one()
 
 ############################################################################## 
 Math::BigFraction (experimental):
@@ -225,6 +242,18 @@ Math::BigInt:
  * fixed overload (w/ _swap/copy), subclasses can inherit it easily
  * removed clone()
  * added bsstr()
+2001-05-11 v1.32 Tels
+ * added accuracy/precision/fallback/round_mode
+2001-07-09 v1.33 Tels
+ * bround() no longer uses 10 ** $pad and is thus much faster when rounding up
+ * fixed and added rounding benchmark (did time bmul instead bround)
+ * blsft(),brsft(): are can work in different bases, check against invalid
+   inputs, more tests, speedup when in base 10
+ * _trailing_zeros is 50% faster
+ * A/P after each op, tests for it in accuracy.t
+ * round() instead of bnorm()
+ * $x->accuracy(), $x->precision() actually round $x to the set value
+ * tests for is_one()
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

@@ -21,9 +21,7 @@
 #		: for faster bstr() and add/dec
 
 package Math::String;
-use vars qw($VERSION $AUTOLOAD);
-$VERSION = 1.09;    # Current version of this package
-require  5.005;     # requires this Perl version or later
+my $class = "Math::String";
 
 use Exporter;
 use Math::BigInt;
@@ -31,9 +29,16 @@ use Math::BigInt;
 @EXPORT_OK = qw( as_number last first string from_number bzero
                );
 #@EXPORT = qw( );
-use strict;
 use Math::String::Charset;
-my $class = "Math::String";
+use strict;
+use vars qw($VERSION $AUTOLOAD $accuracy $precision $fallback $rnd_mode);
+$VERSION = 1.11;    # Current version of this package
+require  5.005;     # requires this Perl version or later
+
+$accuracy = undef;
+$precision = undef;
+$fallback = 40;
+$rnd_mode = 'even';
 
 use overload
 'cmp'   =>      sub { $_[2]?

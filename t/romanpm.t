@@ -5,6 +5,7 @@ use Test;
 
 BEGIN 
   {
+  $| = 1;
   chdir 't' if -d 't';
   unshift @INC, '../lib';
   plan tests => 1094;
@@ -49,11 +50,8 @@ for ($i = 1; $i < 1004; $i++)
   {
   $try = "\$x = Math::Roman->new($i);";
   $try .= "\$y = Math::Roman->new(\"\$x\")->as_number(); # ";
-  # debug: $try .= Math::Roman->new($i);
   $rc = eval $try;
-  # not worth the effort to eliminate eval:
-  # $x = Math::Roman->new($i);
-  # $rc = Math::Roman->new("$x")->as_number();
+  # not worth the effort to eliminate eval
   print "# For '$try'\n" if (!ok "$rc" , $i );
   }
 

@@ -4,10 +4,11 @@ use strict;
 use Test;
 
 BEGIN 
-  {
+  { 
+  $| = 1;
   chdir 't' if -d 't';
   unshift @INC, '../lib';
-  plan tests => 75;
+  plan tests => 79;
   }
 
 use Math::String;
@@ -165,8 +166,26 @@ ok ($x == 1,1);
 $x = Math::String->new('abc'); 
 ok (ref($x->as_number()),'Math::BigInt');
 
+##############################################################################
+# accuracy/precicison
+
+ok_undef ($Math::String::accuracy);
+ok_undef ($Math::String::precision);
+ok ($Math::String::fallback,40);
+ok ($Math::String::rnd_mode,'even');
 
 # all done
+
+###############################################################################
+# Perl 5.005 does not like ok ($x,undef)
+
+sub ok_undef
+  {
+  my $x = shift;
+
+  ok (1,1) and return if !defined $x;
+  ok ($x,'undef');
+  }
 
 1;
 

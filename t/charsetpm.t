@@ -5,6 +5,7 @@ use strict;
 
 BEGIN
   {
+  $| = 1;
   unshift @INC, '../lib';
   chdir 't' if -d 't';
   plan tests => 137;
