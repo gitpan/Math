@@ -8,7 +8,7 @@ BEGIN
   chdir 't' if -d 't';
   unshift @INC, '../lib';
   $| = 1;
-  plan tests => 430;
+  plan tests => 451;
   }
 
 use Math::BigInt;
@@ -86,6 +86,8 @@ while (<DATA>)
         $try .= "\$x ^ \$y;";
       }elsif ($f eq "bpow"){
         $try .= "\$x ** \$y;";
+      }elsif ($f eq "digit"){
+        $try = "\$x = Math::BigInt->new(\"$args[0]\"); \$x->digit($args[1]);";
       } else { warn "Unknown op '$f'"; }
     }
     # remove leading #, thats easier than to edit all instances
@@ -721,6 +723,28 @@ abc:NaN
 +0:-1
 +8:-9
 +281474976710656:-281474976710657
+&digit
+0:0:0
+12:0:2
+12:1:1
+123:0:3
+123:1:2
+123:2:1
+123:-1:1
+123:-2:2
+123:-3:3
+123456:0:6
+123456:1:5
+123456:2:4
+123456:3:3
+123456:4:2
+123456:5:1
+123456:-1:1
+123456:-2:2
+123456:-3:3
+100000:-3:0
+100000:0:0
+100000:1:0
 &bpow
 0:+0:+1
 0:+1:+0

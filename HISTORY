@@ -30,7 +30,7 @@ Math::String:
 2001-02-16 1.05: fixed overload bug in cmp (Math::String cmp something other)
 2001-02-22 1.06: fixed: digits() => length()
 2001-03-18 1.07: fixed: documentation
-2001-03-25 1.08: added: support for caching of  string form
+2001-03-25 1.08: added: support for caching of string form
 
 ############################################################################## 
 Math::String::Charset:
@@ -65,6 +65,16 @@ Math::BigFloat:
 2000-02-24 1.02: add()/sub() should work now
 2000-03-06 1.03: layed more foundations (mul() etc)
 2000-03-27 1.04: bmul/bdiv/cmp work now, better _norm()
+2000-03-31 1.05: fixed bstr() and bsstr()
+	         added AUTOLOAD for fxxx() to work as well as bxxx()
+		 enhanced and fixed testsuite for mul/cmp/add/new
+2000-04-05 1.06: bstr() returns NaN for NaN's
+		 renamed _norm to bnorm, added it to AUTOLOAD for compatibility
+		 fixed bug Math::BigFloat->new(Math::BigInt->new(3));
+		 bug mul/div when second arg was BigInt
+		 bdiv() works now with precision
+		 precision()
+		 doc about mixing different objects in overloaded math
 
 ############################################################################## 
 Math::BigFraction (experimental):
@@ -163,7 +173,14 @@ Math::BigInt:
  * documented BigInts behaviour of bmod/bdiv and use integer
 2001-03-30 v1.21 Tels
  * bool() works now under 5_005
- * bug in sub where numbers with at least 6 trailig digits after any op failed
+ * bug in bsub where numbers with at least 6 trailig digits after any op failed
+2001-04-05 v1.22 Tels
+ * documented Peters OS/390 patch/changes (fix was in for quite some time)
+ * fixed bug Math::BigInt->new(Math::BigFloat->new(3));
+ * objectify() with other objects than BigInt as further args, copy() etc
+ * $x->digit($n) to query fast value of Nth digit
+ * as_number()
+ 
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

@@ -2,10 +2,10 @@
 
 # mark.biggar@TrustedSysLabs.com
 
-# 2001-03-25 v1.02 Tels
+# 2001-04-04 v1.06 Tels
  
 # todo:
-# * anything
+# * test with original testsuite and fix anything that crops up
 
 # The following hash values are used:
 #   _e: exponent (BigInt)
@@ -13,9 +13,8 @@
 #   sign : +,-,"NaN" if not a number
 
 package Math::BigFloat;
-my $class = "Math::BigFloat";
 
-$VERSION = 1.02;
+$VERSION = 1.06;
 require 5.005;
 use Exporter;
 use Math::BigInt qw/trace objectify/;
@@ -31,6 +30,16 @@ use Math::BigInt qw/trace objectify/;
 
 #@EXPORT = qw( );
 use strict;
+use vars qw/$AUTOLOAD $precision/;
+my $class = "Math::BigFloat";
+
+# checks for AUTOLOAD
+  {
+  my %methods = map { $_ => 1 }  
+   qw / fadd fsub fmul fdiv fround fsqrt fpow fnorm/;
+
+  sub method_valid { return exists $methods{$_[0]||''}; } 
+  }
 
 use overload
 '='     =>      \&clone,
@@ -53,7 +62,7 @@ use overload
                $_[1] cmp $c->bstr($_[0]) :
                $c->bstr($_[0]) cmp $_[1] },
 
-# dont need int() here ;)
+'int'	=>	sub { my $c = $class->clone($_[0]); $c->bround(0); }, 
 'neg'	=>	sub { my $c = $class->clone($_[0]); $c->bneg(); }, 
 'abs'	=>	sub { my $c = $class->clone($_[0]); $c->babs(); },
 
@@ -63,7 +72,7 @@ use overload
  $_[2]? 
    $c->bmul($c->copy($_[1]),$_[0]) :
    $c->bmul($_[0]->copy(),$_[1]) },
-'/'	=>	sub { 
+'/'	=>	sub {
  $_[2]? 
                    scalar bdiv(clone($_[1]),$_[0]) :
                    scalar bdiv(clone($_[0]),$_[1]) },
@@ -105,19 +114,39 @@ my $trace = 0;
 # constant for easier life
 my $nan = 'NaN'; 
 
+{
+  my $precision = 20;
+  my $ten = Math::BigInt->new(10);
+  my $precision_10 = $ten ** 20;
+
+  sub precision
+    {
+    if (defined $_[0])
+      {
+      $precision = shift; 
+      $precision_10 = $ten ** $precision;
+      }
+    return $precision;
+    }
+  sub precision_10
+    {
+    return $precision_10;
+    }
+}
+
 ##############################################################################
 # constructors
 
 sub clone
   {
-  my $self = shift;
+  #my $self = shift;
   # call the correct sub (due to closures), may be removed later on for speed
   #$trace = 1;
   #trace(@_);
   #$trace = 0;
-  #print "in $class clone\n";
-  # this is wrong since it does not respect inheritance, ouch!
   my $x = shift;
+  #print "in $class clone ",$x,"\n";
+  # this is wrong since it does not respect inheritance, ouch!
   return $x->copy() if ref($x);
   $class->new($x);
   }
@@ -134,10 +163,19 @@ sub new
  
   my $wanted = shift; # avoid numify call by not using || here
   return $class->bzero() if !defined $wanted;      # default to 0
-  return $wanted->copy() if ref($wanted);
+  return $wanted->copy() if ref($wanted) eq $class;
 
   my $round = shift; $round = 0 if !defined $round; # no rounding as default
   my $self = {};
+  #shortcut for bigints
+  if (ref($wanted) eq 'Math::BigInt')
+    {
+    $self->{_m} = $wanted;
+    $self->{_e} = Math::BigInt->new(0);
+    $self->{_m}->babs();
+    $self->{sign} = $wanted->sign();
+    return bless $self,$class;
+    }
   # got string
   #print "new string '$wanted'\n";
   my ($mis,$miv,$mfv,$es,$ev) = Math::BigInt::_split(\$wanted);
@@ -156,13 +194,14 @@ sub new
     #my $mf = Math::BigInt->new( $$mfv );
     #$mf = $mf->bround($round) if $round >= 0; 		# round to int
     $self->{_e}->bzero() if $self->{_m}->is_zero();	# 0Ex => 0E0
-    $self->{_e} -= CORE::length($$mfv);			# 3.123E0 = 3123E-3	
-    $self->{sign} = $self->{_m}->{sign};
+    #print "e: $self->{_e} length ",CORE::length($$mfv)," $$mfv\n";
+    $self->{_e} -= CORE::length($$mfv); 		# 3.123E0 = 3123E-3	
+    $self->{sign} = $self->{_m}->sign();
     #print "$self\n";        
     }
   #print "$wanted => $self->{sign} $self->{value}->[0]\n";
   bless $self, $class;
-  return $self;
+  return $self->bnorm();
   }
 
 # some shortcuts for easier life
@@ -198,7 +237,7 @@ sub bnan
 
 sub bzero
   {
-  # create a bigint '+0', if given a BigFloat, set it to 0
+  # create a bigfloat '+0', if given a BigFloat, set it to 0
   my $self = shift;
   $self = $class if !defined $self;
   if (!ref($self))
@@ -218,13 +257,26 @@ sub bzero
 sub bstr 
   {
   # (ref to BFLOAT or num_str ) return num_str
-  # Convert number from internal format to string format.
+  # Convert number from internal format to (non-scientific) string format.
   # internal format is always normalized (no leading zeros, "-0" => "+0")
   trace(@_);
   my ($self,$x) = objectify(1,@_);
 
-  return $x->{_m}->bstr()."E".$x->{_e}->bstr() unless $x->{_e}->is_zero();
-  return $x->{_m}->bstr();	# E0
+  return $nan if $x->{sign} eq $nan;
+  my $es = $x->{_m}->bstr();
+  return $es if $x->{_e}->is_zero();
+ 
+  if ($x->{_e}->sign() eq '-')
+    {
+    # insert '.'
+    substr($es,$x->{_e},0) = '.'; 
+    }
+  else
+    {
+    # expand with zeros
+    $es .= '0' x $x->{_e};
+    } 
+  return $es;
   }
 
 sub bsstr 
@@ -244,7 +296,7 @@ sub numify
   # simple return string and let Perl's atoi() handle the rest
   trace (@_);
   my ($self,$x) = objectify(1,@_);
-  return $x->bstr(); # ref($x); 
+  return $x->bsstr(); 
   }
 
 ##############################################################################
@@ -253,7 +305,7 @@ sub numify
 sub bcmp 
   {
   # Compares 2 values.  Returns one of undef, <0, =0, >0. (suitable for sort)
-  # (BINT or num_str, BINT or num_str) return cond_code
+  # (BFLOAT or num_str, BFLOAT or num_str) return cond_code
   my ($self,$x,$y) = objectify(2,@_);
   return undef if (($x->{sign} eq $nan) || ($y->{sign} eq $nan));
 
@@ -280,7 +332,7 @@ sub bacmp
   {
   # Compares 2 values, ignoring their signs. 
   # Returns one of undef, <0, =0, >0. (suitable for sort)
-  # (BINT or num_str, BINT or num_str) return cond_code
+  # (BFLOAT or num_str, BFLOAT or num_str) return cond_code
   my ($self,$x,$y) = objectify(2,@_);
   return undef if (($x->{sign} eq $nan) || ($y->{sign} eq $nan));
 
@@ -344,7 +396,7 @@ sub badd
     # else: both are same, so leave them
     $x->{_m} += $y->{_m};
     }
-  return $x->_norm();
+  return $x->bnorm();
   }
 
 sub bsub 
@@ -411,7 +463,8 @@ sub bmod
 sub is_zero
   {
   # return true if arg (BINT or num_str) is zero (array '+', '0')
-  my ($self,$x) = objectify(1,@_);
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  #my ($self,$x) = objectify(1,@_);
   trace(@_);
   return ($x->{_e}->is_zero() && $x->{_m}->is_zero()); 
   }
@@ -420,7 +473,8 @@ sub is_one
   {
   # return true if arg (BINT or num_str) is +1 (array '+', '1')
   # or -1 if signis given
-  my ($self,$x) = objectify(1,@_); 
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  #my ($self,$x) = objectify(1,@_); 
   my $sign = $_[2] || '+';
   return ($x->{_e}->is_zero() && $x->{_m}->is_one($sign)); 
   }
@@ -457,9 +511,7 @@ sub bmul
   # adjust sign:
   $x->{sign} = $x->{sign} ne $y->{sign} ? '-' : '+';
   #print "s: $x->{sign}\n";
-  $x->_norm();
-  #print "x: $x\n";
-  return $x;
+  return $x->bnorm();
   }
 
 sub bdiv 
@@ -467,13 +519,10 @@ sub bdiv
   # (dividend: BINT or num_str, divisor: BINT or num_str) return 
   # (BINT,BINT) (quo,rem) or BINT (only rem)
   
-  $trace = 1;
-  $class->trace(@_);
-  $trace = 0;
   my ($self,$x,$y) = objectify(2,@_);
 
   return wantarray ? ($x->bnan(),bnan()) : $x->bnan()
-   if ($x->{sign} eq $nan || $y->{sign} eq $nan || $y->is_zero());
+   if ($x->{sign} eq $nan || $y->is_nan() || $y->is_zero());
   
   return wantarray ? ($x,$self->bzero()) : $x if $x->is_zero();
 
@@ -484,22 +533,31 @@ sub bdiv
   #  };
     
   $x->{sign} = $x->{sign} ne $y->{sign} ? '-' : '+'; 
+
   # check for / +-1 ( +/- 1E0)
-  if (($y->{_m}->is_one()) && ($y->{_e}->is_zero()))
+  if ($y->is_one())
     {
     return wantarray ? ($x,$self->bzero()) : $x; 
     }
 
   # a * 10 ** b / c * 10 ** d => a/c * 10 ** (b-d)
-
-  $x->{_m}->bdiv($y->{_m});	# a/c
+  #print "self: $self x: $x ref(x) ", ref($x)," m: $x->{_m}\n";
+  $x->{_m}->bmul(precision_10());
+  #print "m: $x->{_m}\n";
+  $x->{_m}->bdiv( $y->{_m} );	# a/c
+  #print "m: $x->{_m}\n";
+  #print "e: $x->{_e} $y->{_e}",precision(),"\n";
   $x->{_e}->bsub($y->{_e});	# b-d
+  #print "e: $x->{_e}\n";
+  $x->{_e}->bsub(precision());	# correct for 10**precision
+  #print "e: $x->{_e}\n";
   
-  return $x;
+  return $x->bnorm();
   }
 
 sub bpow 
   {
+  # not ready yet
   # (BINT or num_str, BINT or num_str) return BINT
   # compute power of two numbers -- stolen from Knuth Vol 2 pg 233
   # modifies first argument
@@ -531,7 +589,67 @@ sub bpow
   #print "bpow: e p2: $pow2 x: $x y: $y1 r: $res\n";
   &bmul($x,$pow2) if (!$pow2->is_one());
   #print "bpow: e p2: $pow2 x: $x y: $y1 r: $res\n";
-  return $x;
+  return $x->bnrom();
+  }
+
+sub bround
+  {
+  my $self = shift,
+  my $round = shift || 0;
+
+  # round a number to the appriate number of digits
+  # xx not ready yet
+
+  $self; 
+  }
+
+sub DESTROY
+  {
+  # going trough AUTOLOAD for every DESTROY is costly, so avoid it
+  }
+
+sub AUTOLOAD
+  {
+  # make fxxx and bxxx work
+  my $self = $_[0];
+  my $name = $AUTOLOAD;
+
+  $name =~ s/.*:://;	# split package
+  #print "$name\n";
+  if (!method_valid($name))
+    {
+    # delayed load of Carp and avoid recursion	
+    require Carp;
+    Carp::croak ("Can't call $class\-\>$name, not a valid method");
+    }
+  no strict 'refs';
+  my $bname = $name; $bname =~ s/^f/b/;
+  *{$class."\:\:$name"} = \&$bname;
+  #sub
+  #  {
+  #  my $self = shift;
+  #  
+  #  print "inside $name\n"; 
+  #  };
+  #$name =~ s/^f/b/;
+  &$bname;
+  #goto &$name;
+  }
+
+sub exponent
+  {
+  my $self = shift;
+  $self = $class->new($self) unless ref $self;
+
+  return $self->{_e};
+  }
+
+sub mantissa
+  {
+  my $self = shift;
+  $self = $class->new($self) unless ref $self;
+
+  return $self->{_m};
   }
 
 ##############################################################################
@@ -557,10 +675,12 @@ sub import
   overload::constant float => sub { $self->new(@_) };
   }
 
-sub _norm
+sub bnorm
   {
   # adjust m and e so that m is smallest possible
+  # used internally, numbers are always normalized so user need not to call it
   my $x = shift;
+
   return $x if $x->is_zero();
 
   # check each array elem in _m for having 0 at end as long as elem == 0
@@ -571,7 +691,7 @@ sub _norm
     if ($_ != 0)
       {
       $elem = $_;				# preserve x
-      $elem =~ s/[1-9]+([0]*)/$1/;		# strip anything not zero
+      $elem =~ s/.*?(0*$)/$1/;			# strip anything not zero
       $zeros += length($elem);			# count trailing zeros
       last;					# early out
       }
@@ -741,7 +861,11 @@ Math::BigFloat - Arbitrary size floating point math package
   bgcd(@values);		# greatest common divisor
   blcm(@values);		# lowest common multiplicator
   
-  $x->bstr();			# return normalized string
+  $x->bstr();			# return string
+  $x->bsstr();			# return string in scientific notation
+  
+  $x->exponent();		# return exponent as BigInt
+  $x->mantissa();		# return mantissa as BigInt
 
 =head1 DESCRIPTION
 
@@ -783,6 +907,10 @@ returns a string in normalized form.
 Some routines (C<is_odd()>, C<is_even()>, C<is_zero()>, C<is_one()>)
 return true or false, while others (C<bcmp()>, C<bacmp()>) return either 
 undef, <0, 0 or >0 and are suited for sort.
+
+C<bstr()> will always return a string with a decimal point as delimiter,
+while C<bsstr()> will return a string in scientific notation, aka 
+something like I<1E-1>.
 
 =back
 
@@ -838,6 +966,8 @@ None known yet.
 =over 1
 
 =item stringify, bstr()
+
+Not ready yet.
 
 Both stringify and bstr() now drop the leading '+'. The old code would return
 '+1.23', the new returns '1.23'. This is to be consistent with Perl and to make

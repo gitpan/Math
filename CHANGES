@@ -1,12 +1,13 @@
 This file contains all the CHANGES and bugfixes from original BigInt/BigFloat
 to the rewritten one:
 
-v1.21:
+v1.22:
 
  general:
   + It is subsequent faster than the original
   + regression test suite greatly enlarged to cover more problematic cases
   + added example scripts (prime.pl, bigprimes.pl)
+  + documentation fixed and enhanced
  caveats:
   + bpow now modifies the first argument like all other routines do
   + bstr() and stringify now drop the leading '+' (to make overloaded cmp work
@@ -15,13 +16,17 @@ v1.21:
   + 0**0 gave NaN instead of 1
   + -1**y gave -1 instead of +1 for even y
   + mod/div for negative numbers were incompatible to Perl's way
-  + integers of the form 1E5, 1.01E3, 100E-2 etc are now valid input values
+  + integers of the form 1E5, 1.01E3, 100E-2 etc are now valid for BigInt::new
+  + added P. Prymmer's OS/390 '/1e5 vs *1e-5' patch w/o the performance snag
+  + NRY XXX: rounding errors in BigFloat, sqrt() bug
+  + BigFloat::bxxx() works as well as BigFloat::fxxx()
+  + Math::BigInt->new(10) / Math::BigFloat->new(2) returned NaN (dito for other
+    subclasses of Math::BigInt)
   + $a = new Math::BigInt; creates now a +0, while "" still gives a NaN
     This supresses all warnings on undef arguments. Wether this is better...	
   + import would always use "Math::BigInt" and give only one arg to new() as
     well as clash with Exporter
   + use Math::BigInt qw(bneg); $a = bneg('1234'); etc did not work at all
-  + documentation fixed and enhanced
  internal fixes:
   + uses a blessed hash ref instead scalar ref (easier subclassable)
   + use strict and -w
@@ -36,6 +41,7 @@ v1.21:
   + bint() for writing shorter code (exportable new())
   + bzero(), bnan(), sign()
   + is_zero(), is_nan(), is_one(), is_odd(), is_even() for faster testing
+  + digit()
   + bgcd accepts now lists
   + blcm (also accepts lists)
 

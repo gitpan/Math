@@ -1,23 +1,27 @@
 See various .pm files.
 
 Math::BigFloat:
- * just do it
+ * ! round(): look at rounding (Toms bug report)
+ * sqrt (seems to do to much work)
+ * ! div() 
+ * ! bpow()
 
 Math::BigFloat::Constant:
- * do it?
+ * really?
 
 Math::BigInt:
  * remove trace()
+ * objectify() is too slow and questionable
  * ++,-- could be faster in Bigint via hardcoded (manual) increment
- * look at mul() and div()
+ * look at mul() and div() for more speed
  * bpow() could be faster by not using div()
 
 Math::String::Charset
- * finish bigram support
+ * ! finish bigram support
  * binaer search in bstr() to find out base number?
 
 Math::String:
- * finish cache string form  and dec/inc
+ * finish cache string form and dec/inc
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

@@ -10,12 +10,11 @@
 # mailto:mail@vipul.net (build a module based on Math::BigInt)
 # mailto:gary@hotlava.com (Math::BigInteger)
 
-# 2001-03-31 v1.21 Tels
+# 2001-04-05 v1.22 Tels
  
 # todo:
-# * Peters OS390 patches!
 # * fully remove funky $# stuff (maybe)
-# * use integer; ?
+# * use integer; vs 1e7 as base
 # * speed issues (XS? Bit::Vector?) 
 
 # Qs: what exactly happens on numify of HUGE numbers? overflow?
@@ -27,10 +26,15 @@
 # Internally the numbers are stored in an array with at least 1 element, no
 # leading zero parts (except the first) and in base 100000
 
+# USE_MUL: due to problems on certain os (os390, posix-bc) "* 1e-5" is used 
+# instead of "/ 1e5" at some places, (marked with USE_MUL). But instead of
+# using the reverse only on problematic machines, I used it everytime to avoid
+# the costly comparisations. This _should_ work everywhere. Thanx Peter Prymmer
+
 package Math::BigInt;
 my $class = "Math::BigInt";
 
-$VERSION = 1.21;
+$VERSION = 1.22;
 use Exporter;
 @ISA =       qw( Exporter );
 @EXPORT_OK = qw( bneg babs bcmp badd bmul bdiv bmod bnorm bsub
@@ -87,9 +91,11 @@ use overload
 			$_[2] ?
                       $class->bcmp($_[1],$_[0]) : 
                       $class->bcmp($_[0],$_[1])},
-'cmp'	=>	sub { my $c = ref($_[0]); $_[2] ? 
-               $_[1] cmp $c->bstr($_[0]) :
-               $c->bstr($_[0]) cmp $_[1] },
+'cmp'	=>	sub { 
+	#my $c = ref($_[0]); 
+         $_[2] ? 
+               $_[1] cmp $_[0]->bstr() :
+               $_[0]->bstr() cmp $_[1] },
 
 # dont need 'int' here ;)
 'neg'	=>	sub { my $c = clone($_[0]); $c->bneg(); }, 
@@ -148,10 +154,19 @@ sub clone
 
 sub copy
   {
-  my $x = shift;
+  my ($c,$x);
+  if (@_ > 1)
+    {
+    ($c,$x) = @_;
+    }
+  else
+    {
+    $x = shift;
+    $c = ref($x);
+    }
   return unless ref($x); # only for objects
 
-  my $self = {}; bless $self,ref($x);
+  my $self = {}; bless $self,$c;
   foreach my $k (keys %$x)
     {
     if (ref($x->{$k}) eq 'ARRAY')
@@ -194,7 +209,7 @@ sub new
  
   my $wanted = shift; # avoid numify call by not using || here
   return $class->bzero() if !defined $wanted;	# default to 0
-  return copy($wanted) if ref($wanted);
+  return $class->copy($wanted) if ref($wanted);
 
   my $self = {}; bless $self, $class;
   # split str in m mantissa, e exponent, i integer, f fraction, v value, s sign
@@ -304,8 +319,9 @@ sub bstr
   # Convert number from internal base 100000 format to string format.
   # internal format is always normalized (no leading zeros, "-0" => "+0")
   trace(@_);
-  my ($self,$x) = objectify(1,@_);
-  if (!ref($x)) { return _norm(\$x) ? $x : $nan; };
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  # my ($self,$x) = objectify(1,@_);
+
   my $ar = $x->{value} || return $nan;
   return $nan if $x->{sign} eq $nan;
   my $es = "";
@@ -375,7 +391,8 @@ sub babs
   {
   # (BINT or num_str) return BINT
   # make number absolute, or return absolute BINT from string
-  my ($self,$x) = objectify(1,@_);
+  #my ($self,$x) = objectify(1,@_);
+  my $x = shift; $x = $class->new($x) unless ref $x;
   return $x if $x->modify('babs');
   # post-normalized abs for internal use (does nothing for NaN)
   $x->{sign} =~ s/^-/+/;
@@ -484,7 +501,8 @@ sub bsub
 sub binc
   {
   # increment arg by one
-  my ($self,$x) = objectify(1,@_);
+  #my ($self,$x) = objectify(1,@_);
+  my $x = shift; $x = $class->new($x) unless ref $x; my $self = ref($x);
   trace(@_);
   return $x if $x->modify('binc');
   $x->badd($self->_one());
@@ -548,11 +566,9 @@ sub bnot
 sub is_zero
   {
   # return true if arg (BINT or num_str) is zero (array '+', '0')
-  my ($self,$x) = objectify(1,@_);
+  #my ($self,$x) = objectify(1,@_);
   #trace(@_);
-  #my $x = shift; 
-  #$x = $class->new($x) unless ref $x;
-  #my $self = ref $x;
+  my $x = shift; $x = $class->new($x) unless ref $x;
   return (@{$x->{value}} == 1) && ($x->{sign} eq '+') 
    && ($x->{value}->[0] == 0); 
   }
@@ -560,11 +576,9 @@ sub is_zero
 sub is_nan
   {
   # return true if arg (BINT or num_str) is NaAN
-  my ($self,$x) = objectify(1,@_);
+  #my ($self,$x) = objectify(1,@_);
   #trace(@_);
-  #my $x = shift; 
-  #$x = $class->new($x) unless ref $x;
-  #my $self = ref $x;
+  my $x = shift; $x = $class->new($x) unless ref $x;
   return ($x->{sign} eq $nan); 
   }
 
@@ -572,8 +586,9 @@ sub is_one
   {
   # return true if arg (BINT or num_str) is +1 (array '+', '1')
   # or -1 if signis given
-  my ($self,$x) = objectify(1,@_); 
-  my $sign = $_[2] || '+';
+  #my ($self,$x) = objectify(1,@_); 
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  my $sign = shift || '+'; #$_[2] || '+';
   return (@{$x->{value}} == 1) && ($x->{sign} eq $sign) 
    && ($x->{value}->[0] == 1); 
   }
@@ -581,14 +596,16 @@ sub is_one
 sub is_odd
   {
   # return true when arg (BINT or num_str) is odd, false for even
-  my ($self,$x) = objectify(1,@_);
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  #my ($self,$x) = objectify(1,@_);
   return (($x->{sign} ne $nan) && ($x->{value}->[0] & 1));
   }
 
 sub is_even
   {
   # return true when arg (BINT or num_str) is even, false for odd
-  my ($self,$x) = objectify(1,@_);
+  my $x = shift; $x = $class->new($x) unless ref $x;
+  #my ($self,$x) = objectify(1,@_);
   return (($x->{sign} ne $nan) && (!($x->{value}->[0] & 1)));
   }
 
@@ -626,14 +643,15 @@ sub bdiv
   if (($cmp < 0) and ($x->{sign} eq $y->{sign}))
     {
     return $x->bzero() unless wantarray;
-    my $t = $class->new($x); return ($x->bzero(),$t);
+    my $t = $x->copy();      # make copy first, because $x->bzero() clobbers $x
+    return ($x->bzero(),$t);
     }
   elsif ($cmp == 0)
     {
     # shortcut, both are the same, so set to +/- 1
     $x->_one( ($x->{sign} ne $y->{sign} ? '-' : '+') ); 
     return $x unless wantarray;
-    my $t = ref $x; return ($x,$t->bzero());
+    return ($x,$self->bzero());
     }
    
   # calc new sign and in case $y == +/- 1, return $x
@@ -770,11 +788,11 @@ sub bior
   return $x->bnan() if ($x->{sign} eq $nan || $y->{sign} eq $nan);
   my $r = $self->bzero(); my $m = new Math::BigInt 1; my ($xr,$yr);
   my $x10000 = new Math::BigInt (0x10000);
-  my $y1 = clone($y);		 		# make copy
+  my $y1 = $y->clone();		 		# make copy
   while (!$x->is_zero() || !$y1->is_zero())
     {
-    ($x, $xr) = bdiv($x, $x10000);
-    ($y1, $yr) = bdiv($y1, $x10000);
+    ($x, $xr) = bdiv($x,$x10000);
+    ($y1, $yr) = bdiv($y1,$x10000);
     $r->badd( bmul( new Math::BigInt ( int($xr) | int($yr)), $m ));
     $m->bmul($x10000);
     }
@@ -808,6 +826,24 @@ sub length
   trace(@_);
   my ($self,$x) = objectify(1,@_);
   _digits($x->{value});
+  }
+
+sub digit
+  {
+  # return the nth digit, negative values count backward
+  my $x = shift;
+  my $n = shift || 0; 
+
+  my $len = $x->length();
+
+  $n = $len+$n if $n < 0;		# -1 last, -2 second-to-last
+  $n = abs($n);				# if negatives are to big
+  $len--; $n = $len if $n > $len;	# n to big?
+  
+  my $elem = int($n / 5);		# which array element
+  my $digit = $n % 5;			# which digit in this element
+  $elem = '0000'.$x->{value}->[$elem];	# get element padded with 0's
+  return substr($elem,-$digit-1,1);
   }
 
 ##############################################################################
@@ -908,6 +944,8 @@ sub objectify
  
   trace(@_); 
   my $count = abs(shift || 0);
+  
+  #print caller(),"\n";
  
   my @a;			# resulting array 
   if (ref $_[0])
@@ -921,13 +959,24 @@ sub objectify
     $a[0] = $class; 
     $a[0] = shift if (@_ > $count && $count != 0);
     }
+  #print caller(),"\n";
   #print "Now in objectify, my class is today $a[0]\n";
   my $k; 
   if ($count == 0)
     {
-    foreach $k (@_) 
+    while (@_)
       {
-      ref($k) ? push @a, $k : push @a, $a[0]->new ($k);
+      $k = shift;
+      if (!ref($k))
+        {
+        $k = $a[0]->new($k);
+        }
+      elsif (ref($k) ne $a[0])
+	{
+	# foreign object, try to convert to integer
+        $k->can('as_number') ?  $k = $k->as_number() : $k = $a[0]->new($k);
+	}
+      push @a,$k;
       }
     }
   else
@@ -935,12 +984,28 @@ sub objectify
     while ($count > 0)
       {
       #print "$count\n";
+      $count--; 
       $k = shift; 
-      $count--; ref($k) ? push @a, $k : push @a, $a[0]->new ($k);
+      if (!ref($k))
+        {
+        $k = $a[0]->new($k);
+        }
+      elsif (ref($k) ne $a[0])
+	{
+	# foreign object, try to convert to integer
+        $k->can('as_number') ?  $k = $k->as_number() : $k = $a[0]->new($k);
+	}
+      push @a,$k;
       }
     #print "objectify() dropped ",scalar @_," arguments to the floor.\n" 
     # if @_ > 0; # debug
     }
+  #my $i = 0;
+  #foreach (@a)
+  #  {
+  #  print "o $i $a[0]\n" if $i == 0;
+  #  print "o $i ",ref($_),"\n" if $i != 0; $i++;
+  #  }
   #print "objectify done: would return ",scalar @a," values\n";
   #print caller(1),"\n" unless wantarray;
   die "$class objectify needs list context" unless wantarray;
@@ -1022,7 +1087,7 @@ sub _split
       $mis = $1||'+'; $miv = $2;
       #print "$mis $miv";
       # valid, existing fraction part of mantissa?
-      return unless ($mf =~ /^(\d+)0*$/);        # strip trailing zeros
+      return unless ($mf =~ /^(\d+?)0*$/);	# strip trailing zeros
       $mfv = $1;
       #print " split: $mis $miv . $mfv E $es $ev\n";
       return (\$mis,\$miv,\$mfv,\$es,\$ev);
@@ -1037,9 +1102,19 @@ sub _digits
   # int() because add/sub leaves sometimes strings (like '00005') instead of
   # int ('5') in this place, causing length to fail
   my $cx = shift;
-  
+
   #print "len: ",(@$cx-1)*5+CORE::length(int($cx->[-1])),"\n";
   return (@$cx-1)*5+CORE::length(int($cx->[-1]));
+  }
+
+sub as_number
+  {
+  # an object might be asked to return itself as bigint on certain overloaded
+  # operations, this does exactly this, so that sub classes can simple inherit
+  # it or override with their own integer conversion routine
+  my $self = shift;
+
+  return Math::BigInt::bstr($self);
   }
 
 ##############################################################################
@@ -1195,7 +1270,7 @@ sub mul
       {
       $prod = $xi * $yi + ($prod[$cty] || 0) + $car;
       $prod[$cty++] =
-       $prod - ($car = int($prod * 1e-5)) * 1e5;
+       $prod - ($car = int($prod * 1e-5)) * 1e5;	# see USE_MUL
       }
     $prod[$cty] += $car if $car; # need really to check for 0?
     $xi = shift @prod;
@@ -1224,13 +1299,13 @@ sub div
     for $xi (@$x) 
       {
       $xi = $xi * $dd + $car;
-      $xi -= ($car = int($xi * 1e-5)) * 1e5;
+      $xi -= ($car = int($xi * 1e-5)) * 1e5;	# see USE_MUL
       }
     push(@$x, $car); $car = 0;
     for $yi (@$y) 
       {
       $yi = $yi * $dd + $car;
-      $yi -= ($car = int($yi * 1e-5)) * 1e5;
+      $yi -= ($car = int($yi * 1e-5)) * 1e5;	# see USE_MUL
       }
     }
   else 
@@ -1251,7 +1326,7 @@ sub div
       for ($yi = 0, $xi = $#$x-$#$y-1; $yi <= $#$y; ++$yi,++$xi) 
         {
         $prd = $q * $y->[$yi] + $car;
-        $prd -= ($car = int($prd * 1e-5)) * 1e5;
+        $prd -= ($car = int($prd * 1e-5)) * 1e5;	# see USE_MUL
 	$x->[$xi] += 1e5 if ($bar = (($x->[$xi] -= $prd + $bar) < 0));
 	}
       if ($x->[-1] < $car + $bar) 
@@ -1271,11 +1346,11 @@ sub div
     @d = ();
     if ($dd != 1)  
       {
-      $car = 0;
+      $car = 0; 
       for $xi (reverse @$x) 
         {
         $prd = $car * 1e5 + $xi;
-        $car = $prd - ($tmp = int($prd / $dd)) * $dd;
+        $car = $prd - ($tmp = int($prd / $dd)) * $dd; # see USE_MUL
         unshift(@d, $tmp);
         }
       }
@@ -1287,8 +1362,6 @@ sub div
     _strip_zeros($x); 
     _strip_zeros(\@d);
     return ($x,\@d);
-    # tels: why ,0 in org reminder?
-    #(&external($sr, @q), &external($srem, @d, 0 ));
     }
   @$x = @q;
   _strip_zeros($x); 
@@ -1363,6 +1436,8 @@ Math::BigInt - Arbitrary size integer math package
   $x->bcmp($y);			# compare numbers (undef,<0,=0,>0)
   $x->bacmp($y);		# compare absolutely (undef,<0,=0,>0)
   $x->sign();			# return the sign, either +,- or NaN
+  $x->digit($n);		# return the nth digit, counting from right
+  $x->digit(-$n);		# return the nth digit, counting from left
 
   # The following all modify their first argument:
 
@@ -1492,8 +1567,10 @@ so that
 
   	use Math::BigInt qw/:constant/;
 
-	$x = 1234567890123456789012345678901234567890 + 123456789123456789;
-	$x = '1234567890123456789012345678901234567890' + '123456789123456789';
+	$x = 1234567890123456789012345678901234567890
+		+ 123456789123456789;
+	$x = '1234567890123456789012345678901234567890'
+		+ '123456789123456789';
 
 do both not work. You need a explicit Math::BigInt->new() around one of them.
 
@@ -1520,7 +1597,7 @@ For more benchmark results see http://bloodgate.com/perl/benchmarks.html
 =item :constant and eval()
 
 Under Perl prior to 5.6.0 having an C<use Math::BigInt ':constant';> and 
-<C<eval()> in your code will crash with "Out of memory". This is probably an
+C<eval()> in your code will crash with "Out of memory". This is probably an
 overload/exporter bug. You can workaround by not having C<eval()> 
 and ':constant' at the same time, upgrade your Perl or find out why it
 happens ;)
@@ -1538,7 +1615,7 @@ known to be troublesome:
 
 Both stringify and bstr() now drop the leading '+'. The old code would return
 '+3', the new returns '3'. This is to be consistent with Perl and to make
-cmp (especially with overloading) to work as you espect. It also solves
+cmp (especially with overloading) to work as you expect. It also solves
 problems with Test.pm, it's ok() uses 'eq' internally. 
 
 Mark said, when asked about to drop the '+' altogether, or make only cmp work:
@@ -1587,10 +1664,10 @@ real-valued quotient of the two operands, and the remainder (when it is
 nonzero) always has the same sign as the second operand; so, for
 example,
 
-	1->bdiv(4) == (0,1)
-	1->bdiv(-4) == (-1,-3)
-	(-3)->bdiv(4) == (-1,1)
-	(-3)->bdiv(-4) == (0,-3)
+	1 / 4 => (0,1)
+	1 / -4 => (-1,-3)
+	-3 / 4 => (-1,1)
+	-3 / -4 => (0,-3)
 
 As a consequence, the behavior of the operator % agrees with the
 behavior of Perl's built-in % operator (as documented in the perlop
@@ -1633,6 +1710,62 @@ is slower than
 since overload calls C<sub($x,0,1);> instead of C<neg($x)>. The first variant
 needs to preserve $x since it does not know that it later will get overwritten.
 This makes a copy of $x and takes O(N). But $x->bneg() is O(1).
+
+=item Mixing differend object types
+
+In Perl you will get a floating point value if you do one of the following:
+
+	$float = 5.0 + 2;
+	$float = 2 + 5.0;
+	$float = 5 / 2;
+
+With overloaded math, only the first two variants will result in a BigFloat:
+
+	use Math::BigInt;
+	use Math::BigFloat;
+	
+	$mbf = Math::BigFloat->new(5);
+	$mbi2 = Math::BigInteger->new(5);
+	$mbi = Math::BigInteger->new(2);
+
+	$float = $mbf + $mbi;		# $mbf->badd()
+	$float = $mbf / $mbi;		# $mbf->bdiv()
+	$integer = $mbi + $mbf;		# $mbi->badd()
+	$integer = $mbi2 / $mbi;	# $mbi2->bdiv()
+	$integer = $mbi2 / $mbf;	# $mbi2->bdiv()
+
+This is because math with overloaded operators follows the first (dominating)
+operand, this one's operation is called and returns such the result. Thus,
+Math::BigInt::bdiv() will always return a Math::BigInt, regardless wether
+the result should be a Math::BigFloat or the second operant is one.
+
+To get a Math::BigFloat you either need to call the operation manually,
+make sure the operands are already of the proper type or casted to that type
+via Math::BigFloat->new().
+	
+	$float = Math::BigFloat->new($mbi2) / $mbi;	# = 2.5
+
+Beware of simple "casting" the entire expression, this would only convert
+the already computed result:
+
+	$float = Math::BigFloat->new($mbi2 / $mbi);	# = 2.0 thus wrong!
+
+Beware of the order of more complicated expressions like:
+
+	$integer = ($mbi2 + $mbi) / $mbf;		# int / float => int
+	$integer = $mbi2 / Math::BigFloat->new($mbi);	# dito
+
+If in doubt, break the expression into simpler terms, or cast all operands
+to the desired resulting type.
+
+Scalar values are a bit different, since:
+	
+	$float = 2 + $mbf;
+	$float = $mbf + 2;
+
+will both result in the proper type due to the way overload works.
+
+This section also applies to other overloaded math packages, like Math::String.
 
 =back
 

@@ -2,11 +2,11 @@ Rewrite project of Math::BigInt, Math::BigFloat.
 
 (C) ..--- ----- ----- .---- by - . .-.. ... .-.-.-  All rights reserved.
 
-This package contains a new version of Math::BigInt and Math::BigFloat,
+This package contains new versions of Math::BigInt and Math::BigFloat,
 so please do NOT make 'make install', except when you do no longer want your
 old modules or know what you are doing.
 
-Also contains the following, that are based on the new Math::BigInt:
+Also contains the following packages based on the new Math::BigInt:
 
 	Math::Big
 	Math::Roman
@@ -32,15 +32,15 @@ longer supported etc and mainly, because I didn't know the other alternatives.
 
 Here is a short, but surely incomplete list of replacements (2001-03-30):
 
-	Math::BigIntFast	(Steffen Beyer, Bit::Vector wrapper)
+	Math::BigIntFast	(Steffen Beyer, Bit::Vector under disguise)
 	Bit::Vector		(Steffen Beyer)
 	Math::BigInteger	(Gary Howland, using external C lib)
-	SSLeay::BN		(discovered today, but couldn't find it)
+	SSLeay::BN		(mentioned in perlop, but couldn't find it)
 	Math::Pari		(Ilya, uses external C lib, discovered today)
-	Math::Fraction		(Kevin Atkinson - oups, discovered this today)
 	Math::Cephes		(Randy Kobes, uses external Cephes C lib)
 	Math::Cephes::Fraction	(dito, Cephes seems not to do BigNum's, though)
 	Math::GMP		(YABIR Chip Turner. This sounds like ideal...)
+	Math::Fraction		(Kevin Atkinson - oups, discovered this today)
 
 Looking backward, I must have been truly mad to write YABIR :-/
 

@@ -54,7 +54,10 @@ foreach (@primes)
   $i++;
   }
 # uncomment to print em:
-#foreach (@real_primes) { print "$_\n"; }
+# foreach (@real_primes) { print "$_\n"; }
+
+print "last prime: $real_primes[-1]\n";
+
 
 # check against text
 open FILE, '1000.txt' or die "Can't read 1000.txt: $!";

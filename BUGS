@@ -2,7 +2,7 @@
 Known bugs:
 
 * Bigram support in Charset does not yet work
-* BigFloat is still unfinished
+* BigFloat is still unfinished (round/sqrt/mod/mul/div)
 * BigInt does not have a mode similiar to 'use integer;'
 
 Please send me test-reports, your experiences with this and your ideas - I love

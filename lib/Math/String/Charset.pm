@@ -628,7 +628,7 @@ sub chars
   my $x = shift;
 
   return 0 if $x->is_zero();
-  return 0 if $x->{sign} eq 'NaN';
+  return 0 if $x->is_nan();
 
   my $i = 1;
   if ($self->{_order} == SIMPLE)

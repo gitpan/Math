@@ -93,7 +93,7 @@ use overload
 
 qw(
 ""  		bstr),
-'0+'   => 	\&as_number,
+'0+'   => 	\&Math::BigInt::as_number,
 ;         
  
 #############################################################################
@@ -316,9 +316,12 @@ sub bstr
   my ($x) = @_;
   return $x if !ref($x);
   return '' if $x->is_zero();
-  return 'NaN' if $x->sign() eq 'NaN';
+  return 'NaN' if $x->is_nan;
 
-  my $rem = new Math::BigInt $x; $rem->babs();
+  # make sure that we calculate with BigInt's, otherwise objectify() will
+  # try to make copies of us vai bstr(), resulting in deep recursion
+  #my $rem = $class->copy($x); bless $rem, 'Math::BigInt'; $rem->babs();
+  my $rem = $class->new($x); $rem->babs();
   ## get the biggest symbol
   #return $bt if $rem == $bv;
 
@@ -396,12 +399,6 @@ sub _recurse
     $level ++;
     }
   return;
-  }
-
-sub as_number
-  {
-  my $self = shift;
-  return Math::BigInt::bstr($self);
   }
 
 1;

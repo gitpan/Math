@@ -35,18 +35,25 @@ while (<DATA>)
   print "# For '$try'\n" if (!ok "$rc" , $args[2] || $args[0]);
 
   }
+close DATA;
 
 # check if negative numbers give same output as positives
   $try =  "\$x = Math::Roman->new(-12);";
   $rc = eval $try;
   print "# For '$try'\n" if (!ok "$rc" , "XII" );
 
+###############################################################################
 # check if output of bstr is again a valid Roman number
-for ($i = 1; $i< 1004; $i++)
+
+for ($i = 1; $i < 1004; $i++)
   {
   $try = "\$x = Math::Roman->new($i);";
-  $try .= "\$x = Math::Roman->new(\"\$x\")->as_number();";
+  $try .= "\$y = Math::Roman->new(\"\$x\")->as_number(); # ";
+  # debug: $try .= Math::Roman->new($i);
   $rc = eval $try;
+  # not worth the effort to eliminate eval:
+  # $x = Math::Roman->new($i);
+  # $rc = Math::Roman->new("$x")->as_number();
   print "# For '$try'\n" if (!ok "$rc" , $i );
   }
 
