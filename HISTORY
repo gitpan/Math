@@ -1,0 +1,171 @@
+
+Complete version history of the rewrite project
+===============================================
+
+If you want to see which things are new and different from the original
+Math::* in the Perl core, see CHANGES.
+
+This lists the complete version history for the rewritten version as well as
+the new Math::String, Math::String::Charset and Math::Roman.
+
+############################################################################## 
+Math::Roman:
+
+2001-02-17 1.02: require 5_005;
+
+############################################################################## 
+Math::Big:
+
+2001-03-17 1.00: first version with primes(), fibonacci(), base()
+2001-03-24 1.01: added: hailstone()
+
+############################################################################## 
+Math::String:
+
+1.02: fixed new() as copy, bstr works now, dropped multiple charsets
+1.03: 02/2001: added support for Math::String::Charset and thus bi-grams
+               added: caching for more speed
+2001-02-14 1.04: fixed inheritance/overloading bugs (objectify)
+                 finally got rid of copy&paste overload
+2001-02-16 1.05: fixed overload bug in cmp (Math::String cmp something other)
+2001-02-22 1.06: fixed: digits() => length()
+2001-03-18 1.07: fixed: documentation
+2001-03-25 1.08: added: support for caching of  string form
+
+############################################################################## 
+Math::String::Charset:
+
+2000-02-07 1.02: first version with bi-grams
+2000-02-14 1.03: fixed: simple charsets to work now,
+                 added: _end hash and _ones set
+2000-02-16 1.04: added: char(), charlength()
+2000-02-17 1.05: fixed: chars with diff. len raise error, works now with
+                        characters of length > 1
+                        some slight optimizations for simple charsets
+2000-02-22 1.06: fixed: documentation (fill-characters, die on error)
+			toggle $Math::String::Charset::die_on_error
+		        num2str() is now about a small, constant amount faster
+2000-03-18 1.07: fixed: documentation
+		 added: separator string/char for 'the lazy fox' style strings
+		 	renamed type() to order()
+		 	documented that length() always returns count of chars
+2000-03-25 1.08: added: next(), prev() for simple charsets (cache in M::S)
+
+############################################################################## 
+Math::String::Sequence:
+
+2001-03-20 1.00 first version, complete with test and doc
+2001-03-24 1.01 support for reversed sequences
+
+############################################################################## 
+Math::BigFloat:
+
+2000-02-18 1.00: started work
+2000-02-22 1.01: new() and bstr() work now (sort of)
+2000-02-24 1.02: add()/sub() should work now
+2000-03-06 1.03: layed more foundations (mul() etc)
+2000-03-27 1.04: bmul/bdiv/cmp work now, better _norm()
+
+############################################################################## 
+Math::BigFraction (experimental):
+
+2001-11-20 0.01: first version
+2001-03-30 0.02: made it from BF to BigFraction, fixed doc, added testcases
+
+############################################################################## 
+Math::BigInt::Constant:
+
+2000-03-24 1.00: first version
+2000-03-27 1.01: fixed up documentation
+
+############################################################################## 
+Math::BigInt:
+
+2000-11-13 v1.02 Tels
+ fixed sub and mul (sort of)
+ found out that "$wanted = shift || return bzero()" causes a call to numify,
+ testing for undefined fixes this problem (but might waste more time for
+ a new(0), will save time on average.
+2000-11-14 v1.03 Tels
+ x**0 => 1 (instead of x)
+ fixed bigintpm to include bpow, binc, bdec, new() test
+2000-11-15 v1.04 Tels
+ fixed bigintpm to test '++' and '--' properly
+ done div, fixed mul/bpow (13 tests remain)
+2000-11-16 v1.05 Tels
+ 8 tests remain
+ new copies _all_ fields, not only Math::Bigint ones
+2000-11-19 v1.06 Tels
+ 7 tests remain
+ bgcd accepts lists, added blcm
+2000-11-20 v1.07 Tels
+ objectify fixed to not make copies and work with subclasses
+2000-11-22 v1.08 Tels
+ fixed all but one test (band bior bxor etc)
+2000-11-23 v1.09 Tels
+ fixed bug in bmul (and thus bpow) (self multiply works now)
+2000-11-24 v1.10 Tels
+ finally made it Math::BigInt (w/o trailing 's')
+2001-02-14 v1.11 Tels
+ * fixed bug in band(), bxor(), etc that used badd($x, fixed_number_here);
+ * since subclasses might not be happy with fixed numbers, make sure we pass
+   BigInts all the time if using something like $someclass->badd();
+ * fixed bug in band/bxor/bior which destroyed second argument
+ * bxor/band/bior work now correctly for subclasses
+ * ++ and -- are now a tad (ca 5%) faster
+2001-02-16 v1.12 Tels
+ * accidentily dropped self-multiply test in bigintpm.t
+ * fixed bug in overloading cmp
+ * after correcting the overload for 'cmp', I got a lot of test failings and
+   finally dicsovered that the bstr()'s return of '[+-][0-9]+' instead of
+   Perls ways of '[-]?[0-9]+' breaks string comparisations with numbers :(
+   F.i. ok() from Test.pm uses 'eq' and you can not do ok($a,3*3) where $a
+   is a BigInt. IMNSHO clearly wrong. And only changing the way cmp is
+   overloaded would lead to the curios situation that the following:
+   'print "$a eq $b" if $a eq $b;' would print "+3 eq 3", which looks wrong.
+   Mark B. said go ahead and change bstr(), so I changed it ;) to drop
+   the '+', adapted all the tests, changed the doc, etc.
+   BigInts behave now transparently like build-in scalars in integer/string
+   context ;o)
+2001-02-18 v1.13 Tels
+ * got rid of duplicated copy() code in new()
+2001-02-21 v1.14 Tels
+ * overload +=, -=, *= and /= for about 20-30% more speed if both args have
+   roughly same length
+ * shortcut in add() makes $x += $y; $x -= $y; for large $x and small $y
+   an O(1) case instead of O(N)
+ * fixed (non-critical) bug that caused objectify in numify/bool/stringify to
+   create scratch objects from undef params.
+2001-02-24 v1.15 Tels
+ * $x / $x is now a lot faster (more O(1) than O(N))
+ * 10 ** $x is now a lot faster (more O(N/5) instead of O(N))
+ * overload of **= makes $x **= $y faster
+ * 0 ** 0 was NaN, not 1
+ * -a % b = +c (was -c) to be compatible with perl
+ * added $x->length() and test for it; fixed _digits() (was off by 1)
+ * objectify() was not exported, added tests for objectify()
+2001-03-09 v1.16 Tels
+ * Math::BigInt::badd(4,5) and Math::SomeChildOfBI->badd(4,5) work now
+ * '$x = scalar (**|%|+|-|*|\) $object;' failed (was not tested, either)
+ * 'if ($x)' is now O(1) instead of O(N) and at least twice as fast
+ * fixed nasty bug in _digits that caused <=> after add/sub/mul etc to fail
+   if result was between 100001 and 109999, added test for this
+ * added test cases for op's that should preserve args (+,+=,abs(), neg() etc)
+ * added tests for overloaded 'bool'
+ * added test.pl and some examples (prime.pl, bigprimes.pl)
+ * tests after "use Math::BigInt :constant" were screwed due to not using eval
+ * $x->numify() (for $array[$x] = 0; etc) is much faster now
+ * added caveat documentation for $x = -$x; and $x *= string1 operator string2;
+2001-03-24 v1.20 Tels
+ * added: is_nan()
+ * bug in bmod/bdiv, I forgot some cases with negatives. Thanx to Bruce Fields!
+ * documented ':constant' and eval() crash on Perl 5.00x
+ * documented BigInts behaviour of bmod/bdiv and use integer
+2001-03-30 v1.21 Tels
+ * bool() works now under 5_005
+ * bug in sub where numbers with at least 6 trailig digits after any op failed
+
+Please send me test-reports, your experiences with this and your ideas - I love
+to hear about my work!
+
+Tels <http://bloodgate.com/>

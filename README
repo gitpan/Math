@@ -1,0 +1,65 @@
+Rewrite project of Math::BigInt, Math::BigFloat.
+
+(C) ..--- ----- ----- .---- by - . .-.. ... .-.-.-  All rights reserved.
+
+This package contains a new version of Math::BigInt and Math::BigFloat,
+so please do NOT make 'make install', except when you do no longer want your
+old modules or know what you are doing.
+
+Also contains the following, that are based on the new Math::BigInt:
+
+	Math::Big
+	Math::Roman
+	Math::String
+	Math::String::Sequence
+	Math::String::Charset
+
+There is also an experimental module, called BigFraction.pm, which is
+BigFloat with unlimited precision, aka you can divide 1 by 3, then
+multiply it with 3, and get back exactly '1' (without rounding), not
+'0.9999...' etc. Seeing that Math::Fraction does essential the same I consider
+to retract it...
+
+Another module for testing is Math::BigInt::Constant - read-only BigInt's.
+
+###############################################################################
+
+It seems that everyone, their brother-in-law and their taxi-driver have
+rewritten (or tried to ;) Math::BigInt and Math::BigFloat.
+
+My version exists because the existing ones were buggy, incompatible, no
+longer supported etc and mainly, because I didn't know the other alternatives. 
+
+Here is a short, but surely incomplete list of replacements (2001-03-30):
+
+	Math::BigIntFast	(Steffen Beyer, Bit::Vector wrapper)
+	Bit::Vector		(Steffen Beyer)
+	Math::BigInteger	(Gary Howland, using external C lib)
+	SSLeay::BN		(discovered today, but couldn't find it)
+	Math::Pari		(Ilya, uses external C lib, discovered today)
+	Math::Fraction		(Kevin Atkinson - oups, discovered this today)
+	Math::Cephes		(Randy Kobes, uses external Cephes C lib)
+	Math::Cephes::Fraction	(dito, Cephes seems not to do BigNum's, though)
+	Math::GMP		(YABIR Chip Turner. This sounds like ideal...)
+
+Looking backward, I must have been truly mad to write YABIR :-/
+
+###############################################################################
+
+To test, then run
+
+	perl Makefile.PL
+	make
+	make test
+
+See also ./examples for some example scripts.
+
+More information including HTMLified help and preliminary benchmark results
+are available under:
+
+	http://bloodgate.com/perl/
+
+Please send me test-reports, your experiences with this and your ideas - I love
+to hear about my work!
+
+Tels <http://bloodgate.com/>

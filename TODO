@@ -1,0 +1,25 @@
+See various .pm files.
+
+Math::BigFloat:
+ * just do it
+
+Math::BigFloat::Constant:
+ * do it?
+
+Math::BigInt:
+ * remove trace()
+ * ++,-- could be faster in Bigint via hardcoded (manual) increment
+ * look at mul() and div()
+ * bpow() could be faster by not using div()
+
+Math::String::Charset
+ * finish bigram support
+ * binaer search in bstr() to find out base number?
+
+Math::String:
+ * finish cache string form  and dec/inc
+
+Please send me test-reports, your experiences with this and your ideas - I love
+to hear about my work!
+
+Tels <http://bloodgate.com/>

@@ -1,0 +1,27 @@
+Rewrite project of Math::BigInt, Math::BigFloat.
+
+(C) ..--- ----- ----- .---- by - . .-.. ... .-.-.-  All rights reserved.
+
+Contains new version of Math::BigInt, so please do NOT make 'make install',
+except when you do no longer want your old Math::BigInt or know what you are
+doing.
+
+To test, unzip package, then run
+
+	perl Makefile.PL
+	make
+	make test
+
+PLEASE DO NOT INSTALL UNLESS YOU KNOW WHAT YOU ARE DOING!
+
+Look into ./examples to see some basic example scripts.
+
+More information including HTMLified help ind benchmark results are
+available under:
+
+	http://bloodgate.com/perl/
+
+Please send me test-reports, your experiences with this and your ideas - I love
+to hear about my work!
+
+Tels <http://bloodgate.com/>

@@ -1,0 +1,11 @@
+
+Known bugs:
+
+* Bigram support in Charset does not yet work
+* BigFloat is still unfinished
+* BigInt does not have a mode similiar to 'use integer;'
+
+Please send me test-reports, your experiences with this and your ideas - I love
+to hear about my work!
+
+Tels <http://bloodgate.com/>
