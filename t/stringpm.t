@@ -7,7 +7,7 @@ BEGIN
   {
   chdir 't' if -d 't';
   unshift @INC, '../lib';
-  plan tests => 74;
+  plan tests => 75;
   }
 
 use Math::String;
@@ -86,15 +86,15 @@ print "# For '$try'\n" if (!ok "$rc" , 'true');
 # check wether bior(),bxor(), band() word
 $x = Math::String->new("a");
 $y = Math::String->new("b"); $z = $y | $x;
-print "# For '$z = $y | $x'\n" if (!ok "$z" , 'c');
+print "# For '\$z = $y | $x'\n" if (!ok "$z" , 'c');
 
 $x = Math::String->new("b");
 $y = Math::String->new("c"); $z = $y & $x;
-print "# For '$z = $y & $x'\n" if (!ok "$z" , 'b');
+print "# For '\$z = $y & $x'\n" if (!ok "$z" , 'b');
 
 $x = Math::String->new("d");
 $y = Math::String->new("e"); $z = $y ^ $x;
-print "# For '$z = $y ^ $x'\n" if (!ok "$z" , 'a');
+print "# For '\$z = $y ^ $x'\n" if (!ok "$z" , 'a');
 
 ##############################################################################
 # check objectify of additional params
@@ -156,8 +156,15 @@ print "# For '$try'\n" if (!ok "$rc" , 3 );
 ##############################################################################
 # overloading ==
 
-$x = Math::String->new('a'); 
+$x = Math::String->new('a');
 ok ($x == 1,1);
+
+##############################################################################
+# as_number
+
+$x = Math::String->new('abc'); 
+ok (ref($x->as_number()),'Math::BigInt');
+
 
 # all done
 

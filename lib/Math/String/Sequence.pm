@@ -15,7 +15,7 @@
 
 package Math::String::Sequence;
 use vars qw($VERSION);
-$VERSION = 1.01;    # Current version of this package
+$VERSION = 1.02;    # Current version of this package
 require  5.005;     # requires this Perl version or later
 
 use Exporter;
@@ -205,6 +205,24 @@ sub error
   return $x->{_set}->error();
   }
 
+sub as_array
+  {
+  # return the sequence as array of strings
+  my $x = shift;
+
+  my @a;
+  my $f = $x->{_first}; my $l = $x->{_last};
+  if ($x->{_rev})
+    {
+    while ($f >= $l) { push @a,$f; $f--; }
+    }
+  else
+    {
+    while ($f <= $l) { push @a,$f; $f++; }
+    }
+  return @a;
+  }
+
 #############################################################################
 
 =head1 NAME
@@ -231,6 +249,8 @@ Math::String::Sequence - defines a sequence (or range) of strings.
 	print "last: ",$seq->last(),"\n";
 	print "5th: ",$seq->string(5),"\n"; 	
 	print "out-of-range: ",$seq->string(10000000),"\n"; 	   # undef	
+	
+	print "as array:: ",$seq->as_array(),"\n"; 	   	   # as array
 
 =head1 REQUIRES
 
@@ -306,6 +326,28 @@ Return a reference to the charset of the Math::String::Sequence object.
 
 Returns the Nth string in the sequence, 0 beeing the C<first>. Negative
 arguments count backward from C<last>, just like with arrays.
+
+=head2 B<as_array()>
+
+            @array = $sequence->as_array();
+
+Returns the sequence as array of strings. Usefull for emulating things like
+
+	foreach ('a'..'z')
+	  {
+          print "$_\n";
+          }
+
+via
+
+	my $sequence = Math::String::Sequence->new('foo','bar');
+
+	foreach ($sequence->as_array())
+	  {
+	  print "$_\n";
+          }
+
+Beware, might create HUGE arrays!
 
 =head1 BUGS
 

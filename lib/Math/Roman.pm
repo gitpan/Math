@@ -29,11 +29,9 @@
 # the above for _all_ functions of BigInt. That's rather long. AUTOLOAD does
 # not work, since it steps in _after_ inheritance. Do we really need this?
 
-# todo: get rid of copy/paste overload see Math::String
-
 package Math::Roman;
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = 1.02;    # Current version of this package
+$VERSION = 1.04;    # Current version of this package
 require  5.005;     # requires this Perl version or later
 
 use Exporter;
@@ -45,57 +43,8 @@ use Math::BigInt;
 use strict;
 my $class = "Math::Roman";
 
-use overload
-#'='     =>      sub { $class->new(@_)},
-#'+'     =>      sub { Math::BigInt::badd( $class->new($_[0]),$_[1]) },
-#'-'     =>      sub { $_[2]?
-#                   Math::BigInt::bsub( $class->new($_[1]),$_[0]) :
-#                   Math::BigInt::bsub( $class->new($_[0]),$_[1]) },
-#'<=>'   =>      sub {$_[2]? 
-#                   Math::BigInt->bcmp($_[1],$_[0]) :
-#                   Math::BigInt->bcmp($_[0],$_[1])},
-#'cmp'   =>      sub {$_[2]?
-#              Math::Roman::bstr($_[1]) cmp Math::Roman::bstr($_[0]) : 
-#              Math::Roman::bstr($_[0]) cmp Math::Roman::bstr($_[1])},
-#
-#'neg'   =>      sub { Math::BigInt::bneg($class->new(@_))},
-#'abs'   =>      sub { Math::BigInt::babs($class->new(@_))},
+use overload;	# inherit from MBI
 
-'*'     =>      sub { Math::BigInt::bmul($class->new($_[0]),$_[1]) },
-'/'     =>      sub { $_[2]?
-                   scalar Math::BigInt::bdiv($class->new($_[1]),$_[0]) :
-                   scalar Math::BigInt::bdiv($class->new($_[0]),$_[1]) },
-'%'     =>      sub { $_[2]?
-                   Math::BigInt::bmod($class->new($_[1]),$_[0]) :
-                   Math::BigInt::bmod($class->new($_[0]),$_[1]) },
-'**'    =>      sub { $_[2]?
-                   Math::BigInt::bpow($class->new($_[1]),$_[0]) :
-                   Math::BigInt::bpow($class->new($_[0]),$_[1]) },
-'<<'    =>      sub { $_[2]?
-                   Math::Bigint::blsft($class->new($_[1]),$_[0]) :
-                   Math::BigInt::blsft($class->new($_[0]),$_[1]) },
-'>>'    =>      sub { $_[2]?
-                   Math::BigInt::brsft($class->new($_[1]),$_[0]) :
-                   Math::BigInt::brsft($class->new($_[0]),$_[1]) },
-
-'&'     =>      sub { Math::BigInt::band($class->new($_[0]),$_[1]) },
-'|'     =>      sub { Math::BigInt::bior($class->new($_[0]),$_[1]) },
-'^'     =>      sub { Math::BigInt::bxor($class->new($_[0]),$_[1]) },
-'~'     =>      sub { Math::BigInt::bnot($class->new(@_)) },
-
-# can modify arg of ++ and --, so avoid a new-copy for speed
-#'++'    =>      sub { Math::BigInt::badd($_[0],Math::BigInt->_one()) },
-#'--'    =>      sub { Math::BigInt::badd($_[0],Math::BigInt->_one('-')) },
-
-#'bool'  =>     sub { Math::BigInt::is_zero(@_); },
-
-# Order of arguments unsignificant
-
-qw(
-""  		bstr),
-'0+'   => 	\&Math::BigInt::as_number,
-;         
- 
 #############################################################################
 # global variables
 
@@ -319,9 +268,8 @@ sub bstr
   return 'NaN' if $x->is_nan;
 
   # make sure that we calculate with BigInt's, otherwise objectify() will
-  # try to make copies of us vai bstr(), resulting in deep recursion
-  #my $rem = $class->copy($x); bless $rem, 'Math::BigInt'; $rem->babs();
-  my $rem = $class->new($x); $rem->babs();
+  # try to make copies of us via bstr(), resulting in deep recursion
+  my $rem = $x->as_number(); $rem->babs();
   ## get the biggest symbol
   #return $bt if $rem == $bv;
 
@@ -401,6 +349,13 @@ sub _recurse
   return;
   }
 
+sub as_number
+  {
+  my $self = shift;
+
+  return Math::BigInt->new($self->SUPER::bstr());
+  }
+
 1;
 __END__
 
@@ -408,8 +363,7 @@ __END__
 
 =head1 NAME
 
-Math::Roman - Package to calculate with arbitrary sized Roman numbers and
-convert from and to Arabic.
+Math::Roman - Arbitrary sized Roman numbers and conversion from and to Arabic.
 
 =head1 SYNOPSIS
 
@@ -694,12 +648,17 @@ constructed, and in this case, would succeed.
 
 =back
 
+=head1 LICENSE
+
+This program is free software; you may redistribute it and/or modify it under
+the same terms as Perl itself.
+
 =head1 AUTHOR
 
 If you use this module in one of your projects, then please email me. I want
 to hear about how my code helps you ;)
 
-This module is (C) Tels http://bloodgate.com 2000-2001.
+Tels http://bloodgate.com 2000-2001.
 
 =cut
 

@@ -7,7 +7,7 @@ BEGIN
   {
   chdir 't' if -d 't';
   unshift @INC, '../lib';
-  plan tests => 22;
+  plan tests => 30;
   }
 
 use Math::String::Sequence;
@@ -56,4 +56,17 @@ ok ($seq->string(0),'z');
 ok ($seq->string(1),'y');
 ok ($seq->string(-1),'a');
 ok ($seq->string(-2),'b');
+
+my @a = $seq->as_array();
+ok ($a[0],'z');
+ok ($a[-1],'a');
+ok ($a[-2],'b');
+ok ($a[1],'y');
+
+$seq = Math::String::Sequence->new( 'aa', 'cc' );
+@a = $seq->as_array();
+ok ($a[0],'aa');
+ok ($a[-1],'cc');
+ok ($a[-2],'cb');
+ok ($a[1],'ab');
 

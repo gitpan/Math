@@ -26,8 +26,20 @@ foreach (qw/badd bmul bdiv bmod binc bdec bsub bnot bneg babs bxor bior
   {
   $@ = ''; $try = "\$x->$_(2);"; $rc = eval $try; 
   print "# tried: $_()\n" unless ok ($x,8); 
-  ok ($rc,undef);
+  ok_undef ($rc);
   ok ($@,qr/^Can not/);
   }
 
 1;
+
+###############################################################################
+# Perl 5.005 does not like ok ($x,undef)
+
+sub ok_undef
+  {
+  my $x = shift;
+
+  ok (1,1) and return if !defined $x;
+  ok ($x,'undef');
+  }
+

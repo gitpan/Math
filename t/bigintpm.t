@@ -8,19 +8,58 @@ BEGIN
   chdir 't' if -d 't';
   unshift @INC, '../lib';
   $| = 1;
-  plan tests => 451;
+  plan tests => 978;
   }
+
+##############################################################################
+# for testing inheritance of _swap
+
+package Math::Foo;
+
+use Math::BigInt;
+use vars qw/@ISA/;
+@ISA = (qw/Math::BigInt/);
+
+use overload
+# customized overload for sub, since original does not use swap there
+'-'     =>      sub { my @a = ref($_[0])->_swap(@_);
+                   $a[0]->bsub($a[1])};
+
+sub _swap
+  {
+  # a fake _swap, which reverses the params
+  my $self = shift;                     # for override in subclass
+  if ($_[2])
+    {
+    my $c = ref ($_[0] ) || 'Math::Foo';
+    return ( $_[0]->copy(), $_[1] );
+    }
+  else
+    {
+    return ( Math::Foo->new($_[1]), $_[0] );
+    }
+  }
+
+##############################################################################
+package main;
 
 use Math::BigInt;
 
-my (@args,$f,$try,$x,$y,$z,$a,$exp,$ans,$ans1,@a);
+my (@args,$f,$try,$x,$y,$z,$a,$exp,$ans,$ans1,@a,$m,$e,$round_mode);
 
 while (<DATA>) 
   {
   chop;
+  next if /^#/;	# skip comments
   if (s/^&//) 
     {
     $f = $_;
+    }
+  elsif (/^\$/) 
+    {
+    $round_mode = $_;
+    $round_mode =~ s/^\$/\$Math::BigInt::/;
+    # print "$round_mode\n";
     }
   else 
     {
@@ -29,6 +68,8 @@ while (<DATA>)
     $try = "\$x = Math::BigInt->new(\"$args[0]\");";
     if ($f eq "bnorm"){
       $try .= '$x+0;';
+    } elsif ($f eq "bsstr") {
+      $try .= '$x->bsstr();';
     } elsif ($f eq "bneg") {
       $try .= '-$x;';
     } elsif ($f eq "babs") {
@@ -39,6 +80,21 @@ while (<DATA>)
       $try .= '--$x;'; 
     }elsif ($f eq "bnot") {
       $try .= '~$x;';
+    }elsif ($f eq "bsqrt") {
+      $try .= '$x->bsqrt();';
+    }elsif ($f eq "length") {
+      $try .= "\$x->length();";
+    }elsif ($f eq "bround") {
+      $try .= "$round_mode; \$x->bround($args[1]);";
+    }elsif ($f eq "exponent"){
+      $try .= '$x = $x->exponent()->bstr();';
+    }elsif ($f eq "mantissa"){
+      $try .= '$x = $x->mantissa()->bstr();';
+    }elsif ($f eq "parts"){
+      $try .= "(\$m,\$e) = \$x->parts();"; 
+      $try .= '$m = $m->bstr(); $m = "NaN" if !defined $m;';
+      $try .= '$e = $e->bstr(); $e = "NaN" if !defined $e;';
+      $try .= '"$m,$e";';
     } else {
       $try .= "\$y = new Math::BigInt \"$args[1]\";";
       if ($f eq "bcmp"){
@@ -90,7 +146,7 @@ while (<DATA>)
         $try = "\$x = Math::BigInt->new(\"$args[0]\"); \$x->digit($args[1]);";
       } else { warn "Unknown op '$f'"; }
     }
-    # remove leading #, thats easier than to edit all instances
+    # remove leading +, thats easier than to edit all instances
     # change necc. due to bstr() dropping leading '+' now
     $ans =~ s/^\+//;
     $ans1 = eval $try;
@@ -100,15 +156,18 @@ while (<DATA>)
       }
     else
       {
+      #print "try: $try ans: $ans1 $ans\n";
       print "# Tried: '$try'\n" if !ok ($ans1, $ans);
       }
+    # check internal state of number objects
+    is_valid($ans1) if ref $ans1; 
     }
   } # endwhile data tests
 close DATA;
 
-# test wether constant works or not
-$try = "use Math::BigInt ':constant';";
-$try .= ' $x = 2**150; $x = "$x";';
+# test whether constant works or not
+$try = "use Math::BigInt (1.31,'babs',':constant');";
+$try .= ' $x = 2**150; babs($x); $x = "$x";';
 $ans1 = eval $try;
 
 ok ( $ans1, "1427247692705959881058285969449495136382746624");
@@ -121,13 +180,13 @@ for (my $i = 1; $i < 10; $i++)
   }
 ok "@a", "1 2 3 4 5 6 7 8 9";
 
-# test wether selfmultiplication works correctly (result is 2**64)
+# test whether selfmultiplication works correctly (result is 2**64)
 $try = '$x = new Math::BigInt "+4294967296";';
 $try .= '$a = $x->bmul($x);';
 $ans1 = eval $try;
 print "# Tried: '$try'\n" if !ok ($ans1, Math::BigInt->new(2) ** 64);
 
-# test wether op detroys args or not (should better not)
+# test whether op detroys args or not (should better not)
 
 $x = new Math::BigInt (3);
 $y = new Math::BigInt (4);
@@ -159,7 +218,7 @@ ok ($x, -5);
 $x = new Math::BigInt (-5); $y = abs($x);
 ok ($x, -5);
 
-# check wether overloading cmp works
+# check whether overloading cmp works
 $try = "\$x = Math::BigInt->new(0);";
 $try .= "\$y = 10;";
 $try .= "'false' if \$x ne \$y;";
@@ -240,9 +299,6 @@ ok ($x,99999);
 ok (scalar @{$x->{value}}, 1);
 
 ###############################################################################
-# check int-form of internal arrays (not done yet todo )
-
-###############################################################################
 # check numify
 
 my $BASE = int(1e5);
@@ -254,7 +310,7 @@ $x = Math::BigInt->new( -($BASE*$BASE*1+$BASE*1+1) );
 ok($x->numify(),-($BASE*$BASE*1+$BASE*1+1)); 
 
 ###############################################################################
-# check bug in _digits with length($c[-1]) where C[-1] was "00001" instead of 1
+# test bug in _digits with length($c[-1]) where $c[-1] was "00001" instead of 1
 
 $x = Math::BigInt->new(99998); $x++; $x++; $x++; $x++;
 if ($x > 100000) { ok (1,1) } else { ok ("$x < 100000","$x > 100000"); }
@@ -264,7 +320,7 @@ $y = Math::BigInt->new(1000000);
 if ($x < 1000000) { ok (1,1) } else { ok ("$x > 1000000","$x < 1000000"); }
 
 ###############################################################################
-#  bug in sub where number with at least 6 trailing zeros after any op failed
+# bug in sub where number with at least 6 trailing zeros after any op failed
 
 $x = Math::BigInt->new(123456); $z = Math::BigInt->new(10000); $z *= 10;
 $x -= $z;
@@ -272,7 +328,15 @@ ok ($z, 100000);
 ok ($x, 23456);
 
 ###############################################################################
-# check what if undefs
+# bug with rest "-0" in div, causing further div()s to fail
+
+$x = Math::BigInt->new(-322056000); ($x,$y) = $x->bdiv('-12882240');
+
+ok ($y,'0');	# not '-0'
+is_valid($y);
+
+###############################################################################
+# check undefs: NOT DONE YET
 
 ###############################################################################
 # bool
@@ -302,7 +366,7 @@ ok ($args[1],4);
 ok ($args[2],5);
 
 ###############################################################################
-# test for flaoting-point input
+# test for flaoting-point input (other tests in bnorm() below)
 
 $y = '1050000000000000';
 $x = Math::BigInt->new($y);
@@ -312,27 +376,6 @@ $z = 1050000000000000;          # may pass on systems with 64bit regardless?
 $x = Math::BigInt->new($z);
 ok ($x,$y);
 
-$y = "1.01E2";   $x = Math::BigInt->new($y);
-ok ($x,101);
-
-$y = "1010E-1";  $x = Math::BigInt->new($y);
-ok ($x,101);
-
-$y = "-1010E0";  $x = Math::BigInt->new($y);
-ok ($x,-1010);
-
-$y = "-1010E1";  $x = Math::BigInt->new($y);
-ok ($x,-10100);
-
-$y = "-1010E-2"; $x = Math::BigInt->new($y);    # cant strip that many zeros
-ok ($x,'NaN');
-
-$y = "-1.01E+1"; $x = Math::BigInt->new($y);    # e not high enough
-ok ($x,'NaN');
-
-$y = "-1.01E-1"; $x = Math::BigInt->new($y);    # uh-oh, fract AND negative e
-ok ($x,'NaN');
- 
 ###############################################################################
 # prime number tests, also test for **= and length()
 # found on: http://www.utm.edu/research/primes/notes/by_year.html
@@ -356,7 +399,40 @@ ok ($x,"170141183460469231731687303715884105727");
 #ok ($x->digits(),100000);
 
 ###############################################################################
-# all done
+# inheritance and overriding of _swap
+
+$x = Math::Foo->new(5);
+$x = $x - 8;		# 8 - 5 instead of 5-8
+ok ($x,3);
+ok (ref($x),'Math::Foo');
+
+$x = Math::Foo->new(5);
+$x = 8 - $x;		# 5 - 8 instead of 8 - 5
+ok ($x,-3);
+ok (ref($x),'Math::Foo');
+
+###############################################################################
+# all tests done
+
+# devel test, see whether valid catches errors
+#$x = Math::BigInt->new(0);
+#$x->{sign} = '-';
+#is_valid($x); # nok
+#
+#$x->{sign} = 'e';
+#is_valid($x); # nok
+#
+#$x->{value}->[0] = undef;
+#is_valid($x); # nok
+#
+#$x->{value}->[0] = 1e6;
+#is_valid($x); # nok
+#
+#$x->{value}->[0] = -2;
+#is_valid($x); # nok
+#
+#$x->{sign} = '+';
+#is_valid($x); # ok
 
 ###############################################################################
 # Perl 5.005 does not like ok ($x,undef)
@@ -367,6 +443,68 @@ sub ok_undef
 
   ok (1,1) and return if !defined $x;
   ok ($x,'undef');
+  }
+
+###############################################################################
+# sub to check validity of a BigInt internally, to ensure that no op leaves a
+# number object in an invalid state (f.i. "-0")
+
+sub is_valid
+  {
+  my $x = shift;
+
+  my $error = ["",];
+
+  # ok as reference? 
+  is_okay('ref($x)','Math::BigInt',ref($x),$error);
+
+  # has ok sign?
+  is_okay('$x->{sign}',"'+', '-' or 'NaN'",$x->{sign},$error)
+   if $x->{sign} !~ /^([\+\-]|NaN)$/;
+
+  # is not -0?
+  if (($x->{sign} eq '-') && (@{$x->{value}} == 1) && ($x->{value}->[0] == 0))
+     {
+     is_okay("\$x ne '-0'","0",$x,$error);
+     }
+  # all parts are valid?
+  my $i = 0; my $j = scalar @{$x->{value}}; my $e; my $try;
+  while ($i < $j)
+    {
+    $e = $x->{value}->[$i]; $e = 'undef' unless defined $e;
+    $try = '=~ /^[\+]?[0-9]+\$/; '."($f, $x, $e)";
+    last if $e !~ /^[+]?[0-9]+$/;
+    $try = ' < 0 || >= 1e5; '."($f, $x, $e)";
+    last if $e <0 || $e >= 1e5;
+    # this test is disabled, since new/bnorm and certain ops (like early out
+    # in add/sub) are allowed/expected to leave '00000' in some elements
+    #$try = '=~ /^00+/; '."($f, $x, $e)";
+    #last if $e =~ /^00+/;
+    $i++;
+    }
+  is_okay("\$x->{value}->[$i] $try","not $e",$e,$error)
+   if $i < $j; # trough all?
+  
+  # see whether errors crop up
+  $error->[1] = 'undef' unless defined $error->[1];
+  if ($error->[0] ne "")
+    {
+    ok ($error->[1],$error->[2]);
+    print "# Tried: $error->[0]\n";
+    }
+  else
+    {
+    ok (1,1);
+    }
+  }
+
+sub is_okay
+  {
+  my ($tried,$expected,$try,$error) = @_;
+
+  return if $error->[0] ne "";	# error, no further testing
+
+  @$error = ( $tried, $try, $expected ) if $try ne $expected;
   }
 
 __END__
@@ -381,8 +519,8 @@ abc:NaN
 0:+0
 +0:+0
 +00:+0
-+0 0 0:+0
-000000  0000000   00000:+0
++000:+0
+000000000000000000:+0
 -0:+0
 -0000:+0
 +1:+1
@@ -395,6 +533,33 @@ abc:NaN
 -001:-1
 -123456789:-123456789
 -00000100000:-100000
+1_2_3:123
+_123:NaN
+_123_:NaN
+_123_:NaN
+1__23:NaN
+10000000000E-1_0:1
+1E2:100
+1E1:10
+1E0:1
+E1:NaN
+E23:NaN
+1.23E2:123
+1.23E1:NaN
+1.23E-1:NaN
+100E-1:10
+# floating point input
+1.01E2:101
+1010E-1:101
+-1010E0:-1010
+-1010E1:-10100
+-1010E-2:NaN
+-1.01E+1:NaN
+-1.01E-1:NaN
+&bsstr
+1e+34:1e+34
+123.456E3:123456e+0
+100:1e+2
 &bneg
 abd:NaN
 +0:+0
@@ -745,6 +910,29 @@ abc:NaN
 100000:-3:0
 100000:0:0
 100000:1:0
+&mantissa
+abc:NaN
+1e4:1
+2e0:2
+123:123
+-1:-1
+-2:-2
+&exponent
+abc:NaN
+1e4:4
+2e0:0
+123:0
+-1:0
+-2:0
+0:1
+&parts
+abc:NaN,NaN
+1e4:1,4
+2e0:2,0
+123:123,0
+-1:-1,0
+-2:-2,0
+0:0,1
 &bpow
 0:+0:+1
 0:+1:+0
@@ -773,3 +961,83 @@ abc:NaN
 10:8:+100000000
 10:9:+1000000000
 10:20:+100000000000000000000
+&length
+100:3
+10:2
+1:1
+0:1
+12345:5
+10000000000000000:17
+&bsqrt
+144:12
+16:4
+4:2
+2:1
+12:3
+256:16
+100000000:10000
+4000000000000:2000000
+1:1
+0:0
+-2:NaN
+Nan:NaN
+&bround
+$rnd_mode = 'trunc'
+1234:0:1234
+1234:2:1200
+123456:4:123400
+123456:5:123450
+123456:6:123456
++10123456789:5:+10123000000
+-10123456789:5:-10123000000
++10123456789:9:+10123456700
+-10123456789:9:-10123456700
++101234500:6:+101234000
+-101234500:6:-101234000
+$rnd_mode = 'zero'
++20123456789:5:+20123000000
+-20123456789:5:-20123000000
++20123456789:9:+20123456800
+-20123456789:9:-20123456800
++201234500:6:+201234000
+-201234500:6:-201234000
++12345000:4:12340000
+-12345000:4:-12340000
+$rnd_mode = '+inf'
++30123456789:5:+30123000000
+-30123456789:5:-30123000000
++30123456789:9:+30123456800
+-30123456789:9:-30123456800
++301234500:6:+301235000
+-301234500:6:-301234000
++12345000:4:12350000
+-12345000:4:-12340000
+$rnd_mode = '-inf'
++40123456789:5:+40123000000
+-40123456789:5:-40123000000
++40123456789:9:+40123456800
+-40123456789:9:-40123456800
++401234500:6:+401234000
+-401234500:6:-401235000
++12345000:4:12340000
+-12345000:4:-12350000
+$rnd_mode = 'odd'
++50123456789:5:+50123000000
+-50123456789:5:-50123000000
++50123456789:9:+50123456800
+-50123456789:9:-50123456800
++501234500:6:+501235000
+-501234500:6:-501235000
++12345000:4:12350000
+-12345000:4:-12350000
+$rnd_mode = 'even'
++60123456789:5:+60123000000
+-60123456789:5:-60123000000
++60123456789:9:+60123456800
+-60123456789:9:-60123456800
++601234500:6:+601234000
+-601234500:6:-601234000
++1234567:7:1234567
++1234567:6:1234570
++12345000:4:12340000
+-12345000:4:-12340000

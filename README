@@ -27,13 +27,13 @@ Another module for testing is Math::BigInt::Constant - read-only BigInt's.
 It seems that everyone, their brother-in-law and their taxi-driver have
 rewritten (or tried to ;) Math::BigInt and Math::BigFloat.
 
-My version exists because the existing ones were buggy, incompatible, no
-longer supported etc and mainly, because I didn't know the other alternatives. 
+My version exists because the existing ones were buggy, incompatible, no longer
+supported etc and mainly, because I didn't know the other alternatives ;o) 
 
 Here is a short, but surely incomplete list of replacements (2001-03-30):
 
-	Math::BigIntFast	(Steffen Beyer, Bit::Vector under disguise)
-	Bit::Vector		(Steffen Beyer)
+	Math::BigIntFast	(Steffen Beyer, Bit::Vector under disguise :-/
+	Bit::Vector		(Steffen Beyer, fast but no autoextend)
 	Math::BigInteger	(Gary Howland, using external C lib)
 	SSLeay::BN		(mentioned in perlop, but couldn't find it)
 	Math::Pari		(Ilya, uses external C lib, discovered today)
@@ -42,7 +42,8 @@ Here is a short, but surely incomplete list of replacements (2001-03-30):
 	Math::GMP		(YABIR Chip Turner. This sounds like ideal...)
 	Math::Fraction		(Kevin Atkinson - oups, discovered this today)
 
-Looking backward, I must have been truly mad to write YABIR :-/
+Looking backward, I must have been truly mad to write YABIR - but then I now
+know far more about big nuber systems than I ever wanted to learn ;)
 
 ###############################################################################
 

@@ -22,7 +22,7 @@
 
 package Math::String;
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = 1.08;    # Current version of this package
+$VERSION = 1.09;    # Current version of this package
 require  5.005;     # requires this Perl version or later
 
 use Exporter;
@@ -35,26 +35,14 @@ use strict;
 use Math::String::Charset;
 my $class = "Math::String";
 
-#sub clone;
-
 use overload
 'cmp'   =>      sub { $_[2]?
               $_[1] cmp Math::String::bstr($_[0]) :
               Math::String::bstr($_[0]) cmp $_[1] },
-#'<=>'   =>      sub {
-#                        $_[2] ?
-#                      Math::BigInt::bcmp($_[1],$_[0]) :
-#                      Math::BigInt::bcmp($_[0],$_[1])},
 # can modify arg of ++ and --, so avoid a new-copy for speed
-#'++'    =>      \&binc,
-#sub { Math::BigInt::badd($_[0],Math::BigInt->_one()) },
 '++'    =>      sub { Math::BigInt::badd($_[0],Math::BigInt->_one()) },
 '--'    =>      sub { Math::BigInt::badd($_[0],Math::BigInt->_one('-')) },
 
-# Order of arguments unsignificant
-qw(
-""  		bstr),
-'0+'   => 	sub { my $c = shift; $c->as_number(@_); },
 ;         
 
 # some shortcuts for easier life
@@ -115,7 +103,7 @@ sub new
   my $value = shift; $value = '' if !defined $value;
   my $self = {};
   bless $self, $class;
-  return $value->clone() if ref($value);	# got an object, so make copy
+  return $value->copy() if ref($value);	# got an object, so make copy
   $self->_set_charset(shift);
   $self->_initialize($value);
   return $self; 
@@ -188,7 +176,9 @@ sub bstr
 sub as_number
   {
   my $self = shift;
-  return $self->SUPER::bstr();
+
+  # return yourself as MBI
+  return Math::BigInt->new($self->SUPER::bstr());
   }
 
 sub order
@@ -251,8 +241,7 @@ sub modify
 
 =head1 NAME
 
-Math::String - Arbitrary sized integers having arbitrary charsets to 
-calculate with password/key rooms.
+Math::String - Arbitrary sized integers having arbitrary charsets to calculate with password/key rooms.
 
 =head1 SYNOPSIS
 
@@ -683,12 +672,17 @@ or a 26 ('z'), and which one is more valid is unclear.
 
 =back
 
+=head1 LICENSE
+
+This program is free software; you may redistribute it and/or modify it under
+the same terms as Perl itself.
+
 =head1 AUTHOR
 
 If you use this module in one of your projects, then please email me. I want
 to hear about how my code helps you ;)
 
-This module is (C) Tels http://bloodgate.com 2000-2001.
+Tels http://bloodgate.com 2000-2001.
 
 =cut
 

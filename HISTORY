@@ -12,12 +12,17 @@ the new Math::String, Math::String::Charset and Math::Roman.
 Math::Roman:
 
 2001-02-17 1.02: require 5_005;
+2001-04-14 1.03: fixed as_number() to return BigInt 
+2001-05-07 1.04: got rid of C&P in overload section
 
 ############################################################################## 
 Math::Big:
 
 2001-03-17 1.00: first version with primes(), fibonacci(), base()
 2001-03-24 1.01: added: hailstone()
+2001-04-12 1.02: added: factors(), wheel()
+		 fixed: primes()
+2001-05-07 1.03: added: factorial()
 
 ############################################################################## 
 Math::String:
@@ -31,6 +36,8 @@ Math::String:
 2001-02-22 1.06: fixed: digits() => length()
 2001-03-18 1.07: fixed: documentation
 2001-03-25 1.08: added: support for caching of string form
+2001-04-13 1.09: as_number: returns now Math::BigInt
+2001-05-07 1.10: finally got rid of C&P of overload section
 
 ############################################################################## 
 Math::String::Charset:
@@ -56,6 +63,7 @@ Math::String::Sequence:
 
 2001-03-20 1.00 first version, complete with test and doc
 2001-03-24 1.01 support for reversed sequences
+2001-04-21 1.02 added: as_array for 'a'..'z' emulation
 
 ############################################################################## 
 Math::BigFloat:
@@ -79,6 +87,20 @@ Math::BigFloat:
 		 babs(), bneg(), bint() work now
 		 empty stubs for bsqrt(), bround() and bmod()
 		 exponent(), mantissa(), parts() work now as expected
+2000-04-18 1.08: exponent(), mantissa() and parts() now return BigInt's
+		 bnorm: 0Ey => 0E1 (was wrongly 0E0)
+		 fixed is_zero()
+		 added bround() and bfround() (only truncate mode)
+                 fixed bug in bstr() for 1.203E-2 style numbers (Thanx Tom!)
+2000-04-23 1.09: length() in list context return length of mantissa & exponent
+		 bug in bstr() for '0.x' style strings
+		 added bsqrt()
+		 workaround for Perl v5.6.0 overload-bool bug (via MBI)
+                 fixed rounding
+2000-05-07 1.10: Tom's round fixes (minus one nit)
+ 		 new: .xxx, -.xxx, +.xxx etc are valid inputs, while
+                 '.', 'x x x' and 'Exxx' are now invalid
+                 finally got rid of C&P of overload section and clone()
 
 ############################################################################## 
 Math::BigFraction (experimental):
@@ -186,7 +208,23 @@ Math::BigInt:
  * as_number()
 2001-04-07 v1.23 Tels
  * speling errors in pod
- 
+2001-04-23 v1.3 Tels
+ * added (compatible to MBF) mantissa(), exponent() & parts() as well as tests
+ * _trailing_zeros()
+ * fixed as_number() to return copy of BigInt 
+ * added bround(), bfround() and support for round_mode() as well as $rnd_mode
+ * fixed bug in bdiv() wich left reminder "-0", causing further op's to die()
+ * added is_valid to testsuite to see whether invalid objects are created
+ * added bsqrt()
+ * workaround coredump bug in bool() for v5.6.1
+2001-05-08 v1.31 Tels
+ * _ between digits now accepted, ' ' no longer valid inside (but at front/end)
+ * Exxx is NaN, and no longer produces warning
+ * .xxx style numbers are valid input
+ * tests for 1E1, 123E-2, 1E2 etc style input to Bigint.pm
+ * fixed overload (w/ _swap/copy), subclasses can inherit it easily
+ * removed clone()
+ * added bsstr()
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

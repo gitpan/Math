@@ -5,7 +5,7 @@ BEGIN { unshift @INC, 'lib'; }
 use Math::BigInt;
 use Math::String;
 use Test;
-BEGIN { plan tests => 7; }
+BEGIN { plan tests => 8; }
 
 my ($x,$y);
 # M::BI itself
@@ -37,3 +37,7 @@ ok ($x,9);
 $x = Math::String->badd('d','e');
 ok ($x,'i');
 
+# test wether overload works with childs and inheritance
+$x = Math::String->new('a');
+$y = 'b' + $x;
+ok (ref($y),'Math::String');

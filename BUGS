@@ -1,9 +1,64 @@
 
 Known bugs:
 
-* Bigram support in Charset does not yet work
-* BigFloat is still unfinished (round/sqrt/mod/mul/div)
-* BigInt does not have a mode similiar to 'use integer;'
+* Math::String::Charset
+  + bigram support does not work yet
+* BigFloat:
+  + unfinished (fmod() is missing, fsqrt() is buggy)
+  + mul/div etc may not round the result properly to be less or equal than the
+    desired precision
+  + doesn't support accuracy (sigdigs) yet
+  + doesn't have a per-object precision/round_mode setting yet
+  + comparing (<=> or == or !=) a BigFloat to an BigInt does not work yet
+  + new is first running the entire number trough _split, then again the parts
+    to construct BigInts. Could be a bit more optimzed.
+* BigInt:
+  + doesn't have a mode akin to 'use integer;', e.g. it always emulates Perl
+  + Handling of undef arguments is somewhat broken (no proper warnings)
+
+A change in overload breaks BigInt.pm::band() due to deep recursion. Hm?
+
+###############################################################################
+
+Mixing of classes does not always work like here:
+
+	use Math::BigInt;
+	use Math::BigFloat;
+
+	$x = Math::BigFloat->new(2.5);
+	$y = Math::BigInt->new(2);
+
+	$z = $x + $y;
+
+What should $z become? Certainly not a BigFloat with value 4. But a BigFloat
+with value 4.5? Ora BigInt with value 4? And should
+
+	$z = $y + $x;
+
+influence the result? Overload works this way with scalars, the first object
+gives the class to that the result is set and the second argument converted:
+
+	$z = $x + 2;	# 4.5
+	$z = 2 + $x:	# 4.5
+	$z = $y + 2.5;	# 4 !!
+
+One problem is that in normal Perl floating point is prefered, when in doubt.
+But this assumes that MBI knows about MBF and that this is considered more
+"powerfull", so that MBI objects promote themselfe to MBFs upon contact:
+
+	$z = $x + $y;	# 4.5
+	$z = $y + $x;	# 4.5, too
+
+While this could be made work somehow, the assumption that MBI must know
+anything about MBF (a subclass of it) is somewhat ugly. (Of course having a
+routine in both packages, that return 1 for MBI, and 2 for MBF, thus denoting
+the more powerfull would work, and even with subclasses of MBI, which inherit
+than the 1, or override it (maybe even with 3 for complex numbers)).
+
+The old code (v0.01 etc) breaks in various, mysterious and starnge ways when
+confronted with mixed arguments. For fun throw t/fi_mixed.t at the old library.
+
+The new code is only partially better, I am afraid.
 
 Please send me test-reports, your experiences with this and your ideas - I love
 to hear about my work!

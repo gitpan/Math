@@ -1,0 +1,38 @@
+This lists only the changes for the current release (v1.31), since HISTORY is
+now quite a bit cluttered:
+
+General:
+* 8 - 5 in MBF gave 13. (You guys DO test my releases, right? %o/
+  apparently badd() for negative numbers was completely broken in MBF - oups)
+* Extended GOALS and added a section about using Bit::Vector
+* added BENCHMARK and NEW
+* lots of new tests for MBF, some more for MBI.
+* Applied Tom's rounding fixes (minus one nit for ffround(+$n))
+  Various things have now changed in rounding to make it more correct and to
+  make it work more like the old code.
+* Cleaned overload section in MBI, so that sub classes need only minimalistic
+  overload sections. Added _swap() in nearly all cases so that sub classes can
+  override it if necc. Added a test for _swap() overriding.
+* removed clone() in MBI and MBF. (use copy() if you want a well, copy)
+* added factorial() in Big.pm
+* MBF->fsqrt() works now, sort of (it seems to be overly optimistic on the
+  scale and also does not do big numbers or 0 < x < 1). I followed the old
+  implemenation, which seems to get it wrong except for some simple cases. Hm.
+  Ah, I see a bug in div() and mul() :-( 
+
+Input:
+* '.2', '-.2', '-.2E1', '1.E1' etc are now valid inputs
+* 'E123', '-E123', '-E-1' etc are no longer valid 
+* Ditto for MBI input, except that it takes only integers, of course.
+* Spaces are no longer allowed in numbers, only before/after. So "1 2 3" is
+  invalid, but "  +123  " is still valid to make it easier for upgrading
+* _ is allowed between any two digits, so that 1_3.4_5E1_2 is valid
+
+Output:
+* output of bsstr() is now "1e+308" style, instead of "1E308" to be eq to Perl
+* added bsstr() to BigInt, with doc and tests
+
+
+Even with all the fixes and new features, v1.31 is 144 code instead of 146
+KBytes compared to v1.30. Code cleanup pays back sometimes - unfortunately
+the grown testsuite eats up the same 2 KBytes ;o)

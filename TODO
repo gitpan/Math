@@ -1,12 +1,16 @@
 See various .pm files.
 
+General:
+ * Copy on write (helps for $x = -$x; cases etc)
+
 Math::BigFloat:
- * ! round(): look at rounding (Toms bug report)
+ * ! round(): some bugs may lurk in there (warnings)
  * ! bsqrt() (old variant seems to do to much work)
- * ! bdiv() 
+ * ! bdiv() is broken for 2 / 1.41 
  * ! bmod() 
  * ! bpow()
- * complete doc
+ * complete doc abot accuracy vs precision
+ * accuracy()
 
 Math::BigFloat::Constant:
  * really?
@@ -17,9 +21,11 @@ Math::BigInt:
  * ++,-- could be faster in Bigint via hardcoded (manual) increment
  * look at mul() and div() for more speed
  * bpow() could be faster by not using div()
+ * scan_for_zeros is slower than it needs to be (affects rounding speed)
 
 Math::String::Charset
  * ! finish bigram support
+ * different charsets at each pos (for grouping)
  * binaer search in bstr() to find out base number?
 
 Math::String:
