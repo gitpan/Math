@@ -188,7 +188,7 @@ as follows:
 	    }
           }
 
-It is not yet proven wether for every N the sequence reaches 1, but it
+It is not yet proven whether for every N the sequence reaches 1, but it
 apparently does so. The number of steps is somewhat chaotically.
 
 =head2 B<base()>

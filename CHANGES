@@ -1,7 +1,7 @@
 This file contains all the CHANGES and bugfixes from original BigInt/BigFloat
 to the rewritten one:
 
-v1.22:
+v1.23:
 
  general:
   + It is subsequent faster than the original
@@ -20,8 +20,8 @@ v1.22:
   + added P. Prymmer's OS/390 '/1e5 vs *1e-5' patch w/o the performance snag
   + NRY XXX: rounding errors in BigFloat, sqrt() bug
   + BigFloat::bxxx() works as well as BigFloat::fxxx()
-  + Math::BigInt->new(10) / Math::BigFloat->new(2) returned NaN (dito for other
-    subclasses of Math::BigInt)
+  + Math::BigInt->new(10) / Math::BigFloat->new(2) returned NaN (ditto for
+    other subclasses of Math::BigInt)
   + $a = new Math::BigInt; creates now a +0, while "" still gives a NaN
     This supresses all warnings on undef arguments. Wether this is better...	
   + import would always use "Math::BigInt" and give only one arg to new() as

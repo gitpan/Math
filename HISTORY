@@ -75,6 +75,10 @@ Math::BigFloat:
 		 bdiv() works now with precision
 		 precision()
 		 doc about mixing different objects in overloaded math
+2000-04-07 1.07: bug in bstr() for 0.xxx style numbers, as well as for "-xxx"
+		 babs(), bneg(), bint() work now
+		 empty stubs for bsqrt(), bround() and bmod()
+		 exponent(), mantissa(), parts() work now as expected
 
 ############################################################################## 
 Math::BigFraction (experimental):
@@ -180,6 +184,8 @@ Math::BigInt:
  * objectify() with other objects than BigInt as further args, copy() etc
  * $x->digit($n) to query fast value of Nth digit
  * as_number()
+2001-04-07 v1.23 Tels
+ * speling errors in pod
  
 
 Please send me test-reports, your experiences with this and your ideas - I love

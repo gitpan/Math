@@ -2,9 +2,11 @@ See various .pm files.
 
 Math::BigFloat:
  * ! round(): look at rounding (Toms bug report)
- * sqrt (seems to do to much work)
- * ! div() 
+ * ! bsqrt() (old variant seems to do to much work)
+ * ! bdiv() 
+ * ! bmod() 
  * ! bpow()
+ * complete doc
 
 Math::BigFloat::Constant:
  * really?

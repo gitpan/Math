@@ -562,7 +562,7 @@ Also, things like
 
         $a = Math::String::bsub('hal', 5);
 
-does not work, since Math::String can not decide wether 5 is the number 5,
+does not work, since Math::String can not decide whether 5 is the number 5,
 or the string '5'. It could, if the charset does not contain '0'..'9', but
 this would lead to confusion if you change the charset. So, the second paramter
 must always be a Math::String object, or a string that is valid with the
@@ -667,7 +667,7 @@ Adding/subtracting etc Math::Strings with different charsets treats the
 second argument as it had the charset of the first. 
 
 Only if the first charset contains all the characters of second string, you
-could convert the second string to the first charset, but wether this is
+could convert the second string to the first charset, but whether this is
 usefull is questionable:
 
 	use Math::String;

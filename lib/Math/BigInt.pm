@@ -10,7 +10,7 @@
 # mailto:mail@vipul.net (build a module based on Math::BigInt)
 # mailto:gary@hotlava.com (Math::BigInteger)
 
-# 2001-04-05 v1.22 Tels
+# 2001-04-07 v1.23 Tels
  
 # todo:
 # * fully remove funky $# stuff (maybe)
@@ -34,7 +34,7 @@
 package Math::BigInt;
 my $class = "Math::BigInt";
 
-$VERSION = 1.22;
+$VERSION = 1.23;
 use Exporter;
 @ISA =       qw( Exporter );
 @EXPORT_OK = qw( bneg babs bcmp badd bmul bdiv bmod bnorm bsub
@@ -1427,8 +1427,8 @@ Math::BigInt - Arbitrary size integer math package
   $zero = Math::BigInt->bzero();# create a "+0"
 
   # Testing
-  $x->is_zero();		# return wether arg is zero or not
-  $x->is_nan();			# return wether arg is NaN or not
+  $x->is_zero();		# return whether arg is zero or not
+  $x->is_nan();			# return whether arg is NaN or not
   $x->is_one();			# return true if arg is +1
   $x->is_one('-');		# return true if arg is -1
   $x->is_odd();			# return true if odd, false for even
@@ -1463,10 +1463,10 @@ Math::BigInt - Arbitrary size integer math package
   $x->blsft($y);		# left shift
   $x->brsft($y);		# right shift 
   
-  $x->band($y);			# bit-wise and
-  $x->bior($y);			# bit-wise inclusive or
-  $x->bxor($y);			# bit-wise exclusive or
-  $x->bnot();			# bit-wise not (two's complement)
+  $x->band($y);			# bitwise and
+  $x->bior($y);			# bitwise inclusive or
+  $x->bxor($y);			# bitwise exclusive or
+  $x->bnot();			# bitwise not (two's complement)
   
   # The following do not modify their arguments:
 
@@ -1516,9 +1516,9 @@ object.
 
 Output values are BigInt objects (normalized), except for bstr(), which
 returns a string in normalized form.
-Some routines (C<is_odd()>, C<is_even()>, C<is_zero()>, C<is_one()>)
-return true or false, while others (C<bcmp()>, C<bacmp()>) return either 
-undef, <0, 0 or >0 and are suited for sort.
+Some routines (C<is_odd()>, C<is_even()>, C<is_zero()>, C<is_one()>,
+C<is_nan()>) return true or false, while others (C<bcmp()>, C<bacmp()>)
+return either undef, <0, 0 or >0 and are suited for sort.
 
 =back
 
@@ -1538,7 +1538,7 @@ the result of dividing by zero.
   $x = Math::BigInt->babs("-12345"); 	# Bigint "12345"
   $x = Math::BigInt->bnorm("-0 00"); 	# BigInt "0"
   $x = bint(1) + bint(2);            	# BigInt "3"
-  $x = bint(1) + "2";                	# dito (auto-BigIntify of "2")
+  $x = bint(1) + "2";                	# ditto (auto-BigIntify of "2")
   $x = bint(1);                      	# BigInt "1"
   $x = $x + 5 / 2;                   	# BigInt "3"
   $x = $x ** 3;                      	# BigInt "27"
@@ -1691,7 +1691,7 @@ it alone and only returned the result. This is to be consistent with
 C<badd()> etc. The first three will modify $x, the last one won't:
 
 	print bpow($x,$i),"\n"; 	# modify $x
-	print $x->bpow($i),"\n"; 	# dito
+	print $x->bpow($i),"\n"; 	# ditto
 	print $x **= $i,"\n";		# the same
 	print $x ** $i,"\n";		# leave $x alone 
 
@@ -1736,7 +1736,7 @@ With overloaded math, only the first two variants will result in a BigFloat:
 
 This is because math with overloaded operators follows the first (dominating)
 operand, this one's operation is called and returns such the result. Thus,
-Math::BigInt::bdiv() will always return a Math::BigInt, regardless wether
+Math::BigInt::bdiv() will always return a Math::BigInt, regardless whether
 the result should be a Math::BigFloat or the second operant is one.
 
 To get a Math::BigFloat you either need to call the operation manually,
@@ -1753,7 +1753,7 @@ the already computed result:
 Beware of the order of more complicated expressions like:
 
 	$integer = ($mbi2 + $mbi) / $mbf;		# int / float => int
-	$integer = $mbi2 / Math::BigFloat->new($mbi);	# dito
+	$integer = $mbi2 / Math::BigFloat->new($mbi);	# ditto
 
 If in doubt, break the expression into simpler terms, or cast all operands
 to the desired resulting type.

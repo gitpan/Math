@@ -128,7 +128,7 @@ sub numify
 sub _reduce
   {
   # reduce a/b to lowest a and b, by finding g = gcd (a,b) and the a/g and b/g
-  # we could cache wether a/b is already reduced or not
+  # we could cache whether a/b is already reduced or not
   my ($self,$x) = objectify(1,@_);
 
   # don't do anything for NaNs  
@@ -392,7 +392,7 @@ Math::BigFraction - Arbitrary size floating point fractions
   $zero = Math::BigFraction->bzero();	# create a "+0"
 
   # Testing
-  $x->is_zero();		# return wether arg is zero or not
+  $x->is_zero();		# return whether arg is zero or not
   $x->is_one();			# return true if arg is +1
   $x->is_one('-');		# return true if arg is -1
   #$x->is_odd();		# return true if odd, false for even
