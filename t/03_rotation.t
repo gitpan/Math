@@ -12,33 +12,33 @@ BEGIN {
 my ( $r, $r1, $r2 );
 my ( $x, $y, $z, $v );
 
-ok( ! Math::Rotation->new );
-ok(  !Math::Rotation->new(0,0,1,0) );
-ok( ! Math::Rotation->new(0,1,1,0) );
-ok(!  Math::Rotation->new(1,2,1,0) );
-ok(!  Math::Rotation->new(0,0,1,2*CORE::atan2( 0, -1 )) );
-ok( ! Math::Rotation->new([ 0, 0, 1 ], [ 0, 0, 1 ]) );
+ok( !Math::Rotation->new );
+ok( !Math::Rotation->new( 0, 0, 1, 0 ) );
+ok( !Math::Rotation->new( 0, 1, 1, 0 ) );
+ok( !Math::Rotation->new( 1, 2, 1, 0 ) );
+ok( !Math::Rotation->new( 0, 0, 1, 2 * CORE::atan2( 0, -1 ) ) );
+ok( !Math::Rotation->new( [ 0, 0, 1 ], [ 0, 0, 1 ] ) );
 
-ok( ! Math::Rotation->new(2,3,5,0) );
-ok( ! Math::Rotation->new(2,7,8,0) );
-ok( ! Math::Rotation->new(5,6,1,0) );
+ok( !Math::Rotation->new( 2, 3, 5, 0 ) );
+ok( !Math::Rotation->new( 2, 7, 8, 0 ) );
+ok( !Math::Rotation->new( 5, 6, 1, 0 ) );
 
-ok( ! Math::Rotation->new(2,3,5,0) );
-ok(!  Math::Rotation->new(2,7,8,0) );
-ok( ! Math::Rotation->new(5,6,1,4*CORE::atan2( 0, -1 )) );
+ok( !Math::Rotation->new( 2, 3, 5, 0 ) );
+ok( !Math::Rotation->new( 2, 7, 8, 0 ) );
+ok( !Math::Rotation->new( 5, 6, 1, 4 * CORE::atan2( 0, -1 ) ) );
 
-ok(  Math::Rotation->new(2,3,5,1) );
-ok(  Math::Rotation->new(2,7,8,2) );
-ok(  Math::Rotation->new(5,6,1,-1) );
+ok( Math::Rotation->new( 2, 3, 5, 1 ) );
+ok( Math::Rotation->new( 2, 7, 8, 2 ) );
+ok( Math::Rotation->new( 5, 6, 1, -1 ) );
 
-ok(  ! Math::Rotation->new(0,0,0,-1) );
+ok( !Math::Rotation->new( 0, 0, 0, -1 ) );
 
-ok( ! new Math::Rotation() );
-ok( ! new Math::Rotation(0,0,1,0) );
-ok( ! new Math::Rotation(0,1,1,0) );
-ok( ! new Math::Rotation(1,2,1,0) );
-ok( ! new Math::Rotation(0,0,1,2*CORE::atan2( 0, -1 )) );
-ok( ! new Math::Rotation( [ 0, 0, 1 ], [ 0, 0, 1 ] ) );
+ok( !new Math::Rotation() );
+ok( !new Math::Rotation( 0, 0, 1, 0 ) );
+ok( !new Math::Rotation( 0, 1, 1, 0 ) );
+ok( !new Math::Rotation( 1, 2, 1, 0 ) );
+ok( !new Math::Rotation( 0, 0, 1, 2 * CORE::atan2( 0, -1 ) ) );
+ok( !new Math::Rotation( [ 0, 0, 1 ], [ 0, 0, 1 ] ) );
 
 is( $r = new Math::Rotation, "0 0 1 0", "$r new Math::Rotation()" );
 ok( ( $r = Math::Rotation->new->toString ) eq "0 0 1 0", "$r Math::Rotation->new->toString" );

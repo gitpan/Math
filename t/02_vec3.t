@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 54;
+use Test::More tests => 56;
 use strict;
 
 BEGIN {
@@ -16,11 +16,11 @@ is( $v = @{ Math::Vec3->DefaultValue }, 3, "$v getDefaultValue" );
 
 is( $v = new Math::Vec3(), "0 0 0", "$v new Math::Vec3()" );
 
-$v->setValue(); is( $v, "0 0 0", "$v new Math::Vec3()" );
+$v->setValue();  is( $v, "0 0 0", "$v new Math::Vec3()" );
 $v->setValue(1); is( $v, "1 0 0", "$v new Math::Vec3()" );
-$v->setValue(1,1); is( $v, "1 1 0", "$v new Math::Vec3()" );
-$v->setValue(1,1,1); is( $v, "1 1 1", "$v new Math::Vec3()" );
-$v->setValue(1,1,1,1); is( $v, "1 1 1", "$v new Math::Vec3()" );
+$v->setValue( 1, 1 ); is( $v, "1 1 0", "$v new Math::Vec3()" );
+$v->setValue( 1, 1, 1 ); is( $v, "1 1 1", "$v new Math::Vec3()" );
+$v->setValue( 1, 1, 1, 1 ); is( $v, "1 1 1", "$v new Math::Vec3()" );
 
 is( $v = new Math::Vec3( 1, 2, 3 ), "1 2 3", "$v new Math::Vec3()" );
 is( $v = new Math::Vec3( [ 1, 2, 3 ] ), "1 2 3", "$v new Math::Vec3()" );
@@ -56,10 +56,13 @@ ok( $v ne new Math::Vec3( 0, 2, 3 ), "$v ne" );
 ok( $v != new Math::Vec3( 0, 2, 3 ), "$v !=" );
 
 is( $v1 = new Math::Vec3( 1, 2, 3 ), "1 2 3", "$v1 v1" );
+is( $v = $v1 + [ 1, 2, 3 ], "2 4 6", "$v +" );
+is( $v = $v1 - [ 1, 2, 3 ], "0 0 0",  "$v -" );
+
 is( $v2 = new Math::Vec3( 2, 3, 4 ), "2 3 4", "$v2 v2" );
 
-is( $v = -$v1,      "-1 -2 -3",  "$v -" );
-is( $v = $v1 + $v2, "3 5 7",     "$v +" );
+is( $v = -$v1, "-1 -2 -3", "$v -" );
+is( $v = $v1 + $v2, "3 5 7", "$v +" );
 is( $v = $v1 - $v2, "-1 -1 -1",  "$v -" );
 is( $v = $v1 * 2,   "2 4 6",     "$v *" );
 is( $v = $v1 / 2,   "0.5 1 1.5", "$v /" );

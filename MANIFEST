@@ -2,6 +2,7 @@ images/Rotation.png
 lib/Math.pm
 lib/Math/Color.pm
 lib/Math/ColorRGBA.pm
+lib/Math/Image.pm
 lib/Math/Rotation.pm
 lib/Math/Vec2.pm
 lib/Math/Vec3.pm

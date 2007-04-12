@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 886;
+use Test::More tests => 896;
 use strict;
 
 BEGIN {
@@ -100,6 +100,18 @@ is( Math::pro(), 0 );
 is( Math::pro(23), 23 );
 is( Math::pro( 2, 3 ), 6 );
 is( Math::pro( 2, 3, 4 ), 24 );
+
+is( Math::even(-1), 0 );
+is( Math::even(1),  0 );
+is( Math::even(0),  1 );
+is( Math::even(2),  1 );
+is( Math::even(-2), 1 );
+
+is( Math::odd(-1), 1 );
+is( Math::odd(1),  1 );
+is( Math::odd(0),  0 );
+is( Math::odd(2),  0 );
+is( Math::odd(-2), 0 );
 
 is( Math::even($_), 1 ) foreach map { $_ * 2 } ( -100 .. 100 );
 is( Math::odd($_),  0 ) foreach map { $_ * 2 } ( -100 .. 100 );

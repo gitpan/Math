@@ -28,7 +28,7 @@ use overload
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.275';
+our $VERSION = '0.28';
 
 use constant DefaultValue => [0, 0, 0];
 
@@ -36,7 +36,7 @@ use constant DefaultValue => [0, 0, 0];
 
 Math::Vec3 - Perl class to represent 3d vectors
 
-=head1 HIERARCHY
+=head1 TREE
 
 -+- L<Math::Vec2> -+- L<Math::Vec3>
 
@@ -55,14 +55,15 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 DESCRIPTION
 
+=head2 DefaultValue
+
+	0 0 0
+
 =head1 METHODS
 
 =head2 new
 
-	my $v = new Math::Vec3; 					  
-	my $v1 = new Math::Vec3($v);   
-	my $v2 = new Math::Vec3(1,2,3);   
-	my $v3 = new Math::Vec3([1,2,3]); 
+Derived from L<Math::Vec2/new>.
 
 =cut
 

@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.275';
+our $VERSION = '0.28';
 
 use Math ();
 
@@ -13,7 +13,7 @@ use base 'Math::Vec3';
 
 Math::Color - Perl class to represent colors
 
-=head1 HIERARCHY
+=head1 TREE
 
 -+- L<Math::Vec2> -+- L<Math::Vec3> -+- L<Math::Color>
 
@@ -32,6 +32,10 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 DESCRIPTION
 
+=head2 DefaultValue
+
+	0 0 0
+
 =head1 METHODS
 
 =head2 new(r,g,b)
@@ -39,7 +43,6 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 r, g, b are given on [0, 1].
 
 	my $c = new Math::Color; 					  
-	my $c1 = new Math::Color($v);   
 	my $c2 = new Math::Color(0, 0.5, 1);   
 	my $c3 = new Math::Color([0, 0.5, 1]); 
 

@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.185';
+our $VERSION = '0.19';
 
 use base 'Math::Color';
 
@@ -13,7 +13,7 @@ use constant DefaultValue => [ 0, 0, 0, 0 ];
 
 Math::ColorRGBA - Perl class to represent rgba colors
 
-=head1 HIERARCHY
+=head1 TREE
 
 -+- L<Math::ColorRGBA>
 
@@ -32,14 +32,17 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 DESCRIPTION
 
+=head2 DefaultValue
+
+	0 0 0 0
+
 =head1 METHODS
 
 =head2 new(r,g,b,a)
 
-r, g, b,a are given on [0, 1].
+r, g, b, a are given on [0, 1].
 
 	my $c = new Math::ColorRGBA; 					  
-	my $c1 = new Math::ColorRGBA($v);   
 	my $c2 = new Math::ColorRGBA(0, 0.5, 1, 0);   
 	my $c3 = new Math::ColorRGBA([0, 0.5, 1, 1]); 
 

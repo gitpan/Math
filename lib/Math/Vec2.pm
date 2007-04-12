@@ -27,13 +27,13 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.275';
+our $VERSION = '0.28';
 
 =head1 NAME
 
 Math::Vec2 - Perl class to represent 2d vectors
 
-=head1 HIERARCHY
+=head1 TREE
 
 -+- L<Math::Vec2>
 
@@ -51,6 +51,10 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 	my $v1 = new Math::Vec2(0,1);
 
 =head1 DESCRIPTION
+
+=head2 DefaultValue
+
+	0 0
 
 =head1 CONSTANT
 
@@ -72,8 +76,11 @@ use constant DefaultValue => [ 0, 0 ];
 =head2 new
 
 	my $v = new Math::Vec2; 					  
-	my $v1 = new Math::Vec2($v);   
-	my $v2 = new Math::Vec2(1,2);   
+	my $v2 = new Math::Vec2(1,2);
+	my @v3 = @$v; 
+	
+If you call new() with a reference to an array, it will be used as reference.
+
 	my $v3 = new Math::Vec2([1,2]); 
 
 =cut

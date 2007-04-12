@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 44;
+use Test::More tests => 46;
 use strict;
 
 BEGIN {
@@ -16,10 +16,10 @@ is( $v = @{ Math::Vec2->DefaultValue }, 2, "$v getDefaultValue" );
 
 is( $v = new Math::Vec2(), "0 0", "$v new Math::Vec2()" );
 
-$v->setValue(); is( $v, "0 0", "$v new Math::Vec2()" );
+$v->setValue();  is( $v, "0 0", "$v new Math::Vec2()" );
 $v->setValue(1); is( $v, "1 0", "$v new Math::Vec2()" );
-$v->setValue(1,1); is( $v, "1 1", "$v new Math::Vec2()" );
-$v->setValue(1,1,1); is( $v, "1 1", "$v new Math::Vec2()" );
+$v->setValue( 1, 1 ); is( $v, "1 1", "$v new Math::Vec2()" );
+$v->setValue( 1, 1, 1 ); is( $v, "1 1", "$v new Math::Vec2()" );
 
 is( $v = new Math::Vec2(), "0 0", "$v new Math::Vec2()" );
 is( $v = new Math::Vec2( 1, 2 ), "1 2", "$v new Math::Vec2()" );
@@ -53,6 +53,9 @@ ok( $v != new Math::Vec2( 0, 2 ), "$v !=" );
 
 is( $v1 = new Math::Vec2( 1, 2 ), "1 2", "$v1 v1" );
 is( $v2 = new Math::Vec2( 2, 3 ), "2 3", "$v2 v2" );
+
+is( $v = $v1 + [ 1, 2 ], "2 4", "$v +" );
+is( $v = $v1 - [ 1, 2 ], "0 0",  "$v -" );
 
 is( $v = -$v1,      "-1 -2", "$v -" );
 is( $v = $v1 + $v2, "3 5",   "$v +" );

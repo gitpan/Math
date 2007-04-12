@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.275';
+our $VERSION = '0.28';
 
 =head1 NAME
 
@@ -36,15 +36,17 @@ Math::Rotation - Perl class to represent rotations
 
 =head1 VERSION
 
-=head1 HIERARCHY
+=head1 TREE
 
 -+- L<Math::Rotation>
+
+=head1 REQUIRES
+
+L<Math::Quaternion>
 
 =head1 SEE ALSO
 
 L<Math>
-
-L<Math::Quaternion>
 
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -67,6 +69,10 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 	~-$r2 == $r2;
 
 =head1 DESCRIPTION
+
+=head2 DefaultValue
+
+	0 0 1 0
 
 =head1 METHODS
 
