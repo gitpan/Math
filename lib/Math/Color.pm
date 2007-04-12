@@ -3,12 +3,11 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.267';
+our $VERSION = '0.275';
 
 use Math ();
 
-use Math::Vec3;
-use base qw(Math::Vec3);
+use base 'Math::Vec3';
 
 =head1 NAME
 
@@ -16,7 +15,7 @@ Math::Color - Perl class to represent colors
 
 =head1 HIERARCHY
 
--+- L<Math::Vec3> -+- L<Math::Color>
+-+- L<Math::Vec2> -+- L<Math::Vec3> -+- L<Math::Color>
 
 =head1 SEE ALSO
 
@@ -51,7 +50,6 @@ r, g, b are given on [0, 1].
 Makes a copy
 	
 	$c2 = $c1->copy;
-	$c2 = new Math::Color($c1);
 
 =cut
 
@@ -77,10 +75,10 @@ r is given on [0, 1].
 
 =cut
 
-*setRed = \&Math::Vec3::setX;
-*r      = \&Math::Vec3::x;
-*red    = \&Math::Vec3::x;
-*getRed = \&Math::Vec3::getX;
+*setRed = \&Math::Vec2::setX;
+*r      = \&Math::Vec2::x;
+*red    = \&Math::Vec2::x;
+*getRed = \&Math::Vec2::getX;
 
 =head2 setGreen(g)
 
@@ -95,10 +93,10 @@ g is given on [0, 1].
 
 =cut
 
-*setGreen = \&Math::Vec3::setY;
-*g        = \&Math::Vec3::y;
-*green    = \&Math::Vec3::y;
-*getGreen = \&Math::Vec3::getY;
+*setGreen = \&Math::Vec2::setY;
+*g        = \&Math::Vec2::y;
+*green    = \&Math::Vec2::y;
+*getGreen = \&Math::Vec2::getY;
 
 =head2 setBlue(b)
 

@@ -3,10 +3,11 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.177';
+our $VERSION = '0.185';
 
-use Math::Color;
-use base qw(Math::Color);
+use base 'Math::Color';
+
+use constant DefaultValue => [ 0, 0, 0, 0 ];
 
 =head1 NAME
 
@@ -14,7 +15,7 @@ Math::ColorRGBA - Perl class to represent rgba colors
 
 =head1 HIERARCHY
 
--+- L<Math::Vec3> -+- L<Math::Color> -+- L<Math::ColorRGBA>
+-+- L<Math::ColorRGBA>
 
 =head1 SEE ALSO
 
@@ -49,7 +50,6 @@ r, g, b,a are given on [0, 1].
 Makes a copy
 	
 	$c2 = $c1->copy;
-	$c2 = new Math::ColorRGBA($c1);
 
 =cut
 
@@ -61,8 +61,6 @@ r, g, b, a are given on [0, 1].
 	$c1->setValue(0, 0.2, 1, 0);
 
 =cut
-
-sub setValue { @{ $_[0] } = @_[ 1, 2, 3, 4 ] }
 
 =head2 setRed(r)
 

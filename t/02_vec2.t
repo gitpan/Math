@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 36;
+use Test::More tests => 44;
 use strict;
 
 BEGIN {
@@ -11,10 +11,20 @@ BEGIN {
 
 my ( $v, $v1, $v2 );
 
+is( $v = join( " ", @{ Math::Vec2->DefaultValue } ), "0 0", "$v getDefaultValue" );
+is( $v = @{ Math::Vec2->DefaultValue }, 2, "$v getDefaultValue" );
+
+is( $v = new Math::Vec2(), "0 0", "$v new Math::Vec2()" );
+
+$v->setValue(); is( $v, "0 0", "$v new Math::Vec2()" );
+$v->setValue(1); is( $v, "1 0", "$v new Math::Vec2()" );
+$v->setValue(1,1); is( $v, "1 1", "$v new Math::Vec2()" );
+$v->setValue(1,1,1); is( $v, "1 1", "$v new Math::Vec2()" );
+
 is( $v = new Math::Vec2(), "0 0", "$v new Math::Vec2()" );
 is( $v = new Math::Vec2( 1, 2 ), "1 2", "$v new Math::Vec2()" );
 is( $v = new Math::Vec2( [ 1, 2 ] ), "1 2", "$v new Math::Vec2()" );
-is( $v = new Math::Vec2($v), "1 2", "$v new Math::Vec2()" );
+is( $v = $v->copy, "1 2", "$v new Math::Vec2()" );
 is( "$v", "1 2", "$v ''" );
 
 is( $v = Math::Vec2->new( 1, 2 )->getX, "1", "$v getX" );
@@ -58,6 +68,9 @@ is( $v1 += $v2, "3 5", "$v1 +=" );
 is( $v1 -= $v2, "1 2", "$v1 -=" );
 is( $v1 *= 2, "2 4", "$v1 *=" );
 is( $v1 /= 2, "1 2", "$v1 /=" );
+
+is( $v1, "1 2", "$v1 ------------" );
+#is( $v1 >> 1, "1 2", "$v1 >> 1" );
 
 #use Math::Rotation;
 #my $r = new Math::Rotation(2,3,4,5);

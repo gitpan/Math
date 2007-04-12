@@ -14,11 +14,11 @@ use Math::Trig qw(pi);
 my ( $v, $v1, $v2 );
 
 is( $v = new Math::ColorRGBA(), "0 0 0 0", "$v new Math::ColorRGBA()" );
-is( $v = new Math::ColorRGBA( 0.1, 0.2, 0.3 ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
 is( $v = new Math::ColorRGBA( 0.1, 0.2, 0.3, 0 ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
-is( $v = new Math::ColorRGBA( [ 0.1, 0.2, 0.3 ] ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
+is( $v = new Math::ColorRGBA( 0.1, 0.2, 0.3, 0 ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
+is( $v = new Math::ColorRGBA( [ 0.1, 0.2, 0.3, 0 ] ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
 is( $v = new Math::ColorRGBA( [ 0.1, 0.2, 0.3, 0.0 ] ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
-is( $v = new Math::ColorRGBA($v), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
+is( $v = $v->copy, "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
 is( "$v", "0.1 0.2 0.3 0", "$v ''" );
 
 is( $v = Math::ColorRGBA->new( 0.1, 0.2, 0.3, 0 )->getX, "0.1", "$v getX" );

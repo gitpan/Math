@@ -11,7 +11,7 @@ use overload
   '='    => \&copy,
   'neg'  => \&inverse,
   '~'    => \&inverse,
-  'bool' => sub { abs($_[0]->{quaternion}->[0]) < 1 }, # ! $_[0]->{quaternion}->[0]->isreal
+  'bool' => sub { abs( $_[0]->{quaternion}->[0] ) < 1 },    # ! $_[0]->{quaternion}->[0]->isreal
   '+'    => \&multVec,
   '*'    => \&multVec,
   'eq'   => \&eq,
@@ -21,11 +21,20 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.267';
+our $VERSION = '0.275';
 
 =head1 NAME
 
+=begin html
+
+<img style="padding: 1em;" border="0" src="http://www.ceres.dti.ne.jp/~kekenken/main/3d/script/04_object/v2r.png" align="right" alt="Figure 1." />
+<p>
 Math::Rotation - Perl class to represent rotations
+</p>
+
+=end html
+
+=head1 VERSION
 
 =head1 HIERARCHY
 
@@ -66,9 +75,10 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 	# Make a new unit rotation.
 	my $r = new Math::Rotation;
 
+	my $r1 = new Math::Rotation([1,2,3],[1,2,3]); # (fromVector, toVector)
+
 	my $r2 = new Math::Rotation(1,2,3,4);         # (x,y,z, angle)
 	my $r3 = new Math::Rotation([1,2,3],4);       # (axis, angle)
-	my $r3 = new Math::Rotation([1,2,3],[1,2,3]); # (fromVec, toVec)
 
 =cut
 
@@ -82,10 +92,6 @@ sub new {
 		$this->{axis}       = [ 0, 0, 1 ];
 		$this->{angle}      = 0;
 		$this->{quaternion} = new Math::Quaternion();
-	} elsif ( 1 == @_ ) {    # rotation
-		$this->{axis}       = [ $_[0]->getAxis ];
-		$this->{angle}      = $_[0]->getAngle;
-		$this->{quaternion} = $_[0]->getQuaternion;
 	} elsif ( 2 == @_ ) {
 
 		my $arg1    = shift;
@@ -117,9 +123,9 @@ sub new {
 	return $this;
 }
 
-=head2 new_from_quaternion
+=head2 new_from_quaternion(new L<Math::Quaternion>)
 
-	$r5 = new_from_quaternion Math::Rotation(new L<Math::Quaternion>);
+	$r5 = new_from_quaternion Math::Rotation(new Math::Quaternion);
 
 =cut
 
@@ -142,13 +148,12 @@ sub private::new_from_quaternion {
 Makes a copy
 	
 	$r2 = $r1->copy;
-	$r2 = new Math::Rotation($r1);
 
 =cut
 
 sub copy {
 	my $this = shift;
-	return $this->new($this);
+	return $this->private::new_from_quaternion($this->{quaternion});
 }
 
 =head2 setValue(x,y,z, angle)
@@ -161,7 +166,7 @@ Sets value of rotation from axis angle.
 
 sub setValue {
 	my $this = shift;
-	if ($_[0] + $_[1] + $_[2]) {
+	if ( $_[0] + $_[1] + $_[2] ) {
 		$this->{axis}       = [ @_[ 0, 1, 2 ] ];
 		$this->{angle}      = $_[3];
 		$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
@@ -216,13 +221,15 @@ sub setZ {
 
 =head2 setAxis(x,y,z)
 
+
 =cut
 
 =head2 setAxis([x,y,z])
 
-Sets axis of rotation from a 3 components @array.
+Sets axis of rotation from a 3 components array.
 
 	$r->setAxis(1,2,3);
+	$r->setAxis([1,2,3]);
 
 =cut
 
@@ -234,7 +241,7 @@ sub setAxis {
 
 =head2 setAngle(angle)
 
-Sets angle of rotation in radiants.
+Sets angle of rotation in L<radiants|http://en.wikipedia.org/wiki/Radian>.
 
 	$r->setAngle(4);
 
@@ -250,7 +257,7 @@ sub setAngle {
 
 Sets value of rotation from a quaternion.
 
-	$r->setQuaternion(new L<Math::Quaternion>(1,2,3,4));
+	$r->setQuaternion(new Math::Quaternion(1,2,3,4));
 
 =cut
 
@@ -363,7 +370,7 @@ sub getAxis { @{ $_[0]->{axis} } }
 
 =head2 getAngle
 
-Returns corresponding 3D rotation angle in radians.
+Returns corresponding 3D rotation angle in L<radiants|http://en.wikipedia.org/wiki/Radian>.
 
 	$angle = $r->angle;
 	$angle = $r->getAngle;
@@ -380,7 +387,7 @@ This function is experimental
 
 =cut
 
-sub quaternion { $_[0]->{ quaternion} }
+sub quaternion { $_[0]->{quaternion} }
 
 =head2 getQuaternion
 
@@ -553,6 +560,15 @@ Holger Seelig  holger.seelig@yahoo.de
 
 This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
+
+=begin html
+
+<img style="padding: 1em;" border="0" src="../../images/Rotation.png" align="right" alt="Figure 1." />
+<p>
+Math::Rotation - Perl class to represent rotations
+</p>
+
+=end html
 
 =cut
 

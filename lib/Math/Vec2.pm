@@ -3,6 +3,8 @@ package Math::Vec2;
 use strict;
 use warnings;
 
+use Math ();
+
 #use Exporter;
 
 use overload
@@ -25,7 +27,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.267';
+our $VERSION = '0.275';
 
 =head1 NAME
 
@@ -50,6 +52,21 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 DESCRIPTION
 
+=head1 CONSTANT
+
+=head2 DefaultValue
+
+Get the default value as array ref
+	
+	$default = $v1->DefaultValue;
+	@default = @{ Math::Vec2->DefaultValue };
+
+	$n = @{ Math::Vec2->DefaultValue };
+
+=cut
+
+use constant DefaultValue => [ 0, 0 ];
+
 =head1 METHODS
 
 =head2 new
@@ -62,32 +79,29 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 =cut
 
 sub new {
-	my $self  = shift;
+	my $self = shift;
 	my $class = ref($self) || $self;
-	my $this  = bless [], $class;
 
 	if ( 0 == @_ ) {
 		# No arguments, default to standard
-		$this->setValue( 0, 0 );
+		return bless [ @{ $self->DefaultValue } ], $class;
 	} elsif ( 1 == @_ ) {
 
-		my $arg1 = shift;
-		my $ref  = ref($arg1);
-
-		if ( $ref =~ /ARRAY/o ) {
-			$this->setValue(@$arg1);
-		} elsif ( $ref->isa("Math::Vec2") ) {
-			$this->setValue(@$arg1);
+		if ( ref( $_[0] ) eq 'ARRAY' ) {    # [0,1]
+			return bless shift(), $class;
 		} else {
 			warn("Don't understand arguments passed to new()");
 		}
-	} elsif ( 2 == @_ ) {    # x,y
+
+	} elsif ( @_ > 1 ) {    # x,y
+		my $this = bless [], $class;
 		$this->setValue(@_);
+		return $this;
 	} else {
 		warn("Don't understand arguments passed to new()");
 	}
 
-	return $this;
+	return;
 }
 
 =head2 copy
@@ -95,13 +109,12 @@ sub new {
 Makes a copy
 	
 	$v2 = $v1->copy;
-	$v2 = new Math::Vec2($v1);
 
 =cut
 
 sub copy {
 	my $this = shift;
-	return $this->new($this);
+	return $this->new( [ $this->getValue ] );
 }
 
 =head2 setValue(x,y,z)
@@ -112,7 +125,15 @@ Sets the value of the vector
 
 =cut
 
-sub setValue { @{ $_[0] } = @_[ 1, 2 ] }
+sub setValue {
+	my $this = shift;
+
+	@$this = map {
+
+		defined $_[$_] ? $_[$_] : $this->DefaultValue->[$_]
+
+	  } 0 .. Math::minmax( $#_, $#{ $this->DefaultValue }, $#{ $this->DefaultValue } )
+}
 
 =head2 setX(x)
 
@@ -148,7 +169,7 @@ Returns the @value of the vector
 
 =cut
 
-sub getValue { map { $_ || 0 } @{ $_[0] } }
+sub getValue { @{ $_[0] } }
 
 =head2 x
 

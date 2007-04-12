@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 47;
+use Test::More tests => 54;
 use strict;
 
 BEGIN {
@@ -11,10 +11,20 @@ BEGIN {
 
 my ( $v, $v1, $v2 );
 
+is( $v = join( " ", @{ Math::Vec3->DefaultValue } ), "0 0 0", "$v getDefaultValue" );
+is( $v = @{ Math::Vec3->DefaultValue }, 3, "$v getDefaultValue" );
+
 is( $v = new Math::Vec3(), "0 0 0", "$v new Math::Vec3()" );
+
+$v->setValue(); is( $v, "0 0 0", "$v new Math::Vec3()" );
+$v->setValue(1); is( $v, "1 0 0", "$v new Math::Vec3()" );
+$v->setValue(1,1); is( $v, "1 1 0", "$v new Math::Vec3()" );
+$v->setValue(1,1,1); is( $v, "1 1 1", "$v new Math::Vec3()" );
+$v->setValue(1,1,1,1); is( $v, "1 1 1", "$v new Math::Vec3()" );
+
 is( $v = new Math::Vec3( 1, 2, 3 ), "1 2 3", "$v new Math::Vec3()" );
 is( $v = new Math::Vec3( [ 1, 2, 3 ] ), "1 2 3", "$v new Math::Vec3()" );
-is( $v = new Math::Vec3($v), "1 2 3", "$v new Math::Vec3()" );
+is( $v = $v->copy, "1 2 3", "$v new Math::Vec3()" );
 is( "$v", "1 2 3", "$v ''" );
 
 is( $v = Math::Vec3->new( 1, 2, 3 )->getX, "1", "$v getX" );

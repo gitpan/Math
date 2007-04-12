@@ -5,8 +5,10 @@ use warnings;
 
 #use Exporter;
 
+use base 'Math::Vec2';
+
 use overload
-  '='    => \&copy,
+  #  '='    => \&copy,
   'bool' => \&length,
   'neg'  => \&negate,
   '+='   => \&_add,
@@ -19,14 +21,16 @@ use overload
   '/'    => \&divide,
   '.'    => \&dot,
   'x'    => \&cross,
-  'eq'   => \&eq,
-  '=='   => \&eq,
-  'ne'   => \&ne,
-  '!='   => \&ne,
-  '""'   => \&toString,
+  #  'eq'   => \&eq,
+  #  '=='   => \&eq,
+  #  'ne'   => \&ne,
+  #  '!='   => \&ne,
+  #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.267';
+our $VERSION = '0.275';
+
+use constant DefaultValue => [0, 0, 0];
 
 =head1 NAME
 
@@ -34,7 +38,7 @@ Math::Vec3 - Perl class to represent 3d vectors
 
 =head1 HIERARCHY
 
--+- L<Math::Vec3>
+-+- L<Math::Vec2> -+- L<Math::Vec3>
 
 =head1 SEE ALSO
 
@@ -62,48 +66,13 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =cut
 
-sub new {
-	my $self  = shift;
-	my $class = ref($self) || $self;
-	my $this  = bless [], $class;
-
-	if ( 0 == @_ ) {
-		# No arguments, default to standard
-		$this->setValue( 0, 0, 0 );
-	} elsif ( 1 == @_ ) {
-
-		my $arg1 = shift;
-		my $ref  = ref($arg1);
-
-		if ( $ref =~ /ARRAY/o ) {
-			$this->setValue(@$arg1);
-		} elsif ( $ref->isa("Math::Vec3") ) {
-			$this->setValue(@$arg1);
-		} else {
-			warn("Don't understand arguments passed to new()");
-		}
-	} elsif ( @_ > 2 ) {    # x,y,z,angle
-		$this->setValue(@_);
-	} else {
-		warn("Don't understand arguments passed to new()");
-	}
-
-	return $this;
-}
-
 =head2 copy
 
 Makes a copy
 	
 	$v2 = $v1->copy;
-	$v2 = new Math::Vec3($v1);
 
 =cut
-
-sub copy {
-	my $this = shift;
-	return $this->new($this);
-}
 
 =head2 setValue(x,y,z)
 
@@ -112,8 +81,6 @@ Sets the value of the vector
 	$v1->setValue(1,2,3);
 
 =cut
-
-sub setValue { @{ $_[0] } = @_[ 1, 2, 3 ] }
 
 =head2 setX(x)
 
@@ -126,8 +93,6 @@ Sets the first value of the vector
 
 =cut
 
-sub setX { $_[0]->[0] = $_[1] }
-
 =head2 setY(y)
 
 Sets the second value of the vector
@@ -138,8 +103,6 @@ Sets the second value of the vector
 	$v1->[1] = 2;
 
 =cut
-
-sub setY { $_[0]->[1] = $_[1] }
 
 =head2 setZ(z)
 
@@ -162,8 +125,6 @@ Returns the @value of the vector
 
 =cut
 
-sub getValue { map { $_ || 0 } @{ $_[0] } }
-
 =head2 x
 
 =cut
@@ -178,9 +139,6 @@ Returns the first value of the vector.
 
 =cut
 
-sub x    { $_[0]->[0] }
-sub getX { $_[0]->[0] }
-
 =head2 y
 
 =cut
@@ -194,9 +152,6 @@ Returns the second value of the vector.
 	$y = $v1->[1];
 
 =cut
-
-sub y    { $_[0]->[1] }
-sub getY { $_[0]->[1] }
 
 =head2 z
 
@@ -417,11 +372,6 @@ sub length {
 
 =cut
 
-sub normalize {
-	my ($a) = @_;
-	return $a->divide( $a->length );
-}
-
 =head2 eq(vec3)
 
 	my $bool = $v1->eq($v2);
@@ -430,11 +380,6 @@ sub normalize {
 
 =cut
 
-sub eq {
-	my ( $a, $b ) = @_;
-	return "$a" eq $b;
-}
-
 =head2 ne(vec3)
 
 	my $bool = $v1->ne($v2);
@@ -442,11 +387,6 @@ sub eq {
 	my $bool = $v1 != $v2;
 
 =cut
-
-sub ne {
-	my ( $a, $b ) = @_;
-	return "$a" ne $b;
-}
 
 =head2 toString()
 
@@ -459,11 +399,6 @@ freely interpolated in strings.
 	print "$v";                        # "1 2 3"
 
 =cut
-
-sub toString {
-	my $this = shift;
-	return join " ", map { $_ || 0 } $this->getValue;
-}
 
 1;
 

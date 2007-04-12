@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
-use Test::More tests => 72;
+use Test::More tests => 75;
 use strict;
 
 BEGIN {
 	$| = 1;
 	chdir 't' if -d 't';
 	unshift @INC, '../lib';
+	use_ok('Math::Vec3');
 	use_ok('Math::Color');
 }
 
@@ -14,10 +15,13 @@ use Math::Trig qw(pi);
 my ( $v, $v1, $v2 );
 
 is( $v = new Math::Color(), "0 0 0", "$v new Math::Color()" );
+is( $v = ref $v, "Math::Color", "$v ref" );
 is( $v = new Math::Color( 0.1, 0.2, 0.3 ), "0.1 0.2 0.3", "$v new Math::Color()" );
 is( $v = new Math::Color( [ 0.1, 0.2, 0.3 ] ), "0.1 0.2 0.3", "$v new Math::Color()" );
-is( $v = new Math::Color($v), "0.1 0.2 0.3", "$v new Math::Color()" );
+is( $v = $v->copy, "0.1 0.2 0.3", "$v new Math::Color()" );
 is( "$v", "0.1 0.2 0.3", "$v ''" );
+
+is( $v = @{ Math::Color->DefaultValue }, 3, "$v getDefaultValue" );
 
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getX, "0.1", "$v getX" );
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getY, "0.2", "$v getY" );
