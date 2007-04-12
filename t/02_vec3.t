@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 104;
+use Test::More tests => 103;
 use strict;
 
 BEGIN {
@@ -70,7 +70,6 @@ is( $v = $v1 . $v2, "20",        "$v ." );
 is( $v = $v1 x $v2, "-1 2 -1",   "$v x" );
 is( $v = $v1 . [ 2, 3, 4 ], "20",      "$v ." );
 is( $v = $v1 x [ 2, 3, 4 ], "-1 2 -1", "$v x" );
-is( $v = $v1 x 2, "1 2 31 2 3", "$v x" );
 
 is( sprintf( "%0.0f", $v = $v1->length ), "4", "$v length" );
 

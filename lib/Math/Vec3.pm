@@ -35,7 +35,7 @@ use overload
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.307';
+our $VERSION = '0.31';
 
 use constant DefaultValue => [ 0, 0, 0 ];
 
@@ -481,19 +481,14 @@ sub dot {
 sub cross {
 	my ( $a, $b ) = @_;
 
-	if ( ref $b ) {
+	my ( $a0, $a1, $a2 ) = @$a;
+	my ( $b0, $b1, $b2 ) = @$b;
 
-		my ( $a0, $a1, $a2 ) = @$a;
-		my ( $b0, $b1, $b2 ) = @$b;
-
-		return $a->new(
-			$a1 * $b2 - $a2 * $b1,
-			$a2 * $b0 - $a0 * $b2,
-			$a0 * $b1 - $a1 * $b0
-		  )
-	}
-
-	return $a->toString x $b;
+	return $a->new(
+		$a1 * $b2 - $a2 * $b1,
+		$a2 * $b0 - $a0 * $b2,
+		$a0 * $b1 - $a1 * $b0
+	  )
 }
 
 sub _cross {

@@ -33,7 +33,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.307';
+our $VERSION = '0.31';
 
 =head1 NAME
 

@@ -21,20 +21,11 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.307';
+our $VERSION = '0.31';
 
 =head1 NAME
 
-=cut
-
-=begin html
-
-<img style="padding: 1em;" border="0" src="http://www.ceres.dti.ne.jp/~kekenken/main/3d/script/04_object/v2r.png" align="right" alt="Figure 1." />
-<p>
 Math::Rotation - Perl class to represent rotations
-</p>
-
-=end html
 
 =head1 VERSION
 
@@ -570,13 +561,3 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
-
-=begin html
-
-<img style="padding: 1em;" border="0" src="../../images/Rotation.png" align="right" alt="Figure 1." />
-<p>
-Math::Rotation - Perl class to represent rotations
-</p>
-
-=end html
-
