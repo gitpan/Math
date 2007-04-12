@@ -26,9 +26,9 @@ is( $v = Math::Vec3->new( 1, 2, 3 )->y, "2", "$v y" );
 is( $v = Math::Vec3->new( 1, 2, 3 )->z, "3", "$v z" );
 
 is( $v = new Math::Vec3( 1, 2, 3 ), "1 2 3", "$v new Math::Vec3()" );
-is( $v->x = 2, "2", "$v x" );
-is( $v->y = 3, "3", "$v y" );
-is( $v->z = 4, "4", "$v z" );
+is( $v->setX(2), "2", "$v x" );
+is( $v->setY(3), "3", "$v y" );
+is( $v->setZ(4), "4", "$v z" );
 
 is( $v->[0], "2", "$v [0]" );
 is( $v->[1], "3", "$v [1]" );

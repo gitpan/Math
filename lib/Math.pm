@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.3';
+our $VERSION = '0.467';
 
 our @POSIX = qw(
   acos
@@ -25,6 +25,7 @@ our @CONSTANTS = qw(
   PI
   PI1_4
   PI1_2
+  PI3_4
   PI2
   SQRT1_2
   SQRT2
@@ -92,19 +93,10 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head2 PI
 
-	Ratio of the circumference of a circle to its diameter, approximately 3.1415
+Ratio of the circumference of a circle to its diameter, approximately 3.1415
+or L<atan2|http://perldoc.perl.org/search.html?q=atan2>( 0, -1 ).
 
-=head2 PI1_4
-
-	PI * 1/4
-
-=head2 PI1_2
-
-	PI * 1/2
-
-=head2 PI2
-
-	PI * 2
+	PI1_2 == PI * 1/2
 
 =head2 SQRT1_2
 
@@ -116,15 +108,18 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =cut
 
-use constant E       => 2**( 1 / log(2) );
-use constant LN10    => log(10);
-use constant LN2     => log(2);
-use constant PI      => 4 * CORE::atan2( 1, 1 );
-use constant PI1_4   => PI * 1 / 4;
-use constant PI1_2   => PI * 1 / 2;
-use constant PI2     => PI * 2;
-use constant SQRT1_2 => sqrt( 1 / 2 );
-use constant SQRT2   => sqrt(2);
+use constant E    => CORE::exp(1);
+use constant LN10 => CORE::log(10);
+use constant LN2  => CORE::log(2);
+
+use constant PI    => CORE::atan2( 0, -1 );    #arg(-1+i*0)
+use constant PI1_4 => CORE::atan2( 1, 1 );
+use constant PI1_2 => CORE::atan2( 1, 0 );
+use constant PI3_4 => CORE::atan2( 1, -1 );
+use constant PI2   => PI * 2;
+
+use constant SQRT1_2 => CORE::sqrt( 1 / 2 );
+use constant SQRT2   => CORE::sqrt(2);
 
 =head1 Functions
 
@@ -256,11 +251,11 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 =cut
 
-sub abs { CORE::abs(@_) }
-sub cos { CORE::cos(@_) }
-sub exp { CORE::exp(@_) }
+sub abs { CORE::abs( $_[0] ) }
+sub cos { CORE::cos( $_[0] ) }
 
-sub log { POSIX::log(@_) }
+sub exp { CORE::exp( $_[0] ) }
+sub log { CORE::log( $_[0] ) }
 
 sub min {
 	@_ = sort { $a <=> $b } @_;
@@ -287,7 +282,7 @@ sub random {
 }
 
 sub round {
-	return int( $_[0] + ( $_[0] < 0 ? -0.5 : 0.5 ) ) if @_ == 1 || $_[1] == 0;
+	return int( $_[0] + ( $_[0] < 0 ? -0.5 : 0.5 ) ) if  @_ == 1 || $_[1] == 0; # @_ == 1 || $_[1] == 0;
 	return sprintf "%.$_[1]f", $_[0] if $_[1] >= 0;
 
 	my $f = 10**-$_[1];
@@ -300,8 +295,8 @@ sub sum {
 	return $sum;
 }
 
-sub sin  { CORE::sin(@_) }
-sub sqrt { CORE::sqrt(@_) }
+sub sin  { CORE::sin( $_[0] ) }
+sub sqrt { CORE::sqrt( $_[0] ) }
 
 sub even { $_[0] & 1 ? 0 : 1 }
 sub odd { $_[0] & 1 }
@@ -1085,3 +1080,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

@@ -7,7 +7,7 @@ use warnings;
 
 use overload
   '='    => \&copy,
-  'bool' => sub { 1 },     # So we can do if ($foo=Math::Vec3->new) { .. }
+  'bool' => \&length,
   'neg'  => \&negate,
   '+='   => \&_add,
   '-='   => \&_subtract,
@@ -26,7 +26,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.1';
+our $VERSION = '0.267';
 
 =head1 NAME
 
@@ -178,8 +178,8 @@ Returns the first value of the vector.
 
 =cut
 
-sub x : lvalue { $_[0]->[0] }
-sub getX       { $_[0]->[0] }
+sub x    { $_[0]->[0] }
+sub getX { $_[0]->[0] }
 
 =head2 y
 
@@ -195,8 +195,8 @@ Returns the second value of the vector.
 
 =cut
 
-sub y : lvalue { $_[0]->[1] }
-sub getY       { $_[0]->[1] }
+sub y    { $_[0]->[1] }
+sub getY { $_[0]->[1] }
 
 =head2 z
 
@@ -212,8 +212,8 @@ Returns the third value of the vector
 
 =cut
 
-sub z : lvalue { $_[0]->[2] }
-sub getZ       { $_[0]->[2] }
+sub z    { $_[0]->[2] }
+sub getZ { $_[0]->[2] }
 
 =head2 negate
 
@@ -489,3 +489,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

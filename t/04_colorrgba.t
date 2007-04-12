@@ -30,9 +30,9 @@ is( $v = Math::ColorRGBA->new( 0.1, 0.2, 0.3, 0 )->y, "0.2", "$v y" );
 is( $v = Math::ColorRGBA->new( 0.1, 0.2, 0.3, 0 )->z, "0.3", "$v z" );
 
 is( $v = new Math::ColorRGBA( 0.1, 0.2, 0.3, 0 ), "0.1 0.2 0.3 0", "$v new Math::ColorRGBA()" );
-is( $v->r = 2, "2", "$v x" );
-is( $v->g = 3, "3", "$v y" );
-is( $v->b = 4, "4", "$v z" );
+is( $v->setRed(2),   "2", "$v x" );
+is( $v->setGreen(3), "3", "$v y" );
+is( $v->setBlue(4),  "4", "$v z" );
 
 ok( $v->x == $v->getRed, "$v x" );
 ok( $v->x == $v->red,    "$v x" );

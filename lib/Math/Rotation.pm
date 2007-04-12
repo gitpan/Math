@@ -11,7 +11,7 @@ use overload
   '='    => \&copy,
   'neg'  => \&inverse,
   '~'    => \&inverse,
-  'bool' => sub { 1 },    # So we can do if ($foo=Math::Rotation->new) { .. }
+  'bool' => sub { abs($_[0]->{quaternion}->[0]) < 1 }, # ! $_[0]->{quaternion}->[0]->isreal
   '+'    => \&multVec,
   '*'    => \&multVec,
   'eq'   => \&eq,
@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.1';
+our $VERSION = '0.267';
 
 =head1 NAME
 
@@ -119,7 +119,7 @@ sub new {
 
 =head2 new_from_quaternion
 
-	$r5 = new_from_quaternion Math::Rotation(new Math::Quaternion);
+	$r5 = new_from_quaternion Math::Rotation(new L<Math::Quaternion>);
 
 =cut
 
@@ -161,9 +161,15 @@ Sets value of rotation from axis angle.
 
 sub setValue {
 	my $this = shift;
-	$this->{axis}       = [ @_[ 0, 1, 2 ] ];
-	$this->{angle}      = $_[3];
-	$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
+	if ($_[0] + $_[1] + $_[2]) {
+		$this->{axis}       = [ @_[ 0, 1, 2 ] ];
+		$this->{angle}      = $_[3];
+		$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
+	} else {
+		$this->{axis}       = [ 0, 0, 1 ];
+		$this->{angle}      = 0;
+		$this->{quaternion} = new Math::Quaternion();
+	}
 }
 
 =head2 setX(x)
@@ -240,11 +246,11 @@ sub setAngle {
 	$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
 }
 
-=head2 setQuaternion(quaternion)
+=head2 setQuaternion(L<quaternion|Math::Quaternion>)
 
 Sets value of rotation from a quaternion.
 
-	$r->setQuaternion(new Math::Quaternion(1,2,3,4));
+	$r->setQuaternion(new L<Math::Quaternion>(1,2,3,4));
 
 =cut
 
@@ -274,7 +280,7 @@ Returns corresponding 3D rotation (x, y, z, angle).
 sub getValue {
 	my $this = shift;
 
-	$this->private::setQuaternion($this->{quaternion});
+	$this->private::setQuaternion( $this->{quaternion} );
 
 	return (
 		$this->getAxis,
@@ -295,8 +301,8 @@ Returns the first value of the axis vector.
 
 =cut
 
-sub x : lvalue { $_[0]->{axis}->[0] }
-sub getX       { $_[0]->{axis}->[0] }
+sub x    { $_[0]->{axis}->[0] }
+sub getX { $_[0]->{axis}->[0] }
 
 =head2 y
 
@@ -311,8 +317,8 @@ Returns the second value of the axis vector.
 
 =cut
 
-sub y : lvalue { $_[0]->{axis}->[1] }
-sub getY       { $_[0]->{axis}->[1] }
+sub y    { $_[0]->{axis}->[1] }
+sub getY { $_[0]->{axis}->[1] }
 
 =head2 z
 
@@ -327,19 +333,19 @@ Returns the third value of the axis vector
 
 =cut
 
-sub z : lvalue { $_[0]->{axis}->[2] }
-sub getZ       { $_[0]->{axis}->[2] }
+sub z    { $_[0]->{axis}->[2] }
+sub getZ { $_[0]->{axis}->[2] }
 
 =head2 axis
 
 Returns the axis of rotation as an $array.
+This function is experimental
 
 	$axis = $r->axis;
-	$x = $r->axis->[0];
 
 =cut
 
-sub axis : lvalue { $_[0]->{axis} }
+sub axis { $_[0]->{axis} }
 
 =head2 getAxis
 
@@ -364,12 +370,21 @@ Returns corresponding 3D rotation angle in radians.
 
 =cut
 
-sub angle : lvalue { $_[0]->{angle} }
-sub getAngle       { $_[0]->{angle} }
+sub angle    { $_[0]->{angle} }
+sub getAngle { $_[0]->{angle} }
+
+=head2 quaternion
+
+Returns corresponding L<quaternion|Math::Quaternion>.
+This function is experimental
+
+=cut
+
+sub quaternion { $_[0]->{ quaternion} }
 
 =head2 getQuaternion
 
-Returns corresponding Math::Quaternion.
+Returns a copy of the corresponding L<quaternion|Math::Quaternion>.
 	
 	$q = $r->getQuaternion;
 
@@ -540,3 +555,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

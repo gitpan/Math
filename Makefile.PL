@@ -31,6 +31,7 @@ sudo rm MANIFEST.bak 2>&1 | grep OK
 #mk dist
 perl Makefile.PL | grep OK
 make manifest 2>&1 | grep OK
+cat MANIFEST | cpanversion+ 0.001 | grep OK
 make test | grep OK
 make dist | grep OK
 mv *.gz ../

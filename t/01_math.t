@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 885;
+use Test::More tests => 886;
 use strict;
 
 BEGIN {
@@ -8,43 +8,45 @@ BEGIN {
 	unshift @INC, '../lib';
 }
 
-use Math ();
+use Math  ();
+use POSIX ();
 
 my ( $v, $v1, $v2 );
 
-ok( Math::E,       "Math::E" );
-ok( Math::LN10,    "Math::LN10" );
-ok( Math::LN2,     "Math::LN2" );
-ok( Math::PI,      "Math::PI" );
-ok( Math::PI1_4,   "Math::PI1_4" );
-ok( Math::PI1_2,   "Math::PI1_2" );
-ok( Math::PI2,     "Math::PI2" );
-ok( Math::SQRT1_2, "Math::SQRT1_2" );
-ok( Math::SQRT2,   "Math::SQRT2" );
+is( $v = Math::E,    2**( 1 / CORE::log(2) ), "Math::E = $v" );
+is( $v = Math::LN10, CORE::log(10),           "Math::LN10 = $v" );
+is( $v = Math::LN2,  CORE::log(2),            "Math::LN2 = $v" );
+is( $v = Math::PI,    CORE::atan2( 0, -1 ),     "Math::PI = $v" );
+is( $v = Math::PI1_4, CORE::atan2( 1, 1 ),      "Math::PI1_4 = $v" );
+is( $v = Math::PI1_2, CORE::atan2( 1, 0 ),      "Math::PI1_2 = $v" );
+is( $v = Math::PI3_4, CORE::atan2( 1, -1 ),     "Math::PI1_4 = $v" );
+is( $v = Math::PI2,   CORE::atan2( 0, -1 ) * 2, "Math::PI2 = $v" );
+is( $v = Math::SQRT1_2, CORE::sqrt(0.5), "Math::SQRT1_2 = $v" );
+is( $v = Math::SQRT2,   CORE::sqrt(2),   "Math::SQRT2 = $v" );
 
-ok( Math::abs(-1),     "Math::abs(-1)" );
-ok( Math::acos(-1),    "Math::acos(-1)" );
-ok( Math::asin(-1),    "Math::asin(-1)" );
-ok( Math::atan(-1),    "Math::atan(-1)" );
-ok( Math::ceil(-1.2),  "Math::ceil(-1)" );
-ok( Math::cos(-1),     "Math::cos(-1)" );
-ok( Math::exp(-1),     "Math::exp(-1)" );
-ok( Math::floor(-1.3), "Math::floor(-1)" );
-ok( Math::log(2),      "Math::log(-1)" );
-ok( Math::log10(2),    "Math::log(-1)" );
-ok( Math::min( 3, 2 ), "Math::min(3, 2)" );
-ok( Math::max( 3, 2 ), "Math::max(3, 2)" );
-ok( Math::minmax( -1, 3, 2 ), "Math::minmax(-1, 3, 2)" );
-ok( Math::pow( 2, 4 ), "Math::pow(2, 4)" );
+is( Math::abs(-1),     1,                  "Math::abs(-1)" );
+is( Math::acos(-1),    POSIX::acos(-1),    "Math::acos(-1)" );
+is( Math::asin(-1),    POSIX::asin(-1),    "Math::asin(-1)" );
+is( Math::atan(-1),    POSIX::atan(-1),    "Math::atan(-1)" );
+is( Math::ceil(-1.2),  POSIX::ceil(-1.2),  "Math::ceil(-1)" );
+is( Math::cos(-1),     CORE::cos(-1),      "Math::cos(-1)" );
+is( Math::exp(2),      CORE::exp(2),       "Math::exp(2)" );
+is( Math::floor(-2.3), POSIX::floor(-2.3), "Math::floor(-1)" );
+is( Math::log(2),      CORE::log(2),       "Math::log(-1)" );
+is( Math::log10(2),    POSIX::log10(2),    "Math::log(-1)" );
+is( Math::min( 3, 2 ), 2, "Math::min(3, 2)" );
+is( Math::max( 3, 2 ), 3, "Math::max(3, 2)" );
+is( Math::minmax( -1, 3, 2 ), 2, "Math::minmax(-1, 3, 2)" );
+is( Math::pow( 2, 4 ), 2**4, "Math::pow(2, 4)" );
 ok( Math::random( 1, 2 ), "Math::random()" );
-ok( Math::round(-1), "Math::round(-1)" );
-ok( Math::sin(-1),   "Math::sin(-1)" );
-ok( Math::sqrt(-1),  "Math::sqrt(-1)" );
-ok( Math::sum(-1),   "Math::sum(-1)" );
-ok( Math::tan(-1),   "Math::tan(-1)" );
+is( Math::round(-1), -1,             "Math::round(-1)" );
+is( Math::sin(-1),   CORE::sin(-1),  "Math::sin(-1)" );
+is( Math::sqrt(2),   CORE::sqrt(2),  "Math::sqrt(-1)" );
+is( Math::sum(-1),   -1,             "Math::sum(-1)" );
+is( Math::tan(-1),   POSIX::tan(-1), "Math::tan(-1)" );
 
 my ( $min, $max, $n ) = ( 10, 100, 0 );
-for ( 0 .. 170_000 ) {
+for ( 0 .. 17_000 ) {
 	$n = Math::random( $min, $max );
 	ok(0) if $n < $min || $n > $max;
 }

@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.177';
 
 use Math::Color;
 use base qw(Math::Color);
@@ -168,14 +168,14 @@ Returns the third value of the color.
 
 Returns the fourth value of the color.
 
-	$x = $v1->getAlpha;
-	$x = $v1->alpha;
-	$x = $v1->[3];
+	$a = $v1->getAlpha;
+	$a = $v1->alpha;
+	$a = $v1->[3];
 
 =cut
 
-sub alpha : lvalue { $_[0]->[3] }
-sub getAlpha       { $_[0]->[3] }
+sub alpha    { $_[0]->[3] }
+sub getAlpha { $_[0]->[3] }
 
 =head2 setHSV(h,s,v)
 
@@ -230,3 +230,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

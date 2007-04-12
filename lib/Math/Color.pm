@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.1';
+our $VERSION = '0.267';
 
 use Math ();
 

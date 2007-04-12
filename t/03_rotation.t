@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 46;
+use Test::More tests => 68;
 use strict;
 
 BEGIN {
@@ -12,30 +12,47 @@ BEGIN {
 my ( $r, $r1, $r2 );
 my ( $x, $y, $z, $v );
 
+ok( ! Math::Rotation->new );
+ok(  !Math::Rotation->new(0,0,1,0) );
+ok( ! Math::Rotation->new(0,1,1,0) );
+ok(!  Math::Rotation->new(1,2,1,0) );
+ok(!  Math::Rotation->new(0,0,1,2*CORE::atan2( 0, -1 )) );
+ok( ! Math::Rotation->new([ 0, 0, 1 ], [ 0, 0, 1 ]) );
+
+ok( ! Math::Rotation->new(2,3,5,0) );
+ok( ! Math::Rotation->new(2,7,8,0) );
+ok( ! Math::Rotation->new(5,6,1,0) );
+
+ok( ! Math::Rotation->new(2,3,5,0) );
+ok(!  Math::Rotation->new(2,7,8,0) );
+ok( ! Math::Rotation->new(5,6,1,4*CORE::atan2( 0, -1 )) );
+
+ok(  Math::Rotation->new(2,3,5,1) );
+ok(  Math::Rotation->new(2,7,8,2) );
+ok(  Math::Rotation->new(5,6,1,-1) );
+
+ok(  ! Math::Rotation->new(0,0,0,-1) );
+
+ok( ! new Math::Rotation() );
+ok( ! new Math::Rotation(0,0,1,0) );
+ok( ! new Math::Rotation(0,1,1,0) );
+ok( ! new Math::Rotation(1,2,1,0) );
+ok( ! new Math::Rotation(0,0,1,2*CORE::atan2( 0, -1 )) );
+ok( ! new Math::Rotation( [ 0, 0, 1 ], [ 0, 0, 1 ] ) );
+
 is( $r = new Math::Rotation, "0 0 1 0", "$r new Math::Rotation()" );
-
 ok( ( $r = Math::Rotation->new->toString ) eq "0 0 1 0", "$r Math::Rotation->new->toString" );
-
 is( $r = new Math::Rotation( [ 0, 0, 1 ], 0 ), "0 0 1 0", "$r new Math::Rotation([0, 0, 1],0)" );
-
 is( $r = new Math::Rotation( 0, 0, 1, 0 ), "0 0 1 0", "$r new Math::Rotation( 0, 0, 1, 0 )" );
-
 is( $r = new Math::Rotation( [ 0, 0, 1 ], [ 0, 0, 1 ] ), "0 0 1 0", "$r new Math::Rotation([0, 0, 1], [0, 0, 1])" );
 
 ok( $r = new Math::Rotation( [ 1, 0, 1 ], [ 0, 0, 1 ] ), "$r new Math::Rotation([1, 0, 1], [0, 0, 1])" );
-
 ok( $r = new Math::Rotation( [ 1, 1, 1 ], [ 0, 0, 1 ] ), "$r new Math::Rotation([1, 1, 1], [0, 0, 1])" );
-
 ok( $r1 = new Math::Rotation( 1, 2, 3, 4 ), "$r1 new Math::Rotation( 1, 2, 3, 4 )" );
-
 ok( $r2 = new Math::Rotation( 1, 2, 4, 8 ), "$r2 new Math::Rotation( 1, 2, 4, 8 )" );
-
 ok( $r = $r1->inverse, "$r inverse" );
-
 ok( $r = $r1->multiply($r2), "$r multiply" );
-
 ok( ( $x, $y, $z ) = $r1->multVec( 1, 1, 1 ), "$x, $y, $z multVec" );
-
 ok( $r = $r1->slerp( $r2, 1 / 3 ), "$r slerp" );
 
 $r2->setX(2);

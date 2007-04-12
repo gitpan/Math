@@ -24,8 +24,8 @@ is( $v = Math::Vec2->new( 1, 2 )->x, "1", "$v x" );
 is( $v = Math::Vec2->new( 1, 2 )->y, "2", "$v y" );
 
 is( $v = new Math::Vec2( 1, 2 ), "1 2", "$v new Math::Vec2()" );
-is( $v->x = 2, "2", "$v x" );
-is( $v->y = 3, "3", "$v y" );
+is( $v->setX(2), "2", "$v x" );
+is( $v->setY(3), "3", "$v y" );
 
 is( $v->[0], "2", "$v [0]" );
 is( $v->[1], "3", "$v [1]" );

@@ -7,7 +7,7 @@ use warnings;
 
 use overload
   '='    => \&copy,
-  'bool' => sub { 1 },     # So we can do if ($foo=Math::Vec2->new) { .. }
+  'bool' => \&length,
   'neg'  => \&negate,
   '+='   => \&_add,
   '-='   => \&_subtract,
@@ -25,7 +25,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.1';
+our $VERSION = '0.267';
 
 =head1 NAME
 
@@ -158,14 +158,14 @@ sub getValue { map { $_ || 0 } @{ $_[0] } }
 
 Returns the first value of the vector.
 
-	$y = $v1->getX;
-	$y = $v1->x;
-	$y = $v1->[0];
+	$x = $v1->getX;
+	$x = $v1->x;
+	$x = $v1->[0];
 
 =cut
 
-sub x : lvalue { $_[0]->[0] }
-sub getX       { $_[0]->[0] }
+sub x    { $_[0]->[0] }
+sub getX { $_[0]->[0] }
 
 =head2 y
 
@@ -181,8 +181,8 @@ Returns the second value of the vector.
 
 =cut
 
-sub y : lvalue { $_[0]->[1] }
-sub getY       { $_[0]->[1] }
+sub y    { $_[0]->[1] }
+sub getY { $_[0]->[1] }
 
 =head2 negate
 
@@ -421,3 +421,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+
