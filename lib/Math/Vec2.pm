@@ -27,7 +27,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.28';
+our $VERSION = '0.283';
 
 =head1 NAME
 
@@ -170,7 +170,7 @@ sub setY { $_[0]->[1] = $_[1] }
 
 =head2 getValue
 
-Returns the @value of the vector
+Returns the value of the vector (x, y) as a 2 components array.
 
 	@v = $v1->getValue;
 

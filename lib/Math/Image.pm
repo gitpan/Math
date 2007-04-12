@@ -3,7 +3,7 @@ package Math::Image;
 use strict;
 use warnings;
 
-our $VERSION = '0.002';
+our $VERSION = '0.005';
 
 =head1 NAME
 
@@ -50,7 +50,7 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head2 getValue
 
-Returns the @value of the image.
+Returns the @value of the image  (width, height, components, array) as a 4 components array.
 
 	($width, $height, $components, $array) = $i->getValue;
 	@i = $i->getValue;

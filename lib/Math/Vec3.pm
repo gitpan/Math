@@ -28,7 +28,7 @@ use overload
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.28';
+our $VERSION = '0.283';
 
 use constant DefaultValue => [0, 0, 0];
 
@@ -120,7 +120,7 @@ sub setZ { $_[0]->[2] = $_[1] }
 
 =head2 getValue
 
-Returns the @value of the vector
+Returns the value of the vector (x, y, z) as a 3 components array.
 
 	@v = $v1->getValue;
 

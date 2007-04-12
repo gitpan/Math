@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.28';
+our $VERSION = '0.283';
 
 use Math ();
 
@@ -120,7 +120,7 @@ b is given on [0, 1].
 
 =head2 getValue
 
-Returns the @value of the color.
+Returns the value of the color (r, g, b) as a 3 components array.
 
 	@v = $c1->getValue;
 

@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.28';
+our $VERSION = '0.283';
 
 =head1 NAME
 
@@ -282,7 +282,7 @@ sub private::setQuaternion {
 
 =head2 getValue
 
-Returns corresponding 3D rotation (x, y, z, angle).
+Returns corresponding 3D rotation (x, y, z, angle) as a 4 components array.
 
 	($x, $y, $z, $angle) = $r->getValue;
 	

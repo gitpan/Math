@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.19';
+our $VERSION = '0.193';
 
 use base 'Math::Color';
 
@@ -118,7 +118,7 @@ sub setAlpha { $_[0]->[3] = $_[1] }
 
 =head2 getValue
 
-Returns the @value of the color.
+Returns the value of the color (r, g, b, a) as a 4 components array.
 
 	@v = $c1->getValue;
 
