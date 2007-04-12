@@ -9,6 +9,9 @@ use base 'Math::Vec2';
 
 use overload
   #  '='    => \&copy,
+  #  '~'    => \&reverse,
+  '>>'   => \&rotate,
+  '<<'   => sub { $_[0]->rotate( -$_[1] ) },
   'bool' => \&length,
   'neg'  => \&negate,
   '+='   => \&_add,
@@ -25,12 +28,10 @@ use overload
   #  '=='   => \&eq,
   #  'ne'   => \&ne,
   #  '!='   => \&ne,
-  '>>' => \&rotate,
-  '<<' => sub { $_[0]->rotate( -$_[1] ) },
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.285';
+our $VERSION = '0.298';
 
 use constant DefaultValue => [ 0, 0, 0 ];
 
@@ -57,9 +58,68 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 DESCRIPTION
 
+3D vector class used to store 3D vectors and points.
+
 =head2 DefaultValue
 
 	0 0 0
+
+=head1 OPERATORS
+
+=head2 Overview
+
+	'abs'		=> abs 
+	'~'		=> reverse
+	'>>'		=> rotate
+	'<<'		=> rotate
+	'bool'		=> length
+	'eq'		=> eq
+	'=='		=> eq
+	'ne'		=> ne
+	'!='		=> ne
+	'neg' 		=> negate
+	'+='		=> add
+	'-='		=> subtract
+	'*='		=> multiply
+	'/='		=> divide
+	'+'		=> add
+	'-'		=> subtract
+	'*'		=> multiply
+	'/'		=> divide
+	'.'		=> dot
+	'x'		=> cross
+	'""'		=> toString
+
+=head2 ~
+
+Returns the reverse of this vector.
+
+	my $v = new Math::Vec3(1,2,3);
+	
+	printf "3 2 1 = %s\n",  ~$v;
+	printf "1 2 3 = %s\n", ~~$v;
+
+=head2 <<
+
+Performs a counter-clockwise rotation of the components.
+Very similar to bitwise left-shift.
+
+	my $v = new Math::Vec3(1,2,3);
+	
+	printf "2 3 1= %s\n", $v << 1;
+	printf "3 1 2 = %s\n", $v << 2;
+
+=head2 >>
+
+Performs a clockwise rotation of the components.
+Very similar to bitwise right-shift.
+
+	my $v = new Math::Vec3(1,2,3);
+	
+	printf "3 1 2 = %s\n", $v >> 1;
+	printf "2 3 1 = %s\n", $v >> 2;
+
+=cut
 
 =head1 METHODS
 
@@ -120,6 +180,22 @@ Sets the third value of the vector
 
 sub setZ { $_[0]->[2] = $_[1] }
 
+
+# sub getClosestAxis {
+# 
+#   SbVec3f closest(0.0f, 0.0f, 0.0f);
+#  
+#   float xabs = abs(this->vec[0]);
+#   float yabs = abs(this->vec[1]);
+#   float zabs = abs(this->vec[2]);
+# 
+#   if (xabs>=yabs && xabs>=zabs) closest[0] = (this->vec[0] > 0.0f) ? 1.0f : -1.0f;
+#   else if (yabs>=zabs) closest[1] = (this->vec[1] > 0.0f) ? 1.0f : -1.0f;
+#   else closest[2] = (this->vec[2] > 0.0f) ? 1.0f : -1.0f;
+# 
+#   return closest;
+# }
+
 =head2 getValue
 
 Returns the value of the vector (x, y, z) as a 3 components array.
@@ -172,6 +248,22 @@ Returns the third value of the vector
 
 sub z    { $_[0]->[2] }
 sub getZ { $_[0]->[2] }
+
+=head2 eq(vec3)
+
+	my $bool = $v1->eq($v2);
+	my $bool = $v1 eq $v2;
+	my $bool = $v1 == $v2;
+
+=cut
+
+=head2 ne(vec3)
+
+	my $bool = $v1->ne($v2);
+	my $bool = $v1 ne $v2;
+	my $bool = $v1 != $v2;
+
+=cut
 
 =head2 negate
 
@@ -375,19 +467,12 @@ sub length {
 
 =cut
 
-=head2 eq(vec3)
+=head2 reverse()
 
-	my $bool = $v1->eq($v2);
-	my $bool = $v1 eq $v2;
-	my $bool = $v1 == $v2;
+Returns the reverse of this vector.
+This is used to overload the '~' operator.
 
-=cut
-
-=head2 ne(vec3)
-
-	my $bool = $v1->ne($v2);
-	my $bool = $v1 ne $v2;
-	my $bool = $v1 != $v2;
+	$v = $vec3->reverse;
 
 =cut
 
@@ -412,28 +497,6 @@ sub rotate {
 
 	return $_[0]->copy;
 }
-
-=head2 <<
-
-Performs a counter-clockwise rotation of the components.
-Very similar to bitwise left-shift.
-
-	my $v = new Math::Vec3(1,2,3);
-	
-	printf "2 3 1= %s\n", $v << 1;
-	printf "3 1 2 = %s\n", $v << 2;
-
-=head2 >>
-
-Performs a clockwise rotation of the components.
-Very similar to bitwise right-shift.
-
-	my $v = new Math::Vec3(1,2,3);
-	
-	printf "3 1 2 = %s\n", $v >> 1;
-	printf "2 3 1 = %s\n", $v >> 2;
-
-=cut
 
 =head2 toString()
 

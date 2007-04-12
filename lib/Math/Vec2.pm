@@ -9,6 +9,10 @@ use Math ();
 
 use overload
   '='    => \&copy,
+  'abs'  => \&abs,
+  '~'    => \&reverse,
+  '>>'   => \&rotate,
+  '<<'   => \&rotate,
   'bool' => \&length,
   'neg'  => \&negate,
   '+='   => \&_add,
@@ -24,12 +28,10 @@ use overload
   '=='   => \&eq,
   'ne'   => \&ne,
   '!='   => \&ne,
-  '>>'   => \&rotate,
-  '<<'   => \&rotate,
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.285';
+our $VERSION = '0.298';
 
 =head1 NAME
 
@@ -58,7 +60,65 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 	0 0
 
-=head1 CONSTANT
+=head1 OPERATORS
+
+=head2 Overview
+
+	'abs'		=>   abs 
+	'~'		=>   reverse 
+	'>>'		=>   rotate  
+	'<<'		=>   rotate  
+	'bool'   	=>   length  
+	'eq'		=>   eq      
+	'=='		=>   eq      
+	'ne'		=>   ne      
+	'!='		=>   ne      
+	'neg' 		=>   negate  
+	'+='		=>   add     
+	'-='		=>   subtract
+	'*='		=>   multiply
+	'/='		=>   divide  
+	'+'		=>   add     
+	'-'		=>   subtract
+	'*'		=>   multiply
+	'/'		=>   divide  
+	'.'		=>   dot     
+	'""'		=>   toString
+
+=head2 ~
+
+Returns the reverse of this vector.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n",  ~$v;  # swap components
+	printf "1 2 = %s\n", ~~$v;
+
+=head2 <<
+
+Performs a counter-clockwise rotation of the components.
+Very similar to bitwise left-shift.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n", $v << 1;
+	printf "1 2 = %s\n", $v << 2;
+
+=head2 >>
+
+Performs a clockwise rotation of the components.
+Very similar to bitwise right-shift.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n", $v >> 1;
+	printf "1 2 = %s\n", $v >> 2;
+
+=cut
+
+use constant DefaultValue => [ 0, 0 ];
+
+=head1 METHODS
 
 =head2 DefaultValue
 
@@ -68,12 +128,6 @@ Get the default value as array ref
 	@default = @{ Math::Vec2->DefaultValue };
 
 	$n = @{ Math::Vec2->DefaultValue };
-
-=cut
-
-use constant DefaultValue => [ 0, 0 ];
-
-=head1 METHODS
 
 =head2 new
 
@@ -170,6 +224,16 @@ Sets the second value of the vector
 
 sub setY { $_[0]->[1] = $_[1] }
 
+=head2 getArray ()
+
+Returns the reference to the array that represents this vector.
+
+	$v = $vec2->getArray;
+
+=cut
+
+sub getArray { shift }
+
 =head2 getValue
 
 Returns the value of the vector (x, y) as a 2 components array.
@@ -213,6 +277,32 @@ Returns the second value of the vector.
 
 sub y    { $_[0]->[1] }
 sub getY { $_[0]->[1] }
+
+=head2 eq(vec2)
+
+	my $bool = $v1->eq($v2);
+	my $bool = $v1 eq $v2;
+	my $bool = $v1 == $v2;
+
+=cut
+
+sub eq {
+	my ( $a, $b ) = @_;
+	return "$a" eq $b;
+}
+
+=head2 ne(vec2)
+
+	my $bool = $v1->ne($v2);
+	my $bool = $v1 ne $v2;
+	my $bool = $v1 != $v2;
+
+=cut
+
+sub ne {
+	my ( $a, $b ) = @_;
+	return "$a" ne $b;
+}
 
 =head2 negate
 
@@ -384,30 +474,30 @@ sub normalize {
 	return $a->divide( $a->length );
 }
 
-=head2 eq(vec2)
+=head2 abs()
 
-	my $bool = $v1->eq($v2);
-	my $bool = $v1 eq $v2;
-	my $bool = $v1 == $v2;
+Performs a componentwise abs.
+This is used to overload the 'abs' operator.
+
+	$v = $vec2->abs;
 
 =cut
 
-sub eq {
-	my ( $a, $b ) = @_;
-	return "$a" eq $b;
+sub abs {
+	return $_[0]->new( map { CORE::abs($_) } @{ $_[0]->getArray } );
 }
 
-=head2 ne(vec2)
+=head2 reverse()
 
-	my $bool = $v1->ne($v2);
-	my $bool = $v1 ne $v2;
-	my $bool = $v1 != $v2;
+Returns the reverse of this vector.
+This is used to overload the '~' operator.
+
+	$v = $vec2->reverse;
 
 =cut
 
-sub ne {
-	my ( $a, $b ) = @_;
-	return "$a" ne $b;
+sub reverse {
+	return $_[0]->new( CORE::reverse @{ $_[0]->getArray } );
 }
 
 =head2 rotate(n)
@@ -426,37 +516,12 @@ sub rotate {
 
 	  Math::odd( $_[1] ) ?
 
-	  $_[0]->new(
-		$_[0]->[1],
-		$_[0]->[0],
-	  )
+	  $_[0]->reverse
 
 	  :
 
 	  $_[0]->copy;
 }
-
-=head2 <<
-
-Performs a counter-clockwise rotation of the components.
-Very similar to bitwise left-shift.
-
-	my $v = new Math::Vec2(1,2);
-	
-	printf "2 1 = %s\n", $v << 1;
-	printf "1 2 = %s\n", $v << 2;
-
-=head2 >>
-
-Performs a clockwise rotation of the components.
-Very similar to bitwise right-shift.
-
-	my $v = new Math::Vec2(1,2);
-	
-	printf "2 1 = %s\n", $v >> 1;
-	printf "1 2 = %s\n", $v >> 2;
-
-=cut
 
 =head2 toString
 

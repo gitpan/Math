@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.285';
+our $VERSION = '0.298';
 
 =head1 NAME
 
