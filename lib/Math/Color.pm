@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.298';
+our $VERSION = '0.3';
 
 use Math ();
 
@@ -21,7 +21,7 @@ Math::Color - Perl class to represent colors
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
@@ -285,7 +285,7 @@ freely interpolated in strings.
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 BUGS & SUGGESTIONS
 

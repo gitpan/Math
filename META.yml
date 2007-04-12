@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Math
-version:             0.497
+version:             0.499
 abstract:            Contains some vector math
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.32

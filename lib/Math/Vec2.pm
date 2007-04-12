@@ -31,7 +31,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.298';
+our $VERSION = '0.3';
 
 =head1 NAME
 
@@ -45,7 +45,7 @@ Math::Vec2 - Perl class to represent 2d vectors
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
@@ -546,7 +546,7 @@ sub toString {
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 BUGS & SUGGESTIONS
 

@@ -31,7 +31,7 @@ use overload
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.298';
+our $VERSION = '0.3';
 
 use constant DefaultValue => [ 0, 0, 0 ];
 
@@ -47,7 +47,7 @@ Math::Vec3 - Perl class to represent 3d vectors
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
@@ -127,7 +127,15 @@ Very similar to bitwise right-shift.
 
 Derived from L<Math::Vec2/new>.
 
-=cut
+	my $v  = new Math::Vec3; 					  
+	my $v2 = new Math::Vec3(1,2,3);
+	my @v3 = @$v; 
+	
+If you call new() with a reference to an array, it will be used as reference.
+
+	my $v3 = new Math::Vec3([1,2,3]); 
+
+I=cut
 
 =head2 copy
 
@@ -516,7 +524,7 @@ freely interpolated in strings.
 
 L<Math>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 BUGS & SUGGESTIONS
 
