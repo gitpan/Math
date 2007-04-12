@@ -7,9 +7,7 @@ INSTALLATION
 
 To install this module type the following:
 
-   sudo perl Makefile.PL
-   sudo make clean
-   sudo cpan .
+   sudo cpan -i Math
 	
 DEPENDENCIES
 

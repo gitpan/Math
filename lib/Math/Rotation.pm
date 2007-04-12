@@ -3,7 +3,6 @@ package Math::Rotation;
 use strict;
 use warnings;
 
-use Carp;
 use Math::Quaternion;
 
 #use Exporter;
@@ -22,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.01';
+our $VERSION = '0.1';
 
 =head1 NAME
 
@@ -33,6 +32,8 @@ Math::Rotation - Perl class to represent rotations
 -+- L<Math::Rotation>
 
 =head1 SEE ALSO
+
+L<Math>
 
 L<Math::Quaternion>
 
@@ -53,6 +54,8 @@ L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 	my $r5 = $r2 + $r3;
 	my $r6 = -$r5;
+	
+	~-$r2 == $r2;
 
 =head1 DESCRIPTION
 
@@ -100,15 +103,15 @@ sub new {
 				$this->private::setQuaternion( eval { Math::Quaternion::rotation( $arg1, $arg2 ) }
 					  || new Math::Quaternion() );
 			} else {
-				croak("Don't understand arguments passed to new()");
+				warn("Don't understand arguments passed to new()");
 			}
 		} else {
-			croak("Don't understand arguments passed to new()");
+			warn("Don't understand arguments passed to new()");
 		}
 	} elsif ( 4 == @_ ) {    # x,y,z,angle
 		$this->setValue(@_);
 	} else {
-		croak("Don't understand arguments passed to new()");
+		warn("Don't understand arguments passed to new()");
 	}
 
 	return $this;
@@ -270,6 +273,9 @@ Returns corresponding 3D rotation (x, y, z, angle).
 
 sub getValue {
 	my $this = shift;
+
+	$this->private::setQuaternion($this->{quaternion});
+
 	return (
 		$this->getAxis,
 		$this->getAngle
@@ -323,6 +329,17 @@ Returns the third value of the axis vector
 
 sub z : lvalue { $_[0]->{axis}->[2] }
 sub getZ       { $_[0]->{axis}->[2] }
+
+=head2 axis
+
+Returns the axis of rotation as an $array.
+
+	$axis = $r->axis;
+	$x = $r->axis->[0];
+
+=cut
+
+sub axis : lvalue { $_[0]->{axis} }
 
 =head2 getAxis
 
@@ -436,11 +453,20 @@ For t = 1, the value is destRotation.
 
 sub slerp { $_[0]->private::new_from_quaternion( $_[0]->{quaternion}->slerp( $_[1]->{quaternion}, $_[2] ) ) }
 
+=head2 neq(rotation)
+
+	my $bool = $r1 == $r2;
+
+=cut
+
+sub neq {
+	my ( $a, $b ) = @_;
+	return $a eq $b;
+}
+
 =head2 eq(rotation)
 
-	my $bool = $r1->eq($r2);
 	my $bool = $r1 eq $r2;
-	my $bool = $r1 == $r2;
 
 =cut
 
@@ -449,11 +475,20 @@ sub eq {
 	return "$a" eq $b;
 }
 
+=head2 nne(rotation)
+
+	my $bool = $r1 != $r2;
+
+=cut
+
+sub nne {
+	my ( $a, $b ) = @_;
+	return $a ne $b;
+}
+
 =head2 ne(rotation)
 
-	my $bool = $r1->ne($r2);
 	my $bool = $r1 ne $r2;
-	my $bool = $r1 != $r2;
 
 =cut
 
@@ -483,11 +518,9 @@ sub toString {
 
 =head1 SEE ALSO
 
-L<perlfunc>
+L<Math>
 
-L<POSIX>
-
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
+L<Math::Quaternion>
 
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -499,7 +532,7 @@ please drop the author a note.
 
 =head1 ARRANGED BY
 
-	Holger Seelig  E<holger.seelig@yahoo.de>
+Holger Seelig  holger.seelig@yahoo.de
 
 =head1 COPYRIGHT
 

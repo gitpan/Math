@@ -18,8 +18,9 @@ Math::ColorRGBA - Perl class to represent rgba colors
 
 =head1 SEE ALSO
 
+L<Math>
+
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
-L<Math::Quaternion>
 
 =head1 SYNOPSIS
 	
@@ -209,11 +210,7 @@ freely interpolated in strings.
 
 =head1 SEE ALSO
 
-L<perlfunc>
-
-L<POSIX>
-
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
+L<Math>
 
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -225,7 +222,7 @@ please drop the author a note.
 
 =head1 ARRANGED BY
 
-	Holger Seelig  E<holger.seelig@yahoo.de>
+Holger Seelig  holger.seelig@yahoo.de
 
 =head1 COPYRIGHT
 

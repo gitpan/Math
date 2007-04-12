@@ -3,8 +3,6 @@ package Math::Vec3;
 use strict;
 use warnings;
 
-use Carp;
-
 #use Exporter;
 
 use overload
@@ -28,7 +26,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.01';
+our $VERSION = '0.1';
 
 =head1 NAME
 
@@ -40,8 +38,9 @@ Math::Vec3 - Perl class to represent 3d vectors
 
 =head1 SEE ALSO
 
+L<Math>
+
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
-L<Math::Quaternion>
 
 =head1 SYNOPSIS
 	
@@ -81,12 +80,12 @@ sub new {
 		} elsif ( $ref->isa("Math::Vec3") ) {
 			$this->setValue(@$arg1);
 		} else {
-			croak("Don't understand arguments passed to new()");
+			warn("Don't understand arguments passed to new()");
 		}
 	} elsif ( @_ > 2 ) {    # x,y,z,angle
 		$this->setValue(@_);
 	} else {
-		croak("Don't understand arguments passed to new()");
+		warn("Don't understand arguments passed to new()");
 	}
 
 	return $this;
@@ -163,7 +162,7 @@ Returns the @value of the vector
 
 =cut
 
-sub getValue { @{ $_[0] } }
+sub getValue { map { $_ || 0 } @{ $_[0] } }
 
 =head2 x
 
@@ -470,11 +469,7 @@ sub toString {
 
 =head1 SEE ALSO
 
-L<perlfunc>
-
-L<POSIX>
-
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
+L<Math>
 
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -486,7 +481,7 @@ please drop the author a note.
 
 =head1 ARRANGED BY
 
-	Holger Seelig  E<holger.seelig@yahoo.de>
+Holger Seelig  holger.seelig@yahoo.de
 
 =head1 COPYRIGHT
 

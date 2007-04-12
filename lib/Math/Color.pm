@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.1';
 
 use Math ();
 
@@ -20,8 +20,9 @@ Math::Color - Perl class to represent colors
 
 =head1 SEE ALSO
 
+L<Math>
+
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
-L<Math::Quaternion>
 
 =head1 SYNOPSIS
 	
@@ -123,6 +124,8 @@ Returns the @value of the color.
 	@v = $c1->getValue;
 
 =cut
+
+sub getValue { map { Math::minmax($_, 0, 1) } $_[0]->SUPER::getValue }
 
 =head2 r
 
@@ -234,8 +237,8 @@ sub getHSV {
 	my ( $r, $g, $b ) = $this->getValue;
 	my ( $h, $s, $v );
 
-	my $min = Math::min( $r, Math::min( $g, $b ) );
-	my $max = Math::max( $r, Math::max( $g, $b ) );
+	my $min = Math::min( $r, $g, $b );
+	my $max = Math::max( $r, $g, $b );
 	$v = $max;    # v
 
 	my $delta = $max - $min;
@@ -279,11 +282,7 @@ freely interpolated in strings.
 
 =head1 SEE ALSO
 
-L<perlfunc>
-
-L<POSIX>
-
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
+L<Math>
 
 L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -295,7 +294,7 @@ please drop the author a note.
 
 =head1 ARRANGED BY
 
-	Holger Seelig  E<holger.seelig@yahoo.de>
+Holger Seelig  holger.seelig@yahoo.de
 
 =head1 COPYRIGHT
 

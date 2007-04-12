@@ -1,12 +1,11 @@
 --- #YAML:1.0
 name:                Math
-version:             0.2
+version:             0.3
 abstract:            Contains some vector math
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.32
 distribution_type:   module
 requires:     
-    Carp:                          0
     Math::Quaternion:              0
     POSIX:                         0
     Test::More:                    0

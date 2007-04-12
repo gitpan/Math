@@ -3,15 +3,13 @@ use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 WriteMakefile(
-	'NAME' => 'Math',
-	#'VERSION_FROM' => 'lib/Math/Color.pm',    # finds $VERSION
-	'VERSION'   => 0.2,
-	'PREREQ_PM' => {
+	'NAME'         => 'Math',
+	'VERSION_FROM' => 'lib/Math.pm',    # finds $VERSION
+	'PREREQ_PM'    => {
 		Test::More       => 0,
-		Carp             => 0,
 		POSIX            => 0,
 		Math::Quaternion => 0,
-	},    # e.g., Module::Name => 1.1
+	},                                  # e.g., Module::Name => 1.1
 
 	#ABSTRACT_FROM => 'lib/Math/Color.pm',
 	ABSTRACT => 'Contains some vector math',
@@ -22,6 +20,7 @@ WriteMakefile(
 __END__
 
 #clean
+cd '/home/holger/perl/cpan/Math'
 perl Makefile.PL | grep OK
 sudo make clean | grep OK
 sudo rm Makefile.old 2>&1 | grep OK
