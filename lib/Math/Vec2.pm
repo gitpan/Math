@@ -24,10 +24,12 @@ use overload
   '=='   => \&eq,
   'ne'   => \&ne,
   '!='   => \&ne,
+  '>>'   => \&rotate,
+  '<<'   => \&rotate,
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.283';
+our $VERSION = '0.285';
 
 =head1 NAME
 
@@ -407,6 +409,54 @@ sub ne {
 	my ( $a, $b ) = @_;
 	return "$a" ne $b;
 }
+
+=head2 rotate(n)
+
+Performs a componentwise rotation.
+This is used to overload the '>>' and '<<' operator.
+
+	$v = $vec2->rotate(1);  # swap
+	$v = $vec2->rotate(2);  # eq
+
+=cut
+
+sub rotate {
+
+	return
+
+	  Math::odd( $_[1] ) ?
+
+	  $_[0]->new(
+		$_[0]->[1],
+		$_[0]->[0],
+	  )
+
+	  :
+
+	  $_[0]->copy;
+}
+
+=head2 <<
+
+Performs a counter-clockwise rotation of the components.
+Very similar to bitwise left-shift.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n", $v << 1;
+	printf "1 2 = %s\n", $v << 2;
+
+=head2 >>
+
+Performs a clockwise rotation of the components.
+Very similar to bitwise right-shift.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n", $v >> 1;
+	printf "1 2 = %s\n", $v >> 2;
+
+=cut
 
 =head2 toString
 

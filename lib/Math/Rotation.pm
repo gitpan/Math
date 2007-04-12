@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.283';
+our $VERSION = '0.285';
 
 =head1 NAME
 
@@ -159,7 +159,7 @@ Makes a copy
 
 sub copy {
 	my $this = shift;
-	return $this->private::new_from_quaternion($this->{quaternion});
+	return $this->private::new_from_quaternion( $this->{quaternion} );
 }
 
 =head2 setValue(x,y,z, angle)

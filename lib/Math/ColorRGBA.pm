@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.193';
+our $VERSION = '0.195';
 
 use base 'Math::Color';
 

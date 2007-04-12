@@ -25,12 +25,14 @@ use overload
   #  '=='   => \&eq,
   #  'ne'   => \&ne,
   #  '!='   => \&ne,
+  '>>' => \&rotate,
+  '<<' => sub { $_[0]->rotate( -$_[1] ) },
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.283';
+our $VERSION = '0.285';
 
-use constant DefaultValue => [0, 0, 0];
+use constant DefaultValue => [ 0, 0, 0 ];
 
 =head1 NAME
 
@@ -386,6 +388,50 @@ sub length {
 	my $bool = $v1->ne($v2);
 	my $bool = $v1 ne $v2;
 	my $bool = $v1 != $v2;
+
+=cut
+
+=head2 rotate(n)
+
+Performs a componentwise rotation.
+This is used to overload the '>>' and '<<' operator.
+
+	$v = $vec->rotate(1);
+	$v = $vec->rotate(-2);
+
+=cut
+
+sub rotate {
+	my $n = -$_[1] % @{ $_[0]->DefaultValue };
+
+	if ($n) {
+		my $vec = [ $_[0]->getValue ];
+		splice @$vec, @{ $_[0]->DefaultValue } - $n, $n, splice( @$vec, 0, $n );
+		return $_[0]->new($vec);
+	}
+
+	return $_[0]->copy;
+}
+
+=head2 <<
+
+Performs a counter-clockwise rotation of the components.
+Very similar to bitwise left-shift.
+
+	my $v = new Math::Vec3(1,2,3);
+	
+	printf "2 3 1= %s\n", $v << 1;
+	printf "3 1 2 = %s\n", $v << 2;
+
+=head2 >>
+
+Performs a clockwise rotation of the components.
+Very similar to bitwise right-shift.
+
+	my $v = new Math::Vec3(1,2,3);
+	
+	printf "3 1 2 = %s\n", $v >> 1;
+	printf "2 3 1 = %s\n", $v >> 2;
 
 =cut
 

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 56;
+use Test::More tests => 74;
 use strict;
 
 BEGIN {
@@ -57,12 +57,12 @@ ok( $v != new Math::Vec3( 0, 2, 3 ), "$v !=" );
 
 is( $v1 = new Math::Vec3( 1, 2, 3 ), "1 2 3", "$v1 v1" );
 is( $v = $v1 + [ 1, 2, 3 ], "2 4 6", "$v +" );
-is( $v = $v1 - [ 1, 2, 3 ], "0 0 0",  "$v -" );
+is( $v = $v1 - [ 1, 2, 3 ], "0 0 0", "$v -" );
 
 is( $v2 = new Math::Vec3( 2, 3, 4 ), "2 3 4", "$v2 v2" );
 
-is( $v = -$v1, "-1 -2 -3", "$v -" );
-is( $v = $v1 + $v2, "3 5 7", "$v +" );
+is( $v = -$v1,      "-1 -2 -3",  "$v -" );
+is( $v = $v1 + $v2, "3 5 7",     "$v +" );
 is( $v = $v1 - $v2, "-1 -1 -1",  "$v -" );
 is( $v = $v1 * 2,   "2 4 6",     "$v *" );
 is( $v = $v1 / 2,   "0.5 1 1.5", "$v /" );
@@ -85,5 +85,28 @@ is( $v2 = $v2 / $v1, "1 2 3", "$v2 **" );
 use_ok('Math::Rotation');
 my $r = new Math::Rotation( 2, 3, 4, 5 );
 ok( $v = $r * $v1, "$v x " );
+
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(0), "1 2 3", "$v >> 0" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(1), "3 1 2", "$v >> 1" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(2), "2 3 1", "$v >> 2" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(3), "1 2 3", "$v >> 3" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(4), "3 1 2", "$v >> 4" );
+
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(0),  "1 2 3", "$v << 0" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(-1), "2 3 1", "$v << 1" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(-2), "3 1 2", "$v << 2" );
+is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(-3), "1 2 3", "$v << 3" );
+
+
+is( $v = Math::Vec3->new( 1, 2, 3 ) >> 0, "1 2 3", "$v >> 0" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) >> 1, "3 1 2", "$v >> 1" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) >> 2, "2 3 1", "$v >> 2" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) >> 3, "1 2 3", "$v >> 3" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) >> 4, "3 1 2", "$v >> 4" );
+
+is( $v = Math::Vec3->new( 1, 2, 3 ) << 0,  "1 2 3", "$v << 0" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) << 1, "2 3 1", "$v << 1" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) << 2, "3 1 2", "$v << 2" );
+is( $v = Math::Vec3->new( 1, 2, 3 ) << 3, "1 2 3", "$v << 3" );
 
 __END__
