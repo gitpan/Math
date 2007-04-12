@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.5';
+our $VERSION = '0.507';
 
 our @POSIX = qw(
   acos

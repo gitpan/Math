@@ -9,29 +9,31 @@ use Math ();
 
 use overload
   '='    => \&copy,
-  'abs'  => \&abs,
   '~'    => \&reverse,
   '>>'   => \&rotate,
   '<<'   => \&rotate,
+  'eq'   => \&eq,
+  '=='   => \&eq,
+  'ne'   => \&ne,
+  '!='   => \&ne,
   'bool' => \&length,
+  'abs'  => \&abs,
   'neg'  => \&negate,
   '+='   => \&_add,
   '-='   => \&_subtract,
   '*='   => \&_multiply,
   '/='   => \&_divide,
+  '**='  => \&_pow,
   '+'    => \&add,
   '-'    => \&subtract,
   '*'    => \&multiply,
   '/'    => \&divide,
   '.'    => \&dot,
-  'eq'   => \&eq,
-  '=='   => \&eq,
-  'ne'   => \&ne,
-  '!='   => \&ne,
+  '**'   => \&pow,
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.3';
+our $VERSION = '0.307';
 
 =head1 NAME
 
@@ -64,24 +66,26 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head2 Overview
 
-	'abs'		=>   abs 
 	'~'		=>   reverse 
 	'>>'		=>   rotate  
 	'<<'		=>   rotate  
-	'bool'   	=>   length  
 	'eq'		=>   eq      
 	'=='		=>   eq      
 	'ne'		=>   ne      
 	'!='		=>   ne      
+	'bool'   	=>   length  
+	'abs'		=>   abs 
 	'neg' 		=>   negate  
 	'+='		=>   add     
 	'-='		=>   subtract
 	'*='		=>   multiply
 	'/='		=>   divide  
+	'**='		=>   pow     
 	'+'		=>   add     
 	'-'		=>   subtract
 	'*'		=>   multiply
 	'/'		=>   divide  
+	'**'		=>   pow     
 	'.'		=>   dot     
 	'""'		=>   toString
 
@@ -223,16 +227,6 @@ Sets the second value of the vector
 =cut
 
 sub setY { $_[0]->[1] = $_[1] }
-
-=head2 getArray ()
-
-Returns the reference to the array that represents this vector.
-
-	$v = $vec2->getArray;
-
-=cut
-
-sub getArray { shift }
 
 =head2 getValue
 
@@ -430,6 +424,32 @@ sub _divide {
 	return $a;
 }
 
+=head2 pow(scalar)
+
+This is used to overload the '**' operator.
+
+	$v = $v1->pow(3);
+	$v = $v1 * $v1 * $v1;
+
+	$v = $v1 ** 3;
+
+=cut
+
+sub pow {
+	my ( $a, $b ) = @_;
+	return $a->new(
+		$a->[0]**$b,
+		$a->[1]**$b
+	);
+}
+
+sub _pow {
+	my ( $a, $b ) = @_;
+	$a->[0]**= $b;
+	$a->[1]**= $b;
+	return $a;
+}
+
 =head2 dot(vec2)
 
 	$s = $v1->dot($v2);
@@ -484,7 +504,7 @@ This is used to overload the 'abs' operator.
 =cut
 
 sub abs {
-	return $_[0]->new( map { CORE::abs($_) } @{ $_[0]->getArray } );
+	return $_[0]->new( map { CORE::abs($_) } @{ $_[0] } );
 }
 
 =head2 reverse()
@@ -497,7 +517,7 @@ This is used to overload the '~' operator.
 =cut
 
 sub reverse {
-	return $_[0]->new( CORE::reverse @{ $_[0]->getArray } );
+	return $_[0]->new( CORE::reverse @{ $_[0] } );
 }
 
 =head2 rotate(n)

@@ -10,28 +10,32 @@ use base 'Math::Vec2';
 use overload
   #  '='    => \&copy,
   #  '~'    => \&reverse,
-  '>>'   => \&rotate,
-  '<<'   => sub { $_[0]->rotate( -$_[1] ) },
-  'bool' => \&length,
-  'neg'  => \&negate,
-  '+='   => \&_add,
-  '-='   => \&_subtract,
-  '*='   => \&_multiply,
-  '/='   => \&_divide,
-  '+'    => \&add,
-  '-'    => \&subtract,
-  '*'    => \&multiply,
-  '/'    => \&divide,
-  '.'    => \&dot,
-  'x'    => \&cross,
+  '>>' => \&rotate,
+  '<<' => sub { $_[0]->rotate( -$_[1] ) },
   #  'eq'   => \&eq,
   #  '=='   => \&eq,
   #  'ne'   => \&ne,
   #  '!='   => \&ne,
+  'bool' => \&length,
+  #  'abs'  => \&abs,
+  'neg' => \&negate,
+  '+='  => \&_add,
+  '-='  => \&_subtract,
+  '*='  => \&_multiply,
+  '/='  => \&_divide,
+  '**=' => \&_pow,
+  'x='  => \&_cross,
+  '+'   => \&add,
+  '-'   => \&subtract,
+  '*'   => \&multiply,
+  '/'   => \&divide,
+  '**'  => \&pow,
+  '.'   => \&dot,
+  'x'   => \&cross,
   #  '""'   => \&toString,
   ;
 
-our $VERSION = '0.3';
+our $VERSION = '0.307';
 
 use constant DefaultValue => [ 0, 0, 0 ];
 
@@ -68,24 +72,27 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head2 Overview
 
-	'abs'		=> abs 
 	'~'		=> reverse
 	'>>'		=> rotate
 	'<<'		=> rotate
-	'bool'		=> length
 	'eq'		=> eq
 	'=='		=> eq
 	'ne'		=> ne
 	'!='		=> ne
+	'bool'		=> length
+	'abs'		=> abs 
 	'neg' 		=> negate
 	'+='		=> add
 	'-='		=> subtract
 	'*='		=> multiply
 	'/='		=> divide
+	'**='		=> pow     
+	'x='		=> cross
 	'+'		=> add
 	'-'		=> subtract
 	'*'		=> multiply
 	'/'		=> divide
+	'**'		=> pow     
 	'.'		=> dot
 	'x'		=> cross
 	'""'		=> toString
@@ -118,6 +125,10 @@ Very similar to bitwise right-shift.
 	
 	printf "3 1 2 = %s\n", $v >> 1;
 	printf "2 3 1 = %s\n", $v >> 2;
+
+	$v x= [1, 2, 3];
+
+	$v x= ~$v x [1, 2, 3] >> 2;
 
 =cut
 
@@ -188,19 +199,18 @@ Sets the third value of the vector
 
 sub setZ { $_[0]->[2] = $_[1] }
 
-
 # sub getClosestAxis {
-# 
+#
 #   SbVec3f closest(0.0f, 0.0f, 0.0f);
-#  
+#
 #   float xabs = abs(this->vec[0]);
 #   float yabs = abs(this->vec[1]);
 #   float zabs = abs(this->vec[2]);
-# 
+#
 #   if (xabs>=yabs && xabs>=zabs) closest[0] = (this->vec[0] > 0.0f) ? 1.0f : -1.0f;
 #   else if (yabs>=zabs) closest[1] = (this->vec[1] > 0.0f) ? 1.0f : -1.0f;
 #   else closest[2] = (this->vec[2] > 0.0f) ? 1.0f : -1.0f;
-# 
+#
 #   return closest;
 # }
 
@@ -414,6 +424,34 @@ sub _divide {
 	return $a;
 }
 
+=head2 pow(scalar)
+
+This is used to overload the '**' operator.
+
+	$v = $v1->pow(3);
+	$v = $v1 * $v1 * $v1;
+
+	$v = $v1 ** 3;
+
+=cut
+
+sub pow {
+	my ( $a, $b ) = @_;
+	return $a->new(
+		$a->[0]**$b,
+		$a->[1]**$b,
+		$a->[2]**$b,
+	);
+}
+
+sub _pow {
+	my ( $a, $b ) = @_;
+	$a->[0]**= $b;
+	$a->[1]**= $b;
+	$a->[2]**= $b;
+	return $a;
+}
+
 =head2 dot(vec3)
 
 	$s = $v1->dot($v2);
@@ -442,14 +480,33 @@ sub dot {
 
 sub cross {
 	my ( $a, $b ) = @_;
-	return ref $b ?
-	  $a->new(
-		$a->[1] * $b->[2] - $a->[2] * $b->[1],
-		$a->[2] * $b->[0] - $a->[0] * $b->[2],
-		$a->[0] * $b->[1] - $a->[1] * $b->[0]
-	  )
-	  : $a->toString x $b
-	  ;
+
+	if ( ref $b ) {
+
+		my ( $a0, $a1, $a2 ) = @$a;
+		my ( $b0, $b1, $b2 ) = @$b;
+
+		return $a->new(
+			$a1 * $b2 - $a2 * $b1,
+			$a2 * $b0 - $a0 * $b2,
+			$a0 * $b1 - $a1 * $b0
+		  )
+	}
+
+	return $a->toString x $b;
+}
+
+sub _cross {
+	my ( $a, $b ) = @_;
+
+	my ( $a0, $a1, $a2 ) = @$a;
+	my ( $b0, $b1, $b2 ) = @$b;
+
+	$a->[0] = $a1 * $b2 - $a2 * $b1;
+	$a->[1] = $a2 * $b0 - $a0 * $b2;
+	$a->[2] = $a0 * $b1 - $a1 * $b0;
+
+	return $a;
 }
 
 =head2 length

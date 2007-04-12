@@ -3,7 +3,7 @@ package Math::Image;
 use strict;
 use warnings;
 
-our $VERSION = '0.022';
+our $VERSION = '0.029';
 
 =head1 NAME
 

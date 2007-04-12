@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 64;
+use Test::More tests => 69;
 use strict;
 
 BEGIN {
@@ -94,6 +94,12 @@ is( $v = abs( Math::Vec2->new( 2,  3 ) ),  "2 3", "$v abs" );
 is( $v = abs( Math::Vec2->new( 2,  -3 ) ), "2 3", "$v abs" );
 is( $v = abs( Math::Vec2->new( -2, -3 ) ), "2 3", "$v abs" );
 is( $v = abs( Math::Vec2->new( -2, 3 ) ),  "2 3", "$v abs" );
+
+is( $v1, "1 2", "$v1 **" );
+is( $v1 ** 2, "1 4", "$v1 **" );
+is( $v1 ** 3, "1 8", "$v1 **" );
+is( $v1 **= 2, "1 4", "$v1 **" );
+is( $v1 **= 2, "1 16", "$v1 **" );
 
 #use Math::Rotation;
 #my $r = new Math::Rotation(2,3,4,5);

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 95;
+use Test::More tests => 104;
 use strict;
 
 BEGIN {
@@ -115,23 +115,35 @@ is( $v1->reverse, "3 2 1", "$v1 ~" );
 
 is( ref ~$v1, "Math::Vec3", "$v1 ~" );
 
-is( $v = Math::Vec3->new( 2,  3,  4 ), 	  "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  3,  4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  -3, 4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, -3, 4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, 3,  4 )->abs, "2 3 4", "$v abs" );
+is( $v = Math::Vec3->new( 2,  3,  4 ),       "2 3 4", "$v abs" );
+is( $v = Math::Vec3->new( 2,  3,  4 )->abs,  "2 3 4", "$v abs" );
+is( $v = Math::Vec3->new( 2,  -3, 4 )->abs,  "2 3 4", "$v abs" );
+is( $v = Math::Vec3->new( -2, -3, 4 )->abs,  "2 3 4", "$v abs" );
+is( $v = Math::Vec3->new( -2, 3,  4 )->abs,  "2 3 4", "$v abs" );
 is( $v = Math::Vec3->new( 2,  3,  -4 )->abs, "2 3 4", "$v abs" );
 is( $v = Math::Vec3->new( 2,  -3, -4 )->abs, "2 3 4", "$v abs" );
 is( $v = Math::Vec3->new( -2, -3, -4 )->abs, "2 3 4", "$v abs" );
 is( $v = Math::Vec3->new( -2, 3,  -4 )->abs, "2 3 4", "$v abs" );
 
-is( $v = abs(Math::Vec3->new( 2,  3,  4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( 2,  -3, 4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( -2, -3, 4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( -2, 3,  4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( 2,  3,  -4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( 2,  -3, -4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( -2, -3, -4 )), "2 3 4", "$v abs" );
-is( $v = abs(Math::Vec3->new( -2, 3,  -4 )), "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( 2,  3,  4 ) ),  "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( 2,  -3, 4 ) ),  "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( -2, -3, 4 ) ),  "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( -2, 3,  4 ) ),  "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( 2,  3,  -4 ) ), "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( 2,  -3, -4 ) ), "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( -2, -3, -4 ) ), "2 3 4", "$v abs" );
+is( $v = abs( Math::Vec3->new( -2, 3,  -4 ) ), "2 3 4", "$v abs" );
+
+is( $v, "2 3 4", "$v v" );
+is( $v x= $v1, "1 -2 1", "$v v" );
+is( $v x= [ 1, 3, 5 ], "-13 -4 5", "$v v" );
+
+is( $v x= ~$v x [ 1, 2, 3 ] >> 2, "-126 42 -294", "$v v" );
+
+is( $v1, "1 2 3", "$v1 **" );
+is( $v1 ** 2, "1 4 9", "$v1 **" );
+is( $v1 ** 3, "1 8 27", "$v1 **" );
+is( $v1 **= 2, "1 4 9", "$v1 **" );
+is( $v1 **= 2, "1 16 81", "$v1 **" );
 
 __END__

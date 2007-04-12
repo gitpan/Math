@@ -21,9 +21,11 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.3';
+our $VERSION = '0.307';
 
 =head1 NAME
+
+=cut
 
 =begin html
 
@@ -567,6 +569,8 @@ Holger Seelig  holger.seelig@yahoo.de
 This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
+=cut
+
 =begin html
 
 <img style="padding: 1em;" border="0" src="../../images/Rotation.png" align="right" alt="Figure 1." />
@@ -575,6 +579,4 @@ Math::Rotation - Perl class to represent rotations
 </p>
 
 =end html
-
-=cut
 
