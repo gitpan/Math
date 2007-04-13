@@ -7,35 +7,7 @@ use warnings;
 
 use base 'Math::Vec2';
 
-use overload
-  #  '='    => \&copy,
-  #  '~'    => \&reverse,
-  '>>' => \&rotate,
-  '<<' => sub { $_[0]->rotate( -$_[1] ) },
-  #  'eq'   => \&eq,
-  #  '=='   => \&eq,
-  #  'ne'   => \&ne,
-  #  '!='   => \&ne,
-  'bool' => \&length,
-  #  'abs'  => \&abs,
-  'neg' => \&negate,
-  '+='  => \&_add,
-  '-='  => \&_subtract,
-  '*='  => \&_multiply,
-  '/='  => \&_divide,
-  '**=' => \&_pow,
-  'x='  => \&_cross,
-  '+'   => \&add,
-  '-'   => \&subtract,
-  '*'   => \&multiply,
-  '/'   => \&divide,
-  '**'  => \&pow,
-  '.'   => \&dot,
-  'x'   => \&cross,
-  #  '""'   => \&toString,
-  ;
-
-our $VERSION = '0.31';
+our $VERSION = '0.312';
 
 use constant DefaultValue => [ 0, 0, 0 ];
 
@@ -68,6 +40,30 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 	0 0 0
 
+=cut
+
+use overload
+  '>>' => \&rotate,
+  '<<' => sub { $_[0]->rotate( -$_[1] ) },
+  'bool' => \&length,
+  '0+'   => \&length,
+  'neg' => \&negate,
+  '+='  => \&_add,
+  '-='  => \&_subtract,
+  '*='  => \&_multiply,
+  '/='  => \&_divide,
+  '**=' => \&_pow,
+  'x='  => \&_cross,
+  '+'   => \&add,
+  '-'   => \&subtract,
+  '*'   => \&multiply,
+  '/'   => \&divide,
+  '**'  => \&pow,
+  '.'   => \&dot,
+  'x'   => \&cross,
+  #  '""'   => \&toString,
+  ;
+
 =head1 OPERATORS
 
 =head2 Overview
@@ -75,11 +71,20 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 	'~'		=> reverse
 	'>>'		=> rotate
 	'<<'		=> rotate
-	'eq'		=> eq
+	'<'		=> numerical gt		
+	'>'		=> numerical lt
+	'<=>'		=> numerical cmp
 	'=='		=> eq
-	'ne'		=> ne
 	'!='		=> ne
+	'lt'		=> lt 	  
+	'le'		=> le 	  
+	'gt'		=> gt 	  
+	'ge'		=> ge
+	'cmp'		=> cmp
+	'eq'		=> eq
+	'ne'		=> ne
 	'bool'		=> length
+	'0+'		=> length  
 	'abs'		=> abs 
 	'neg' 		=> negate
 	'+='		=> add
@@ -129,8 +134,6 @@ Very similar to bitwise right-shift.
 	$v x= [1, 2, 3];
 
 	$v x= ~$v x [1, 2, 3] >> 2;
-
-=cut
 
 =head1 METHODS
 
@@ -266,22 +269,6 @@ Returns the third value of the vector
 
 sub z    { $_[0]->[2] }
 sub getZ { $_[0]->[2] }
-
-=head2 eq(vec3)
-
-	my $bool = $v1->eq($v2);
-	my $bool = $v1 eq $v2;
-	my $bool = $v1 == $v2;
-
-=cut
-
-=head2 ne(vec3)
-
-	my $bool = $v1->ne($v2);
-	my $bool = $v1 ne $v2;
-	my $bool = $v1 != $v2;
-
-=cut
 
 =head2 negate
 

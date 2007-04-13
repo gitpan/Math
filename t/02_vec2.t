@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 69;
+use Test::More tests => 81;
 use strict;
 
 BEGIN {
@@ -95,11 +95,31 @@ is( $v = abs( Math::Vec2->new( 2,  -3 ) ), "2 3", "$v abs" );
 is( $v = abs( Math::Vec2->new( -2, -3 ) ), "2 3", "$v abs" );
 is( $v = abs( Math::Vec2->new( -2, 3 ) ),  "2 3", "$v abs" );
 
-is( $v1, "1 2", "$v1 **" );
-is( $v1 ** 2, "1 4", "$v1 **" );
-is( $v1 ** 3, "1 8", "$v1 **" );
-is( $v1 **= 2, "1 4", "$v1 **" );
-is( $v1 **= 2, "1 16", "$v1 **" );
+is( $v1,      "1 2",  "$v1 **" );
+is( $v1**2,   "1 4",  "$v1 **" );
+is( $v1**3,   "1 8",  "$v1 **" );
+is( $v1**= 2, "1 4",  "$v1 **" );
+is( $v1**= 2, "1 16", "$v1 **" );
+
+$v1->setValue( 2, 4 );
+$v2->setValue( 8, 2 );
+
+is( $v1, "2 4", "$v1 **" );
+is( $v2, "8 2", "$v1 **" );
+ok( !( $v1 > $v2 ),                 "$v1 >" );
+ok( $v1 < $v2,                      "$v1 <" );
+ok( !( $v1->length > $v2->length ), "$v1 >" );
+ok( $v1->length < $v2->length,      "$v1 <" );
+ok( ( $v1 <=> $v2 ) == -1, "$v1 <=>" );
+ok( ( $v2 <=> $v1 ) == 1,  "$v1 <=>" );
+
+$v1->setValue( 1, 0 );
+$v2->setValue( 2, 4 );
+
+ok( !( $v1 gt $v2 ), "$v1 >" );
+ok( $v1 lt $v2, "$v1 <" );
+ok( ( $v1 cmp $v2 ) == -1, "$v1 <=>" );
+ok( ( $v2 cmp $v1 ) == 1,  "$v1 <=>" );
 
 #use Math::Rotation;
 #my $r = new Math::Rotation(2,3,4,5);

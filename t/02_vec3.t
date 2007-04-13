@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 103;
+use Test::More tests => 111;
 use strict;
 
 BEGIN {
@@ -144,5 +144,18 @@ is( $v1 ** 2, "1 4 9", "$v1 **" );
 is( $v1 ** 3, "1 8 27", "$v1 **" );
 is( $v1 **= 2, "1 4 9", "$v1 **" );
 is( $v1 **= 2, "1 16 81", "$v1 **" );
+
+$v1->setValue(2,4,1);
+$v2->setValue(8,2,6);
+
+is( $v1, "2 4 1", "$v1 **" );
+is( $v2, "8 2 6", "$v1 **" );
+ok( !($v1 > $v2), "$v1 >" );
+ok( $v1 < $v2, "$v1 <" );
+ok( !($v1->length > $v2->length), "$v1 >" );
+ok( $v1->length < $v2->length, "$v1 <" );
+ok( ($v1 <=> $v2) == -1, "$v1 <=>" );
+ok( ($v2 <=> $v1) == 1, "$v1 <=>" );
+
 
 __END__

@@ -7,33 +7,7 @@ use Math ();
 
 #use Exporter;
 
-use overload
-  '='    => \&copy,
-  '~'    => \&reverse,
-  '>>'   => \&rotate,
-  '<<'   => \&rotate,
-  'eq'   => \&eq,
-  '=='   => \&eq,
-  'ne'   => \&ne,
-  '!='   => \&ne,
-  'bool' => \&length,
-  'abs'  => \&abs,
-  'neg'  => \&negate,
-  '+='   => \&_add,
-  '-='   => \&_subtract,
-  '*='   => \&_multiply,
-  '/='   => \&_divide,
-  '**='  => \&_pow,
-  '+'    => \&add,
-  '-'    => \&subtract,
-  '*'    => \&multiply,
-  '/'    => \&divide,
-  '.'    => \&dot,
-  '**'   => \&pow,
-  '""'   => \&toString,
-  ;
-
-our $VERSION = '0.31';
+our $VERSION = '0.312';
 
 =head1 NAME
 
@@ -61,6 +35,45 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 =head2 DefaultValue
 
 	0 0
+	
+=cut
+
+use overload
+  '='   => \&copy,
+  '~'   => \&reverse,
+  '>>'  => \&rotate,
+  '<<'  => \&rotate,
+  '<'   => sub { $_[1] > $_[0]->length },
+  '<='  => sub { $_[1] >= $_[0]->length },
+  '>'   => sub { $_[1] < $_[0]->length },
+  '>='  => sub { $_[1] <= $_[0]->length },
+  '<=>' => sub { $_[1] <=> $_[0]->length },
+  '=='  => sub { "$_[0]" eq $_[1] },
+  '!='  => sub { "$_[0]" ne $_[1] },
+  'eq'  => sub { "$_[0]" eq $_[1] },
+  'ne'  => sub { "$_[0]" ne $_[1] },
+  'lt'  => sub { $_[1] gt "$_[0]" },
+  'le'  => sub { $_[1] ge "$_[0]" },
+  'gt'  => sub { $_[1] lt "$_[0]" },
+  'ge'  => sub { $_[1] le "$_[0]" },
+  'cmp' => sub { $_[1] cmp "$_[0]" },
+  'bool' => \&length,
+  '0+'   => \&length,
+  'abs'  => \&abs,
+  'neg'  => \&negate,
+  '+='   => \&_add,
+  '-='   => \&_subtract,
+  '*='   => \&_multiply,
+  '/='   => \&_divide,
+  '**='  => \&_pow,
+  '+'    => \&add,
+  '-'    => \&subtract,
+  '*'    => \&multiply,
+  '/'    => \&divide,
+  '.'    => \&dot,
+  '**'   => \&pow,
+  '""'   => \&toString,
+  ;
 
 =head1 OPERATORS
 
@@ -69,11 +82,22 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 	'~'		=>   reverse 
 	'>>'		=>   rotate  
 	'<<'		=>   rotate  
-	'eq'		=>   eq      
+	'<'		=>   numerical gt      
+	'<='		=>   numerical le
+	'>'		=>   numerical lt
+	'>='		=>   numerical ge
+	'<=>'		=>   numerical cmp
 	'=='		=>   eq      
-	'ne'		=>   ne      
 	'!='		=>   ne      
+	'lt'		=>   lt      
+	'le'		=>   le
+	'gt'		=>   gt      
+	'ge'		=>   ge
+	'cmp'		=>   cmp
+	'eq'		=>   eq      
+	'ne'		=>   ne      
 	'bool'   	=>   length  
+	'0+'		=> length  
 	'abs'		=>   abs 
 	'neg' 		=>   negate  
 	'+='		=>   add     
@@ -271,32 +295,6 @@ Returns the second value of the vector.
 
 sub y    { $_[0]->[1] }
 sub getY { $_[0]->[1] }
-
-=head2 eq(vec2)
-
-	my $bool = $v1->eq($v2);
-	my $bool = $v1 eq $v2;
-	my $bool = $v1 == $v2;
-
-=cut
-
-sub eq {
-	my ( $a, $b ) = @_;
-	return "$a" eq $b;
-}
-
-=head2 ne(vec2)
-
-	my $bool = $v1->ne($v2);
-	my $bool = $v1 ne $v2;
-	my $bool = $v1 != $v2;
-
-=cut
-
-sub ne {
-	my ( $a, $b ) = @_;
-	return "$a" ne $b;
-}
 
 =head2 negate
 
