@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 81;
+use Test::More tests => 99;
 use strict;
 
 BEGIN {
@@ -11,8 +11,8 @@ BEGIN {
 
 my ( $v, $v1, $v2 );
 
-is( $v = join( " ", @{ Math::Vec2->DefaultValue } ), "0 0", "$v getDefaultValue" );
-is( $v = @{ Math::Vec2->DefaultValue }, 2, "$v getDefaultValue" );
+is( $v = join( " ", @{ Math::Vec2->getDefaultValue } ), "0 0", "$v getDefaultValue" );
+is( $v = @{ Math::Vec2->getDefaultValue }, 2, "$v getDefaultValue" );
 
 is( $v = new Math::Vec2(), "0 0", "$v new Math::Vec2()" );
 
@@ -120,6 +120,54 @@ ok( !( $v1 gt $v2 ), "$v1 >" );
 ok( $v1 lt $v2, "$v1 <" );
 ok( ( $v1 cmp $v2 ) == -1, "$v1 <=>" );
 ok( ( $v2 cmp $v1 ) == 1,  "$v1 <=>" );
+
+is( $v2 / $v2, "1 1", "$v2 /" );
+
+$v1->setValue( -2, -2 );
+is( $v1->sig, "-1 -1", "$v1 sig" );
+
+$v1->setValue( 2, -2 );
+is( $v1->sig, "1 -1", "$v1 sig" );
+
+$v1->setValue( -2, 2 );
+is( $v1->sig, "-1 1", "$v1 sig" );
+
+$v1->setValue( 2, 2 );
+is( $v1->sig, "1 1", "$v1 sig" );
+
+$v1->setValue( 2, 0 );
+is( $v1->sig, "1 0", "$v1 sig" );
+
+$v1->setValue( 0, 0 );
+is( $v1->sig, "0 0", "$v1 sig" );
+
+$v1 += [ 1, 3 ];
+is( $v1->sum, "4", "$v1 sum" );
+
+$v1 += [ 1, 3 ];
+is( $v1->sum, "8", "$v1 sum" );
+
+is( $v1, "2 6", "$v1 v" );
+is( [ 0, 0 ] -$v1, "-2 -6", "$v1 v" );
+
+$v1->setValue( 1, 3 );
+$v1 <<= 1;
+is( $v1, "3 1", "$v1 v" );
+$v1 <<= 2;
+is( $v1, "3 1", "$v1 v" );
+$v1 <<= 1;
+is( $v1, "1 3", "$v1 v" );
+
+$v1->setValue( 1, 3 );
+$v1 >>= 1;
+is( $v1, "3 1", "$v1 v" );
+$v1 >>= 2;
+is( $v1, "3 1", "$v1 v" );
+$v1 >>= 1;
+is( $v1, "1 3", "$v1 v" );
+
+$v1->setValue( 54, 5454 );
+is( $v1 % $v2, "0 2", "$v1 v" );
 
 #use Math::Rotation;
 #my $r = new Math::Rotation(2,3,4,5);

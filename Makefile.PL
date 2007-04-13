@@ -32,6 +32,7 @@ sudo rm MANIFEST.bak 2>&1 | grep OK
 perl Makefile.PL | grep OK
 make manifest 2>&1 | grep OK
 cat MANIFEST | cpanversion+ 0.001 | grep OK
+perl Makefile.PL | grep OK
 make test | grep OK
 make dist | grep OK
 mv *.gz ../
@@ -40,3 +41,7 @@ mv *.gz ../
 #mk install
 sudo cpan . | grep OK
 
+
+#mk test
+perl Makefile.PL | grep OK
+make test

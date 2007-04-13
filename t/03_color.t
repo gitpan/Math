@@ -21,7 +21,7 @@ is( $v = new Math::Color( [ 0.1, 0.2, 0.3 ] ), "0.1 0.2 0.3", "$v new Math::Colo
 is( $v = $v->copy, "0.1 0.2 0.3", "$v new Math::Color()" );
 is( "$v", "0.1 0.2 0.3", "$v ''" );
 
-is( $v = @{ Math::Color->DefaultValue }, 3, "$v getDefaultValue" );
+is( $v = @{ Math::Color->getDefaultValue }, 3, "$v getDefaultValue" );
 
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getX, "0.1", "$v getX" );
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getY, "0.2", "$v getY" );

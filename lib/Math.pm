@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.512';
+our $VERSION = '0.514';
 
 our @POSIX = qw(
   acos
@@ -10,6 +10,7 @@ our @POSIX = qw(
   atan
   ceil
   floor
+  fmod
   round
   log10
 );
@@ -141,6 +142,10 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 	Returns the arc tangent (in radians) of number
 
+=head2 atan2(number1, number2)
+
+	perls atan2
+
 =head2 ceil(number)
 
 	Returns the least integer greater than or equal to number
@@ -160,6 +165,10 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 =head2 floor(number)
 
 	Returns the greatest integer less than or equal to its argument
+
+=head2 fmod(number, number)
+
+	POSIX fmod
 
 =head2 log(number)
 
@@ -228,7 +237,8 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 =head2 sig(number)
 
-	Returns 1 if number is greater 0 otherwise -1
+	Returns 1 if number is greater 0.
+	Returns -1 if number is lesser 0 otherwise -1.
 
 =head2 sin(number)
 
@@ -251,8 +261,10 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 =cut
 
-sub abs { CORE::abs( $_[0] ) }
-sub cos { CORE::cos( $_[0] ) }
+sub abs   { CORE::abs( $_[0] ) }
+sub atan2 { CORE::atan2( $_[0], $_[1] ) }
+
+sub cos   { CORE::cos( $_[0] ) }
 
 sub exp { CORE::exp( $_[0] ) }
 sub log { CORE::log( $_[0] ) }
@@ -282,12 +294,14 @@ sub random {
 }
 
 sub round {
-	return int( $_[0] + ( $_[0] < 0 ? -0.5 : 0.5 ) ) if  @_ == 1 || $_[1] == 0; # @_ == 1 || $_[1] == 0;
+	return int( $_[0] + ( $_[0] < 0 ? -0.5 : 0.5 ) ) if @_ == 1 || $_[1] == 0; # @_ == 1 || $_[1] == 0;
 	return sprintf "%.$_[1]f", $_[0] if $_[1] >= 0;
 
 	my $f = 10**-$_[1];
 	return round( $_[0] / $f ) * $f;
 }
+
+sub sig { $_[0] ? ( $_[0] < 0 ? -1 : 1 ) : 0 }
 
 sub sum {
 	my $sum = 0;
@@ -300,7 +314,6 @@ sub sqrt { CORE::sqrt( $_[0] ) }
 
 sub even { $_[0] & 1 ? 0 : 1 }
 sub odd { $_[0] & 1 }
-sub sig { $_[0] < 0 ? -1 : 1 }
 
 1;
 
@@ -849,6 +862,8 @@ L<Math::Simple>
 L<Math::SimpleInterest>
 
 L<Math::SimpleVariable>
+
+L<Music::is::Math|http://www.discogs.com/release/24432>
 
 L<Math::Sparse::Matrix>
 

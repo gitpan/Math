@@ -21,7 +21,7 @@ use overload
   '""'   => \&toString,
   ;
 
-our $VERSION = '0.312';
+our $VERSION = '0.314';
 
 =head1 NAME
 
@@ -63,7 +63,7 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head1 DESCRIPTION
 
-=head2 DefaultValue
+=head2 Default value
 
 	0 0 1 0
 

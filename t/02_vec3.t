@@ -11,8 +11,8 @@ BEGIN {
 
 my ( $v, $v1, $v2 );
 
-is( $v = join( " ", @{ Math::Vec3->DefaultValue } ), "0 0 0", "$v getDefaultValue" );
-is( $v = @{ Math::Vec3->DefaultValue }, 3, "$v getDefaultValue" );
+is( $v = join( " ", @{ Math::Vec3->getDefaultValue } ), "0 0 0", "$v getDefaultValue" );
+is( $v = @{ Math::Vec3->getDefaultValue }, 3, "$v getDefaultValue" );
 
 is( $v = new Math::Vec3(), "0 0 0", "$v new Math::Vec3()" );
 
@@ -110,7 +110,7 @@ is( $v = Math::Vec3->new( 1, 2, 3 ) << 3, "1 2 3", "$v << 3" );
 is( ~$v1, "3 2 1", "$v1 ~" );
 is( ~~ $v1, "1 2 3", "$v1 ~" );
 
-is( $v1->reverse, "3 2 1", "$v1 ~" );
+is( ~$v1, "3 2 1", "$v1 ~" );
 
 is( ref ~$v1, "Math::Vec3", "$v1 ~" );
 
@@ -139,23 +139,22 @@ is( $v x= [ 1, 3, 5 ], "-13 -4 5", "$v v" );
 
 is( $v x= ~$v x [ 1, 2, 3 ] >> 2, "-126 42 -294", "$v v" );
 
-is( $v1, "1 2 3", "$v1 **" );
-is( $v1 ** 2, "1 4 9", "$v1 **" );
-is( $v1 ** 3, "1 8 27", "$v1 **" );
-is( $v1 **= 2, "1 4 9", "$v1 **" );
-is( $v1 **= 2, "1 16 81", "$v1 **" );
+is( $v1,      "1 2 3",   "$v1 **" );
+is( $v1**2,   "1 4 9",   "$v1 **" );
+is( $v1**3,   "1 8 27",  "$v1 **" );
+is( $v1**= 2, "1 4 9",   "$v1 **" );
+is( $v1**= 2, "1 16 81", "$v1 **" );
 
-$v1->setValue(2,4,1);
-$v2->setValue(8,2,6);
+$v1->setValue( 2, 4, 1 );
+$v2->setValue( 8, 2, 6 );
 
 is( $v1, "2 4 1", "$v1 **" );
 is( $v2, "8 2 6", "$v1 **" );
-ok( !($v1 > $v2), "$v1 >" );
-ok( $v1 < $v2, "$v1 <" );
-ok( !($v1->length > $v2->length), "$v1 >" );
-ok( $v1->length < $v2->length, "$v1 <" );
-ok( ($v1 <=> $v2) == -1, "$v1 <=>" );
-ok( ($v2 <=> $v1) == 1, "$v1 <=>" );
-
+ok( !( $v1 > $v2 ),                 "$v1 >" );
+ok( $v1 < $v2,                      "$v1 <" );
+ok( !( $v1->length > $v2->length ), "$v1 >" );
+ok( $v1->length < $v2->length,      "$v1 <" );
+ok( ( $v1 <=> $v2 ) == -1, "$v1 <=>" );
+ok( ( $v2 <=> $v1 ) == 1,  "$v1 <=>" );
 
 __END__

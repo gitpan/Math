@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.312';
+our $VERSION = '0.314';
 
 =head1 NAME
 
@@ -32,17 +32,24 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head1 DESCRIPTION
 
-=head2 DefaultValue
+=head2 Default value
 
 	0 0
-	
+
 =cut
 
 use overload
-  '='   => \&copy,
-  '~'   => \&reverse,
-  '>>'  => \&rotate,
-  '<<'  => \&rotate,
+  '=' => \&copy,
+
+  #"&", "^", "|",
+
+  '~' => sub { $_[0]->new( [ CORE::reverse @{ $_[0] } ] ) },
+
+  '>>' => sub { $_[1] & 1 ? ~$_[0] : $_[0]->copy },
+  '<<' => sub { $_[1] & 1 ? ~$_[0] : $_[0]->copy },
+  '>>=' => sub { @{ $_[0] } = CORE::reverse @{ $_[0] } if $_[1] & 1; $_[0] },
+  '<<=' => sub { @{ $_[0] } = CORE::reverse @{ $_[0] } if $_[1] & 1; $_[0] },
+
   '<'   => sub { $_[1] > $_[0]->length },
   '<='  => sub { $_[1] >= $_[0]->length },
   '>'   => sub { $_[1] < $_[0]->length },
@@ -50,87 +57,114 @@ use overload
   '<=>' => sub { $_[1] <=> $_[0]->length },
   '=='  => sub { "$_[0]" eq $_[1] },
   '!='  => sub { "$_[0]" ne $_[1] },
-  'eq'  => sub { "$_[0]" eq $_[1] },
-  'ne'  => sub { "$_[0]" ne $_[1] },
+
   'lt'  => sub { $_[1] gt "$_[0]" },
   'le'  => sub { $_[1] ge "$_[0]" },
   'gt'  => sub { $_[1] lt "$_[0]" },
   'ge'  => sub { $_[1] le "$_[0]" },
   'cmp' => sub { $_[1] cmp "$_[0]" },
+  'eq'  => sub { "$_[0]" eq $_[1] },
+  'ne'  => sub { "$_[0]" ne $_[1] },
+
+  #"!" => sub { !$_[0]->length },
   'bool' => \&length,
   '0+'   => \&length,
-  'abs'  => \&abs,
-  'neg'  => \&negate,
-  '+='   => \&_add,
-  '-='   => \&_subtract,
-  '*='   => \&_multiply,
-  '/='   => \&_divide,
-  '**='  => \&_pow,
-  '+'    => \&add,
-  '-'    => \&subtract,
-  '*'    => \&multiply,
-  '/'    => \&divide,
-  '.'    => \&dot,
-  '**'   => \&pow,
-  '""'   => \&toString,
+
+  'abs' => \&abs,
+  'neg' => \&negate,
+
+  '+='  => \&_add,
+  '-='  => \&_subtract,
+  '*='  => \&_multiply,
+  '/='  => \&_divide,
+  '**=' => \&__pow,
+  '%='  => \&__mod,
+  #".=",
+
+  '+'  => \&add,
+  '-'  => \&subtract,
+  '*'  => \&multiply,
+  '/'  => \&divide,
+  '**' => \&_pow,
+  '%'  => \&_mod,
+  '.'  => \&dot,
+
+  #"x", "x=",
+
+  #"atan2", "cos", "sin", "exp", "log", "sqrt", "int"
+
+  #"<>"
+
+  #'${}', '@{}', '%{}', '&{}', '*{}'.
+
+  #"nomethod", "fallback",
+
+  '""' => \&toString,
   ;
 
 =head1 OPERATORS
 
-=head2 Overview
+=head2 Summary
 
-	'~'		=>   reverse 
-	'>>'		=>   rotate  
-	'<<'		=>   rotate  
-	'<'		=>   numerical gt      
-	'<='		=>   numerical le
-	'>'		=>   numerical lt
-	'>='		=>   numerical ge
-	'<=>'		=>   numerical cmp
-	'=='		=>   eq      
-	'!='		=>   ne      
-	'lt'		=>   lt      
-	'le'		=>   le
-	'gt'		=>   gt      
-	'ge'		=>   ge
-	'cmp'		=>   cmp
-	'eq'		=>   eq      
-	'ne'		=>   ne      
-	'bool'   	=>   length  
-	'0+'		=> length  
-	'abs'		=>   abs 
-	'neg' 		=>   negate  
-	'+='		=>   add     
-	'-='		=>   subtract
-	'*='		=>   multiply
-	'/='		=>   divide  
-	'**='		=>   pow     
-	'+'		=>   add     
-	'-'		=>   subtract
-	'*'		=>   multiply
-	'/'		=>   divide  
-	'**'		=>   pow     
-	'.'		=>   dot     
-	'""'		=>   toString
+	'~'		=>   Returns the reverse of this vector.
+	
+	'>>'		=>   Performs a clockwise rotation of the components.
+	'>>='		=>   Performs a clockwise rotation of the components.
+	'<<'		=>   Performs a counter-clockwise rotation of the components.    
+	'<<='		=>   Performs a counter-clockwise rotation of the components.    
+	
+	'!'		=>   Returns true if the length of this vector is 0
+	
+	'<'		=>   Numerical gt. Compares the length of this vector with a vector or a scalar value.
+	'<='		=>   Numerical le. Compares the length of this vector with a vector or a scalar value.
+	'>'		=>   Numerical lt. Compares the length of this vector with a vector or a scalar value.
+	'>='		=>   Numerical ge. Compares the length of this vector with a vector or a scalar value.
+	'<=>'		=>   Numerical cmp. Compares the length of this vector with a vector or a scalar value.
+	'=='		=>   Numerical eq. Performs a componentwise equation.
+	'!='		=>   Numerical ne. Performs a componentwise equation.
+	
+	'lt'		=>   Stringwise lt
+	'le'		=>   Stringwise le
+	'gt'		=>   Stringwise gt
+	'ge'		=>   Stringwise ge
+	'cmp'		=>   Stringwise cmp
+	'eq'		=>   Stringwise eq
+	'ne'		=>   Stringwise ne
+	
+	'bool'   	=>   Returns true if the length of this vector is not 0
+	'0+'		=>   Numeric conversion operator. Returns the length of this vector.
+	
+	'abs'		=>   Performs a componentwise abs.
+	'neg' 		=>   Performs a componentwise negation.  
+	
+	'++'		=>   Increment components     
+	'--'		=>   Decrement components     
+	'+='		=>   Add a vector
+	'-='		=>   Subtract a vector
+	'*='		=>   Multiply with a vector or a scalar value.
+	'/='		=>   Divide with a vector or a scalar value.
+	'**='		=>   Power
+	'%='		=>   Modulo fmod
+	
+	'+'		=>   Add two vectors
+	'-'		=>   Subtract vectors
+	'*'		=>   Multiply this vector with a vector or a scalar value.
+	'/'		=>   Divide this vector with a vector or a scalar value.
+	'**'		=>   Returns a power of this vector.
+	'%'		=>   Modulo fmod
+	'.'		=>   Returns the dot product of two vectors.
+	
+	'""'		=>   Returns a string representation of the vector.
 
 =head2 ~
 
 Returns the reverse of this vector.
+Very similar to L<perlbuiltin/reverse>.
 
 	my $v = new Math::Vec2(1,2);
 	
 	printf "2 1 = %s\n",  ~$v;  # swap components
 	printf "1 2 = %s\n", ~~$v;
-
-=head2 <<
-
-Performs a counter-clockwise rotation of the components.
-Very similar to bitwise left-shift.
-
-	my $v = new Math::Vec2(1,2);
-	
-	printf "2 1 = %s\n", $v << 1;
-	printf "1 2 = %s\n", $v << 2;
 
 =head2 >>
 
@@ -142,20 +176,49 @@ Very similar to bitwise right-shift.
 	printf "2 1 = %s\n", $v >> 1;
 	printf "1 2 = %s\n", $v >> 2;
 
+=head2 <<
+
+Performs a counter-clockwise rotation of the components.
+Very similar to bitwise left-shift.
+
+	my $v = new Math::Vec2(1,2);
+	
+	printf "2 1 = %s\n", $v << 1;
+	printf "1 2 = %s\n", $v << 2;
+
+=head2 abs()
+
+Performs a componentwise abs.
+This is used to overload the 'abs' operator.
+
+	$v = new Math::Vec2(-4, 5);
+	$v = $vec2->abs;
+	$v = abs($vec2);
+	printf $v;         # 4 5
+
+=head2 **
+
+	$v = $v1 * $v1 * $v1;
+	$v = $v1 ** 3;
+
 =cut
 
-use constant DefaultValue => [ 0, 0 ];
+sub abs { $_[0]->new( [ map { CORE::abs($_) } @{ $_[0] } ] ) }
 
 =head1 METHODS
 
-=head2 DefaultValue
+=head2 getDefaultValue
 
 Get the default value as array ref
 	
-	$default = $v1->DefaultValue;
-	@default = @{ Math::Vec2->DefaultValue };
+	$default = $v1->getDefaultValue;
+	@default = @{ Math::Vec2->getDefaultValue };
 
-	$n = @{ Math::Vec2->DefaultValue };
+	$n = @{ Math::Vec2->getDefaultValue };
+
+=cut
+
+use constant getDefaultValue => [ 0, 0 ];
 
 =head2 new
 
@@ -175,7 +238,7 @@ sub new {
 
 	if ( 0 == @_ ) {
 		# No arguments, default to standard
-		return bless [ @{ $self->DefaultValue } ], $class;
+		return bless [ @{ $self->getDefaultValue } ], $class;
 	} elsif ( 1 == @_ ) {
 
 		if ( ref( $_[0] ) eq 'ARRAY' ) {    # [0,1]
@@ -203,10 +266,7 @@ Makes a copy
 
 =cut
 
-sub copy {
-	my $this = shift;
-	return $this->new( [ $this->getValue ] );
-}
+sub copy { $_[0]->new( [ $_[0]->getValue ] ) }
 
 =head2 setValue(x,y,z)
 
@@ -221,9 +281,9 @@ sub setValue {
 
 	@$this = map {
 
-		defined $_[$_] ? $_[$_] : $this->DefaultValue->[$_]
+		defined $_[$_] ? $_[$_] : $this->getDefaultValue->[$_]
 
-	  } 0 .. Math::minmax( $#_, $#{ $this->DefaultValue }, $#{ $this->DefaultValue } )
+	  } 0 .. Math::minmax( $#_, $#{ $this->getDefaultValue }, $#{ $this->getDefaultValue } )
 }
 
 =head2 setX(x)
@@ -264,8 +324,6 @@ sub getValue { @{ $_[0] } }
 
 =head2 x
 
-=cut
-
 =head2 getX
 
 Returns the first value of the vector.
@@ -280,8 +338,6 @@ sub x    { $_[0]->[0] }
 sub getX { $_[0]->[0] }
 
 =head2 y
-
-=cut
 
 =head2 getY
 
@@ -305,26 +361,27 @@ sub getY { $_[0]->[1] }
 
 sub negate {
 	my ($a) = @_;
-	return $a->new(
-		-$a->[0],
-		-$a->[1],
-	);
+	return $a->new( [
+			-$a->[0],
+			-$a->[1],
+	] );
 }
 
 =head2 add(vec2)
 
 	$v = $v1->add($v2);
 	$v = $v1 + $v2;
+	$v = [8, 2] + $v1;
 	$v1 += $v2;
 
 =cut
 
 sub add {
 	my ( $a, $b ) = @_;
-	return $a->new(
-		$a->[0] + $b->[0],
-		$a->[1] + $b->[1],
-	);
+	return $a->new( [
+			$a->[0] + $b->[0],
+			$a->[1] + $b->[1],
+	] );
 }
 
 sub _add {
@@ -338,16 +395,22 @@ sub _add {
 
 	$v = $v1->subtract($v2);
 	$v = $v1 - $v2;
+	$v = [8, 2] - $v1;
 	$v1 -= $v2;
 
 =cut
 
 sub subtract {
-	my ( $a, $b ) = @_;
-	return $a->new(
-		$a->[0] - $b->[0],
-		$a->[1] - $b->[1],
-	);
+	my ( $a, $b, $r ) = @_;
+	return $a->new( [
+			$r ? (
+				$b->[0] - $a->[0],
+				$b->[1] - $a->[1],
+			  ) : (
+				$a->[0] - $b->[0],
+				$a->[1] - $b->[1],
+			  ) ] )
+	  ;
 }
 
 sub _subtract {
@@ -357,91 +420,129 @@ sub _subtract {
 	return $a;
 }
 
-=head2 multiply(scalar)
+=head2 multiply(vec2 or scalar)
 
-=cut
+This is used to overload the '*' operator.
 
-=head2 multiply(vec2)
-
-	$v = $v1->multiply(2);
 	$v = $v1 * 2;
+	$v = $v1 * [3, 5];
+	$v = [8, 2] * $v1;
+	$v = $v1 * $v1;
 	$v1 *= 2;
+	
+	$v = $v1->multiply(2);
 
 =cut
 
 sub multiply {
 	my ( $a, $b ) = @_;
 	return ref $b ?
-	  $a->new(
-		$a->[0] * $b->[0],
-		$a->[1] * $b->[1],
-	  )
+	  $a->new( [
+			$a->[0] * $b->[0],
+			$a->[1] * $b->[1],
+		] )
 	  :
-	  $a->new(
-		$a->[0] * $b,
-		$a->[1] * $b,
-	  );
+	  $a->new( [
+			$a->[0] * $b,
+			$a->[1] * $b,
+	  ] );
 }
 
 sub _multiply {
 	my ( $a, $b ) = @_;
-	$a->[0] *= $b;
-	$a->[1] *= $b;
+	if ( ref $b ) {
+		$a->[0] *= $b->[0];
+		$a->[1] *= $b->[1];
+	} else {
+		$a->[0] *= $b;
+		$a->[1] *= $b;
+	}
 	return $a;
 }
 
-=head2 divide(scalar)
+=head2 divide(vec2 or scalar)
 
-=cut
+This is used to overload the '/' operator.
 
-=head2 divide(vec2)
-
-	$v = $v1->divide(2);
 	$v = $v1 / 2;
 	$v1 /= 2;
+	$v = $v1 / [3, 7];
+	$v = [8, 2] / $v1;
+	$v = $v1 / $v1;	# unit vector
+	
+	$v = $v1->divide(2);
 
 =cut
 
 sub divide {
-	my ( $a, $b ) = @_;
+	my ( $a, $b, $r ) = @_;
 	return ref $b ?
-	  $a->new(
-		$a->[0] / $b->[0],
-		$a->[1] / $b->[1],
-	  )
-	  : $a->new(
-		$a->[0] / $b,
-		$a->[1] / $b,
-	  );
+	  $a->new( [
+			$r ? (
+				$b->[0] / $a->[0],
+				$b->[1] / $a->[1],
+			  ) : (
+				$a->[0] / $b->[0],
+				$a->[1] / $b->[1],
+			  ) ] )
+	  : $a->new( [
+			$a->[0] / $b,
+			$a->[1] / $b,
+	  ] );
 }
 
 sub _divide {
 	my ( $a, $b ) = @_;
-	$a->[0] /= $b;
-	$a->[1] /= $b;
+	if ( ref $b ) {
+		$a->[0] /= $b->[0];
+		$a->[1] /= $b->[1];
+	} else {
+		$a->[0] /= $b;
+		$a->[1] /= $b;
+	}
 	return $a;
 }
 
-=head2 pow(scalar)
+#mod
+#cut
+sub _mod {
+	my ( $a, $b, $r ) = @_;
+	return ref $b ?
+	  $a->new( [
+			$r ? (
+				Math::fmod( $b->[0], $a->[0] ),
+				Math::fmod( $b->[1], $a->[1] ),
+			  ) : (
+				Math::fmod( $a->[0], $b->[0] ),
+				Math::fmod( $a->[1], $b->[1] ),
+			  ) ] )
+	  : $a->new( [
+			Math::fmod( $a->[0], $b ),
+			Math::fmod( $a->[1], $b ),
+	  ] );
+}
 
-This is used to overload the '**' operator.
-
-	$v = $v1->pow(3);
-	$v = $v1 * $v1 * $v1;
-
-	$v = $v1 ** 3;
-
-=cut
-
-sub pow {
+sub __mod {
 	my ( $a, $b ) = @_;
-	return $a->new(
-		$a->[0]**$b,
-		$a->[1]**$b
-	);
+	if ( ref $b ) {
+		$a->[0] = Math::fmod( $a->[0], $b->[0] );
+		$a->[1] = Math::fmod( $a->[1], $b->[1] );
+	} else {
+		$a->[0] = Math::fmod( $a->[0], $b );
+		$a->[1] = Math::fmod( $a->[1], $b );
+	}
+	return $a;
 }
 
 sub _pow {
+	my ( $a, $b ) = @_;
+	return $a->new( [
+			$a->[0]**$b,
+			$a->[1]**$b
+	] );
+}
+
+sub __pow {
 	my ( $a, $b ) = @_;
 	$a->[0]**= $b;
 	$a->[1]**= $b;
@@ -457,11 +558,11 @@ sub _pow {
 =cut
 
 sub dot {
-	my ( $a, $b ) = @_;
+	my ( $a, $b, $r ) = @_;
 	return ref $b ?
 	  $a->[0] * $b->[0] +
 	  $a->[1] * $b->[1]
-	  : $a->toString . $b
+	  : ( $r ? $b . "$a" : "$a" . "$b" )
 	  ;
 }
 
@@ -487,59 +588,32 @@ sub length {
 
 =cut
 
-sub normalize {
-	my ($a) = @_;
-	return $a->divide( $a->length );
-}
+sub normalize { $_[0] / $_[0]->length }
 
-=head2 abs()
+=head2 sig
 
-Performs a componentwise abs.
-This is used to overload the 'abs' operator.
+Performs a componentwise sig.
 
-	$v = $vec2->abs;
+	$v = new Math::Vec2(-4, 5);
+	$v = $vec2->sig;
+	printf $v;         # -1 1
 
 =cut
 
-sub abs {
-	return $_[0]->new( map { CORE::abs($_) } @{ $_[0] } );
-}
+#sub sig { $_[0]->new( [ map { Math::sig($_) } @{ $_[0] } ] ) }
+sub sig { $_[0]->new( [ map { $_ ? ( $_ < 0 ? -1 : 1 ) : 0 } @{ $_[0] } ] ) }
 
-=head2 reverse()
+=head2 sum
 
-Returns the reverse of this vector.
-This is used to overload the '~' operator.
+Returns the sum of the components.
 
-	$v = $vec2->reverse;
-
-=cut
-
-sub reverse {
-	return $_[0]->new( CORE::reverse @{ $_[0] } );
-}
-
-=head2 rotate(n)
-
-Performs a componentwise rotation.
-This is used to overload the '>>' and '<<' operator.
-
-	$v = $vec2->rotate(1);  # swap
-	$v = $vec2->rotate(2);  # eq
+	$v = new Math::Vec2(-8, 2);
+	$s = $vec2->sum;
+	printf $s;         # -6
 
 =cut
 
-sub rotate {
-
-	return
-
-	  Math::odd( $_[1] ) ?
-
-	  $_[0]->reverse
-
-	  :
-
-	  $_[0]->copy;
-}
+sub sum { $_[0]->[0] + $_[0]->[1] }
 
 =head2 toString
 
@@ -554,8 +628,7 @@ freely interpolated in strings.
 =cut
 
 sub toString {
-	my $this = shift;
-	return join " ", $this->getValue;
+	return join " ", $_[0]->getValue;
 }
 
 1;

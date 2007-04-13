@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 896;
+use Test::More tests => 899;
 use strict;
 
 BEGIN {
@@ -131,3 +131,8 @@ is( Math::even(-2), 1 );
 is( Math::odd(-2),  0 );
 is( Math::sig(-2),  -1 );
 
+ok( Math::atan2( 1, 1 ) == CORE::atan2( 1, 1 ) );
+ok( Math::fmod( 23.5, 4.7 ) );
+ok( Math::fmod( 23, 5 ) == 23 % 5 );
+
+__END__

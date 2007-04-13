@@ -7,9 +7,9 @@ use warnings;
 
 use base 'Math::Vec2';
 
-our $VERSION = '0.312';
+our $VERSION = '0.314';
 
-use constant DefaultValue => [ 0, 0, 0 ];
+use constant getDefaultValue => [ 0, 0, 0 ];
 
 =head1 NAME
 
@@ -36,7 +36,7 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 3D vector class used to store 3D vectors and points.
 
-=head2 DefaultValue
+=head2 Default value
 
 	0 0 0
 
@@ -534,11 +534,11 @@ This is used to overload the '>>' and '<<' operator.
 =cut
 
 sub rotate {
-	my $n = -$_[1] % @{ $_[0]->DefaultValue };
+	my $n = -$_[1] % @{ $_[0]->getDefaultValue };
 
 	if ($n) {
 		my $vec = [ $_[0]->getValue ];
-		splice @$vec, @{ $_[0]->DefaultValue } - $n, $n, splice( @$vec, 0, $n );
+		splice @$vec, @{ $_[0]->getDefaultValue } - $n, $n, splice( @$vec, 0, $n );
 		return $_[0]->new($vec);
 	}
 
