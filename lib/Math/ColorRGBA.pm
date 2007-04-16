@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.233';
+our $VERSION = '0.235';
 
 use Math ();
 use Math::Color;
@@ -257,24 +257,24 @@ sub inverse {
 	] );
 }
 
-=head2 add(Vec3)
+=head2 add(Math::ColorRGBA)
 
 Adds the RGB components. Alpha is taken from the first color.
 
 	$v = $v1->add($v2);
 	$v = $v1 + $v2;
-	$v = [8, 2, 4] + $v1;
+	$v = [0.8, 0.2, 0.4, 0.1] + $v1;
 	$v1 += $v2;
 
 =cut
 
 sub add {
-	my ( $a, $b ) = @_;
+	my ( $a, $b, $r ) = @_;
 	return $a->new( [
 			$a->[0] + $b->[0],
 			$a->[1] + $b->[1],
 			$a->[2] + $b->[2],
-			$a->[3],
+			$r ? $b->[3] : $a->[3],
 	] );
 }
 
@@ -286,13 +286,13 @@ sub _add {
 	return $a;
 }
 
-=head2 subtract(Vec3)
+=head2 subtract(Math::ColorRGBA)
 
 Subtracts the RGB components of the two colors. Alpha is taken from the first color.
   
 	$v = $v1->subtract($v2);
 	$v = $v1 - $v2;
-	$v = [8, 2, 4] - $v1;
+	$v = [0.8, 0.2, 0.4, 0.2] - $v1;
 	$v1 -= $v2;
 
 =cut
@@ -304,7 +304,7 @@ sub subtract {
 				$b->[0] - $a->[0],
 				$b->[1] - $a->[1],
 				$b->[2] - $a->[2],
-				$a->[3],
+				$b->[3],
 			  ) : (
 				$a->[0] - $b->[0],
 				$a->[1] - $b->[1],
@@ -322,14 +322,14 @@ sub _subtract {
 	return $a;
 }
 
-=head2 multiply(Vec3 or scalar)
+=head2 multiply(Math::ColorRGBA or scalar)
 
 This is used to overload the '*' operator.
 Multiplies the RGB components. Alpha is left unchanged.
 
 	$v = $v1 * 2;
-	$v = $v1 * [3, 5, 4];
-	$v = [8, 2, 4] * $v1;
+	$v = $v1 * [0.3, 0.5, 0.4, 0.2];
+	$v = [0.8, 0.2, 0.4, 0.2] * $v1;
 	$v = $v1 * $v1;
 	$v1 *= 2;
 	
@@ -338,13 +338,13 @@ Multiplies the RGB components. Alpha is left unchanged.
 =cut
 
 sub multiply {
-	my ( $a, $b ) = @_;
+	my ( $a, $b, $r ) = @_;
 	return ref $b ?
 	  $a->new( [
 			$a->[0] * $b->[0],
 			$a->[1] * $b->[1],
 			$a->[2] * $b->[2],
-			$a->[3],
+			$r ? $b->[3] : $a->[3],
 		] )
 	  :
 	  $a->new( [
@@ -369,16 +369,16 @@ sub _multiply {
 	return $a;
 }
 
-=head2 divide(Vec3 or scalar)
+=head2 divide(Math::ColorRGBA or scalar)
 
 Divides the RGB components. Alpha is left unchanged.
 This is used to overload the '/' operator.
 
 	$v = $v1 / 2;
 	$v1 /= 2;
-	$v = $v1 / [3, 7, 4];
-	$v = [8, 2, 4] / $v1;
-	$v = $v1 / $v1;	# unit vector
+	$v = $v1 / [0.3, 0.7, 0.4, 0.2];
+	$v = [0.8, 0.2, 0.4, 0.2] / $v1;
+	$v = $v1 / $v1;
 	
 	$v = $v1->divide(2);
 
@@ -392,7 +392,7 @@ sub divide {
 				$b->[0] / $a->[0],
 				$b->[1] / $a->[1],
 				$b->[2] / $a->[2],
-				$a->[3],
+				$b->[3],
 			  ) : (
 				$a->[0] / $b->[0],
 				$a->[1] / $b->[1],
@@ -431,7 +431,7 @@ sub _mod {
 				Math::fmod( $b->[0], $a->[0] ),
 				Math::fmod( $b->[1], $a->[1] ),
 				Math::fmod( $b->[2], $a->[2] ),
-				$a->[3],
+				$b->[3],
 			  ) : (
 				Math::fmod( $a->[0], $b->[0] ),
 				Math::fmod( $a->[1], $b->[1] ),

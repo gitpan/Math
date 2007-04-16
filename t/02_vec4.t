@@ -39,5 +39,6 @@ $v->getArray->[0] = 2345;
 is( ref $v->getArray, "Math::Vec4", "$v new Math::Vec4()" );
 is( $v, "2345 -2 0 6", "$v new Math::Vec4()" );
 
+#is( $v & [ 1, -2, 1, 1 ], "2345 -2 0 6", "$v new Math::Vec4()" );
 
 __END__

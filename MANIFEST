@@ -13,6 +13,7 @@ MANIFEST			This list of files
 README
 t/00_pod.t
 t/01_math.t
+t/01_math2.t
 t/01_vector.t
 t/02_vec2.t
 t/02_vec3.t
@@ -20,4 +21,5 @@ t/02_vec4.t
 t/03_color.t
 t/03_rotation.t
 t/04_colorrgba.t
+t/05_notations.t
 META.yml                                 Module meta-data (added by MakeMaker)

@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.523';
+our $VERSION = '0.525';
 
 our @POSIX = qw(
   acos
@@ -13,6 +13,7 @@ our @POSIX = qw(
   fmod
   round
   log10
+  tan
 );
 
 use POSIX @POSIX;
@@ -35,8 +36,9 @@ our @CONSTANTS = qw(
 our @FUNCTIONS = qw(
   max
   min
-  minmax
+  clamp
   random
+  pow
   pro
   sum
   even

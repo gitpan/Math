@@ -10,7 +10,7 @@ use Scalar::Util;
 
 #use Exporter;
 
-our $VERSION = '0.323';
+our $VERSION = '0.325';
 
 =head1 NAME
 
@@ -122,11 +122,11 @@ sub new {
 	} elsif ( 2 == @_ ) {
 
 		my $arg1    = shift;
-		my $reftype = ref($arg1);
+		my $reftype = Scalar::Util::reftype($arg1);
 
 		if ( $reftype eq 'ARRAY' ) {
 			my $arg2    = shift;
-			my $reftype = ref($arg2);
+			my $reftype = Scalar::Util::reftype($arg2);
 
 			if ( !$reftype ) {    # vec1, angle
 
@@ -350,13 +350,13 @@ sub getZ { $_[0]->{axis}->[2] }
 
 =head2 getAxis
 
-Returns the axis of rotation as an L<Math::Vec3> object.
+Returns a copy of the corresponding axis as an L<Math::Vec3> object.
 
 	$axis = $r->getAxis;
 
 =cut
 
-sub getAxis { new Math::Vec3( [ @{ $_[0]->{axis} } ] ) }
+sub getAxis { new Math::Vec3 [ @{ $_[0]->{axis} } ] }
 
 =head2 getAngle
 
@@ -370,14 +370,14 @@ sub getAngle { $_[0]->{angle} }
 
 =head2 getQuaternion
 
-Returns corresponding L<quaternion|Math::Quaternion>.
-This function is experimental
-	
+Returns a copy of the corresponding L<quaternion|Math::Quaternion>.
+
 	$q = $r->getQuaternion;
 
 =cut
 
-sub getQuaternion { $_[0]->{quaternion} }
+sub getQuaternion { new Math::Quaternion( $_[0]->{quaternion} ) }
+#Returns a copy, weil $_[0]->{quaternion} kann sich ändern
 
 =head2 inverse
 

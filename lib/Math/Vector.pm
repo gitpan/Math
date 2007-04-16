@@ -3,9 +3,10 @@ package Math::Vector;
 use strict;
 use warnings;
 
-our $VERSION = '1.708';
+our $VERSION = '1.71';
 
 use Math ();
+use Scalar::Util qw(reftype);
 
 =head1 NAME
 
@@ -61,6 +62,15 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 use overload
   '=' => \&copy,
 
+  "&" => sub {
+	my ( $a, $b, $r ) = @_;
+	map { printf "%s\n", $a->[$_] } ( 0 .. $#{ $a->getDefaultValue } );
+	map { printf "%s\n", $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } );
+	$a->new( [ map { $a->[$_] & $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+  },
+  #"|",
+  #"^",
+
   #'>>' => \&rotate,
   #'<<' => sub { $_[0]->rotate( -$_[1] ) },
 
@@ -112,6 +122,10 @@ sub new {
 
 		if ( ref( $_[0] ) eq 'ARRAY' ) {    # [0,1]
 			return bless shift(), $class;
+		} elsif ( Scalar::Util::reftype( $_[0] ) eq 'ARRAY' ) {
+			my $this = bless [], $class;
+			$this->setValue( @{ $_[0] } );
+			return $this;
 		} else {
 			warn("Don't understand arguments passed to new()");
 		}
