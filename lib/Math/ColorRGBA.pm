@@ -3,9 +3,11 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.224';
+our $VERSION = '0.233';
 
-use base 'Math::Color';
+use Math ();
+use Math::Color;
+use base 'Math::Vec4';
 
 use constant getDefaultValue => [ 0, 0, 0, 0 ];
 
@@ -15,7 +17,11 @@ Math::ColorRGBA - Perl class to represent rgba colors
 
 =head1 TREE
 
--+- L<Math::ColorRGBA>
+-+- L<Math::Vector> -+- L<Math::Vec4> -+- L<Math::ColorRGBA>
+
+=head1 REQUIRES
+
+L<Math::Color>
 
 =head1 SEE ALSO
 
@@ -35,6 +41,30 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 =head2 Default value
 
 	0 0 0 0
+
+=head1 OPERATORS
+
+=head2 Summary
+
+=cut
+
+use overload
+  '~' => \&inverse,
+
+  '+='  => \&_add,
+  '-='  => \&_subtract,
+  '*='  => \&_multiply,
+  '/='  => \&_divide,
+  '**=' => \&__pow,
+  '%='  => \&__mod,
+
+  '+'  => \&add,
+  '-'  => \&subtract,
+  '*'  => \&multiply,
+  '/'  => \&divide,
+  '**' => \&_pow,
+  '%'  => \&_mod,
+  ;
 
 =head1 METHODS
 
@@ -65,6 +95,16 @@ r, g, b, a are given on [0, 1].
 
 =cut
 
+=head2 setRGB
+
+Sets the value of the color from a 3 component array ref ie. (L<Math::Color>).
+
+	$c4->setRGB(new Math::Color(0.1,0.2,0.3));
+
+=cut
+
+sub setRGB { @{ $_[0] }[ 0, 1, 2 ] = @{ $_[1] }[ 0, 1, 2 ] }
+
 =head2 setRed(r)
 
 Sets the first value of the color
@@ -72,11 +112,10 @@ r is given on [0, 1].
 
 	$c1->setRed(1);
 
-	$c1->red = 1;
-	$c1->r   = 1;
-	$c1->[0] = 1;
-
 =cut
+
+*setRed = \&Math::Vec4::setX;
+*getRed = \&Math::Vec4::getX;
 
 =head2 setGreen(g)
 
@@ -85,11 +124,10 @@ g is given on [0, 1].
 
 	$c1->setGreen(0.2);
 
-	$c1->green = 0.2;
-	$c1->g   = 0.2;
-	$c1->[1] = 0.2;
-
 =cut
+
+*setGreen = \&Math::Vec4::setY;
+*getGreen = \&Math::Vec4::getY;
 
 =head2 setBlue(b)
 
@@ -98,10 +136,10 @@ b is given on [0, 1].
 
 	$c1->setZ(0.3);
 
-	$c1->z   = 0.3;
-	$c1->[2] = 0.3;
-
 =cut
+
+*setBlue = \&Math::Vec4::setZ;
+*getBlue = \&Math::Vec4::getZ;
 
 =head2 setAlpha(alpha)
 
@@ -109,12 +147,10 @@ Sets the first value of the vector
 
 	$v1->setAlpha(1);
 
-	$v1->alpha = 1;
-	$v1->[3] = 1;
-
 =cut
 
-sub setAlpha { $_[0]->[3] = $_[1] }
+*setAlpha = \&Math::Vec4::setW;
+*getAlpha = \&Math::Vec4::getW;
 
 =head2 getValue
 
@@ -124,14 +160,23 @@ Returns the value of the color (r, g, b, a) as a 4 components array.
 
 =cut
 
+sub getValue { map { Math::clamp( $_, 0, 1 ) } @{ $_[0] } }
+
+=head2 getRGB
+
+Returns the rgb value of the color (r, g, b) as color (L<Math::Color>).
+
+	$c = $c4->getRGB;
+
+=cut
+
+sub getRGB { new Math::Color( @{ $_[0] }[ 0, 1, 2 ] ) }
+
 =head2 getRed
 
 Returns the first value of the color.
 
 	$r = $c1->getRed;
-	$r = $c1->red;
-	$r = $c1->r;
-	$r = $c1->[0];
 
 =cut
 
@@ -140,13 +185,6 @@ Returns the first value of the color.
 Returns the second value of the color.
 
 	$g = $c1->getGreen;
-	$g = $c1->green;
-	$g = $c1->g;
-	$g = $c1->[1];
-
-=cut
-
-=head2 alpha
 
 =cut
 
@@ -155,13 +193,6 @@ Returns the second value of the color.
 Returns the third value of the color.
 
 	$b = $c1->getBlue;
-	$b = $c1->blue;
-	$b = $c1->b;
-	$b = $c1->[2];
-
-=cut
-
-=head2 alpha
 
 =cut
 
@@ -170,30 +201,282 @@ Returns the third value of the color.
 Returns the fourth value of the color.
 
 	$a = $v1->getAlpha;
-	$a = $v1->alpha;
-	$a = $v1->[3];
 
 =cut
 
-sub alpha    { $_[0]->[3] }
-sub getAlpha { $_[0]->[3] }
+=head2 setHSV(h,s,v,a)
 
-=head2 setHSV(h,s,v)
-
-h, s, v are given on [0, 1].
+h is given on [0, 2 PI]. s, v are given on [0, 1].
 RGB are each returned on [0, 1].
 
 	$c->setHSV(1/12,1,1);  # 1 0.5 0
+	$c->setHSV(h,s,v);
+	$c->setHSV(h,s,v,a);
 
 =cut
 
+sub setHSV {
+	my ( $this, $h, $s, $v, $a ) = @_;
+
+	my $c = new Math::Color;
+	$c->setHSV( $h, $s, $v );
+
+	$this->setRGB($c);
+	$this->setAlpha($a) if defined $a;
+}
+
 =head2 getHSV
 
-h, s, v are each returned on [0, 1].
+h is in [0, 2 PI]. s, v are each returned on [0, 1].
 
 	@hsv = $c->getHSV;
 
 =cut
+
+sub getHSV { ($_[0]->getRGB->getHSV, 0) }
+
+=head2 inverse
+
+Returns the inverse of the color.
+Inverse the first three componets (r,g,b) of the color.
+This is used to overload the '~' operator.
+
+	$v = new Math::ColorRGBA(0, 0.1, 1, 0.123);
+	$v = $v1->inverse;  # 1 0.9 0 0.123
+	$v = ~$v1;          # 1 0.9 0 0.123
+
+=cut
+
+sub inverse {
+	my ($a) = @_;
+	return $a->new( [
+			1 - $a->[0],
+			1 - $a->[1],
+			1 - $a->[2],
+			$a->[3],
+	] );
+}
+
+=head2 add(Vec3)
+
+Adds the RGB components. Alpha is taken from the first color.
+
+	$v = $v1->add($v2);
+	$v = $v1 + $v2;
+	$v = [8, 2, 4] + $v1;
+	$v1 += $v2;
+
+=cut
+
+sub add {
+	my ( $a, $b ) = @_;
+	return $a->new( [
+			$a->[0] + $b->[0],
+			$a->[1] + $b->[1],
+			$a->[2] + $b->[2],
+			$a->[3],
+	] );
+}
+
+sub _add {
+	my ( $a, $b ) = @_;
+	$a->[0] += $b->[0];
+	$a->[1] += $b->[1];
+	$a->[2] += $b->[2];
+	return $a;
+}
+
+=head2 subtract(Vec3)
+
+Subtracts the RGB components of the two colors. Alpha is taken from the first color.
+  
+	$v = $v1->subtract($v2);
+	$v = $v1 - $v2;
+	$v = [8, 2, 4] - $v1;
+	$v1 -= $v2;
+
+=cut
+
+sub subtract {
+	my ( $a, $b, $r ) = @_;
+	return $a->new( [
+			$r ? (
+				$b->[0] - $a->[0],
+				$b->[1] - $a->[1],
+				$b->[2] - $a->[2],
+				$a->[3],
+			  ) : (
+				$a->[0] - $b->[0],
+				$a->[1] - $b->[1],
+				$a->[2] - $b->[2],
+				$a->[3],
+			  ) ] )
+	  ;
+}
+
+sub _subtract {
+	my ( $a, $b ) = @_;
+	$a->[0] -= $b->[0];
+	$a->[1] -= $b->[1];
+	$a->[2] -= $b->[2];
+	return $a;
+}
+
+=head2 multiply(Vec3 or scalar)
+
+This is used to overload the '*' operator.
+Multiplies the RGB components. Alpha is left unchanged.
+
+	$v = $v1 * 2;
+	$v = $v1 * [3, 5, 4];
+	$v = [8, 2, 4] * $v1;
+	$v = $v1 * $v1;
+	$v1 *= 2;
+	
+	$v = $v1->multiply(2);
+
+=cut
+
+sub multiply {
+	my ( $a, $b ) = @_;
+	return ref $b ?
+	  $a->new( [
+			$a->[0] * $b->[0],
+			$a->[1] * $b->[1],
+			$a->[2] * $b->[2],
+			$a->[3],
+		] )
+	  :
+	  $a->new( [
+			$a->[0] * $b,
+			$a->[1] * $b,
+			$a->[2] * $b,
+			$a->[3],
+	  ] );
+}
+
+sub _multiply {
+	my ( $a, $b ) = @_;
+	if ( ref $b ) {
+		$a->[0] *= $b->[0];
+		$a->[1] *= $b->[1];
+		$a->[2] *= $b->[2];
+	} else {
+		$a->[0] *= $b;
+		$a->[1] *= $b;
+		$a->[2] *= $b;
+	}
+	return $a;
+}
+
+=head2 divide(Vec3 or scalar)
+
+Divides the RGB components. Alpha is left unchanged.
+This is used to overload the '/' operator.
+
+	$v = $v1 / 2;
+	$v1 /= 2;
+	$v = $v1 / [3, 7, 4];
+	$v = [8, 2, 4] / $v1;
+	$v = $v1 / $v1;	# unit vector
+	
+	$v = $v1->divide(2);
+
+=cut
+
+sub divide {
+	my ( $a, $b, $r ) = @_;
+	return ref $b ?
+	  $a->new( [
+			$r ? (
+				$b->[0] / $a->[0],
+				$b->[1] / $a->[1],
+				$b->[2] / $a->[2],
+				$a->[3],
+			  ) : (
+				$a->[0] / $b->[0],
+				$a->[1] / $b->[1],
+				$a->[2] / $b->[2],
+				$a->[3],
+			  ) ] )
+	  : $a->new( [
+			$a->[0] / $b,
+			$a->[1] / $b,
+			$a->[2] / $b,
+			$a->[3],
+	  ] );
+}
+
+sub _divide {
+	my ( $a, $b ) = @_;
+	if ( ref $b ) {
+		$a->[0] /= $b->[0];
+		$a->[1] /= $b->[1];
+		$a->[2] /= $b->[2];
+	} else {
+		$a->[0] /= $b;
+		$a->[1] /= $b;
+		$a->[2] /= $b;
+	}
+	return $a;
+}
+
+#mod
+#cut
+sub _mod {
+	my ( $a, $b, $r ) = @_;
+	return ref $b ?
+	  $a->new( [
+			$r ? (
+				Math::fmod( $b->[0], $a->[0] ),
+				Math::fmod( $b->[1], $a->[1] ),
+				Math::fmod( $b->[2], $a->[2] ),
+				$a->[3],
+			  ) : (
+				Math::fmod( $a->[0], $b->[0] ),
+				Math::fmod( $a->[1], $b->[1] ),
+				Math::fmod( $a->[2], $b->[2] ),
+				$a->[3],
+			  ) ] )
+	  : $a->new( [
+			Math::fmod( $a->[0], $b ),
+			Math::fmod( $a->[1], $b ),
+			Math::fmod( $a->[2], $b ),
+			$a->[3],
+	  ] );
+}
+
+sub __mod {
+	my ( $a, $b ) = @_;
+	if ( ref $b ) {
+		$a->[0] = Math::fmod( $a->[0], $b->[0] );
+		$a->[1] = Math::fmod( $a->[1], $b->[1] );
+		$a->[2] = Math::fmod( $a->[2], $b->[2] );
+	} else {
+		$a->[0] = Math::fmod( $a->[0], $b );
+		$a->[1] = Math::fmod( $a->[1], $b );
+		$a->[2] = Math::fmod( $a->[2], $b );
+	}
+	return $a;
+}
+
+sub _pow {
+	my ( $a, $b ) = @_;
+	return $a->new( [
+			$a->[0]**$b,
+			$a->[1]**$b,
+			$a->[2]**$b,
+			$a->[3],
+	] );
+}
+
+sub __pow {
+	my ( $a, $b ) = @_;
+	$a->[0]**= $b;
+	$a->[1]**= $b;
+	$a->[2]**= $b;
+	return $a;
+}
 
 =head2 toString
 

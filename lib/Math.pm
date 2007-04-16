@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.514';
+our $VERSION = '0.523';
 
 our @POSIX = qw(
   acos
@@ -186,9 +186,7 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 	Returns the greater of number1 and number2
 
-=head2 minmax(min, number, max)
-
-=head2 minmax(number, min, max)
+=head2 clamp(number, min, max)
 
 	Returns number between or equal min and max
 
@@ -279,7 +277,7 @@ sub max {
 	pop;
 }
 
-sub minmax { min( max( $_[0], $_[1] ), $_[2] ) }
+sub clamp { min( max( $_[0], $_[1] ), $_[2] ) }
 
 sub pro {
 	my $pro = 1;

@@ -7,11 +7,13 @@ lib/Math/Rotation.pm
 lib/Math/Vec2.pm
 lib/Math/Vec3.pm
 lib/Math/Vec4.pm
+lib/Math/Vector.pm
 Makefile.PL
 MANIFEST			This list of files
 README
 t/00_pod.t
 t/01_math.t
+t/01_vector.t
 t/02_vec2.t
 t/02_vec3.t
 t/02_vec4.t

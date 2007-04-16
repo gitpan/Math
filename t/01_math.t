@@ -36,7 +36,7 @@ is( Math::log(2),      CORE::log(2),       "Math::log(-1)" );
 is( Math::log10(2),    POSIX::log10(2),    "Math::log(-1)" );
 is( Math::min( 3, 2 ), 2, "Math::min(3, 2)" );
 is( Math::max( 3, 2 ), 3, "Math::max(3, 2)" );
-is( Math::minmax( -1, 3, 2 ), 2, "Math::minmax(-1, 3, 2)" );
+is( Math::clamp( -1, 3, 2 ), 2, "Math::clamp(-1, 3, 2)" );
 is( Math::pow( 2, 4 ), 2**4, "Math::pow(2, 4)" );
 ok( Math::random( 1, 2 ), "Math::random()" );
 is( Math::round(-1), -1,             "Math::round(-1)" );
@@ -86,9 +86,9 @@ is( Math::max( 2, 3 ), 3 );
 is( Math::max( 4, 5, 3, 2 ), 5 );
 is( Math::max( 7, 7, 2, 2, 8, 4, 7, 3 ), 8 );
 
-is( Math::minmax( 4,  2, 8 ), 4 );
-is( Math::minmax( 1,  2, 8 ), 2 );
-is( Math::minmax( 10, 2, 8 ), 8 );
+is( Math::clamp( 4,  2, 8 ), 4 );
+is( Math::clamp( 1,  2, 8 ), 2 );
+is( Math::clamp( 10, 2, 8 ), 8 );
 
 is( Math::sum(), 0 );
 is( Math::sum(23), 23 );

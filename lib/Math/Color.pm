@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.314';
+our $VERSION = '0.323';
 
 use Math ();
 
@@ -15,7 +15,7 @@ Math::Color - Perl class to represent colors
 
 =head1 TREE
 
--+- L<Math::Vec2> -+- L<Math::Vec3> -+- L<Math::Color>
+-+- L<Math::Vector> -+- L<Math::Vec3> -+- L<Math::Color>
 
 =head1 SEE ALSO
 
@@ -35,6 +35,12 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 =head2 DefaultValue
 
 	0 0 0
+
+=cut
+
+use overload
+  '~' => \&inverse,
+  ;
 
 =head1 METHODS
 
@@ -72,16 +78,10 @@ r is given on [0, 1].
 
 	$c1->setRed(1);
 
-	$c1->red = 1;
-	$c1->r   = 1;
-	$c1->[0] = 1;
-
 =cut
 
-*setRed = \&Math::Vec2::setX;
-*r      = \&Math::Vec2::x;
-*red    = \&Math::Vec2::x;
-*getRed = \&Math::Vec2::getX;
+*setRed = \&Math::Vec3::setX;
+*getRed = \&Math::Vec3::getX;
 
 =head2 setGreen(g)
 
@@ -90,16 +90,10 @@ g is given on [0, 1].
 
 	$c1->setGreen(0.2);
 
-	$c1->green = 0.2;
-	$c1->g   = 0.2;
-	$c1->[1] = 0.2;
-
 =cut
 
-*setGreen = \&Math::Vec2::setY;
-*g        = \&Math::Vec2::y;
-*green    = \&Math::Vec2::y;
-*getGreen = \&Math::Vec2::getY;
+*setGreen = \&Math::Vec3::setY;
+*getGreen = \&Math::Vec3::getY;
 
 =head2 setBlue(b)
 
@@ -108,14 +102,9 @@ b is given on [0, 1].
 
 	$c1->setBlue(0.3);
 
-	$c1->blue   = 0.3;
-	$c1->[2] = 0.3;
-
 =cut
 
 *setBlue = \&Math::Vec3::setZ;
-*b       = \&Math::Vec3::z;
-*blue    = \&Math::Vec3::z;
 *getBlue = \&Math::Vec3::getZ;
 
 =head2 getValue
@@ -126,32 +115,13 @@ Returns the value of the color (r, g, b) as a 3 components array.
 
 =cut
 
-sub getValue { map { Math::minmax($_, 0, 1) } $_[0]->SUPER::getValue }
-
-=head2 r
-
-=cut
-
-=head2 red
-
-=cut
+sub getValue { map { Math::clamp( $_, 0, 1 ) } $_[0]->SUPER::getValue }
 
 =head2 getRed
 
 Returns the first value of the color.
 
 	$r = $c1->getRed;
-	$r = $c1->red;
-	$r = $c1->r;
-	$r = $c1->[0];
-
-=cut
-
-=head2 g
-
-=cut
-
-=head2 green
 
 =cut
 
@@ -160,17 +130,6 @@ Returns the first value of the color.
 Returns the second value of the color.
 
 	$g = $c1->getGreen;
-	$g = $c1->green;
-	$g = $c1->g;
-	$g = $c1->[1];
-
-=cut
-
-=head2 b
-
-=cut
-
-=head2 blue
 
 =cut
 
@@ -179,15 +138,12 @@ Returns the second value of the color.
 Returns the third value of the color.
 
 	$b = $c1->getBlue;
-	$b = $c1->blue;
-	$b = $c1->b;
-	$b = $c1->[2];
 
 =cut
 
 =head2 setHSV(h,s,v)
 
-h is given on [0, 2 pi]. s, v are given on [0, 1].
+h is given on [0, 2 PI]. s, v are given on [0, 1].
 RGB are each returned on [0, 1].
 
 	$c->setHSV(1/12,1,1);  # 1 0.5 0
@@ -197,7 +153,7 @@ RGB are each returned on [0, 1].
 sub setHSV {
 	my ( $this, $h, $s, $v ) = @_;
 
-	# H is given on [0, 2 pi]. S and V are given on [0, 1].
+	# H is given on [0, 2 PI]. S and V are given on [0, 1].
 	# RGB are each returned on [0, 1].
 
 	# achromatic (grey)
@@ -226,7 +182,7 @@ sub setHSV {
 
 =head2 getHSV
 
-h is in [0, 2 pi]. s, v are each returned on [0, 1].
+h is in [0, 2 PI]. s, v are each returned on [0, 1].
 
 	@hsv = $c->getHSV;
 
@@ -267,6 +223,26 @@ sub getHSV {
 	return ( $h, $s, $v );
 }
 
+=head2 inverse
+
+Returns the inverse of the color.
+This is used to overload the '~' operator.
+
+	$v = new Math::Color(0, 0.1, 1);
+	$v = $v1->inverse;  # 1 0.9 0
+	$v = -$v1;         # 1 0.9 0
+
+=cut
+
+sub inverse {
+	my ($a) = @_;
+	return $a->new( [
+			1 - $a->[0],
+			1 - $a->[1],
+			1 - $a->[2],
+	] );
+}
+
 =head2 toString
 
 Returns a string representation of the color. This is used
@@ -303,3 +279,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

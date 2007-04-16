@@ -67,7 +67,7 @@ $r2->setZ(2);
 ok( $r = $r2, "$r2 setZ" );
 ok( $r = $r1->multiply($r2), "$r multiply" );
 
-$r2->setAxis( 2, 3, 4 );
+$r2->setAxis( [2, 3, 4] );
 ok( $r = $r2, "$r2 setAxis" );
 ok( $r = $r1->multiply($r2), "$r multiply" );
 
@@ -78,18 +78,18 @@ ok( $r = $r1->multiply($r2), "$r multiply" );
 $r2->setValue( 5, 6, 7, 8 );
 ok( $r = $r2,                "$r2 setValue" );
 ok( $r = $r1->multiply($r2), "$r multiply" );
-ok( $r = $r1 + $r2,          "$r multiply" );
+ok( $r = $r1 * $r2,          "$r multiply" );
 
 $r2->getValue;
 $r2->setValue( 5, 6, 7, 8 );
 $r2->setValue( 5, 6, 7, 8 );
 ok( $r = $r2,                "$r2 setValue" );
 ok( $r = $r1->multiply($r2), "$r multiply" );
-ok( $r = -( $r1 + $r2 ),     "$r multiply" );
+ok( $r = ~( $r1 * $r2 ),     "$r multiply" );
 
-ok( $r = -$r1, "$r -" );
-ok( $r = $r1 + $r2, "$r +" );
-ok( $v = $r2 + [ 1, 2, 3 ], "@$v *" );
+ok( $r = ~$r1, "$r -" );
+ok( $r = $r1 * $r2, "$r +" );
+ok( $v = $r2 * [ 1, 2, 3 ], "@$v *" );
 ok( $v = $r2 * [ 1, 2, 3 ], "@$v *" );
 ok( $v = $r2->multVec( [ 1, 2, 3 ] ), "@$v *" );
 ok( $v = [ $r2->multVec( 1, 2, 3 ) ], "@$v *" );
@@ -98,9 +98,9 @@ ok( $r = $r2->multVec($r1), "$r *" );
 #ok( $v = $r2->multVec( [ 1, 2, 3, 4 ] ), "@$v *" );
 #ok( $v = $r2 * [ 1, 2, 3, 4 ], "@$v *" );
 ok( $r = $r2 * $r1, "$r *" );
-ok( $r = $r2 + $r1, "$r +" );
-ok( ~$r1 == -$r1, "$r1 ==" );
-ok( ~$r1 eq -$r1, "$r1 eq" );
+ok( $r = $r2 * $r1, "$r *" );
+ok( ~$r1 == ~$r1, "$r1 ==" );
+ok( ~$r1 eq ~$r1, "$r1 eq" );
 
 ok( ~$r1 ne $r1, "$r1 ne" );
 ok( ~$r1 != $r1, "$r1 ne" );

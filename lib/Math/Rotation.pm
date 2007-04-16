@@ -4,24 +4,13 @@ use strict;
 use warnings;
 
 use Math::Quaternion;
+use Math::Vec3;
+
+use Scalar::Util;
 
 #use Exporter;
 
-use overload
-  '='    => \&copy,
-  'neg'  => \&inverse,
-  '~'    => \&inverse,
-  'bool' => sub { abs( $_[0]->{quaternion}->[0] ) < 1 },    # ! $_[0]->{quaternion}->[0]->isreal
-  '+'    => \&multVec,
-  '*'    => \&multVec,
-  'eq'   => \&eq,
-  '=='   => \&eq,
-  'ne'   => \&ne,
-  '!='   => \&ne,
-  '""'   => \&toString,
-  ;
-
-our $VERSION = '0.314';
+our $VERSION = '0.323';
 
 =head1 NAME
 
@@ -35,7 +24,7 @@ Math::Rotation - Perl class to represent rotations
 
 =head1 REQUIRES
 
-L<Math::Quaternion>
+L<Math::Quaternion>, L<Math::Vec3>
 
 =head1 SEE ALSO
 
@@ -67,6 +56,45 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 	0 0 1 0
 
+=head1 OPERATORS
+
+=head2 Summary
+
+	'~'		=>   Returns the inverse of this rotation.
+
+	'!'		=>   Returns true if the angle of this rotation is 0
+	
+	'=='		=>   Numerical eq. Performs a componentwise equation.
+	'!='		=>   Numerical ne. Performs a componentwise equation.
+	
+	'eq'		=>   Stringwise eq
+	'ne'		=>   Stringwise ne
+	
+	'bool'   	=>   Returns true if the angle of this rotation is not 0
+		
+	'*'		=>   Multiply this rotation with a rotation or a Math::Vec3 object.
+	
+	'""'		=>   Returns a string representation of the rotation.
+
+=cut
+
+use overload
+  '=' => \&copy,
+
+  '~' => \&inverse,
+
+  'bool' => sub { abs( $_[0]->{quaternion}->[0] ) < 1 },    # ! $_[0]->{quaternion}->[0]->isreal
+
+  '==' => \&_eq,
+  '!=' => \&_ne,
+  'eq' => \&_eq,
+  'ne' => \&_ne,
+
+  '*' => \&multVec,
+
+  '""' => \&toString,
+  ;
+
 =head1 METHODS
 
 =head2 new
@@ -96,7 +124,7 @@ sub new {
 		my $arg1    = shift;
 		my $reftype = ref($arg1);
 
-		if ( $reftype =~ /ARRAY/o ) {
+		if ( $reftype eq 'ARRAY' ) {
 			my $arg2    = shift;
 			my $reftype = ref($arg2);
 
@@ -104,7 +132,7 @@ sub new {
 
 				$this->setValue( @$arg1, $arg2 );
 
-			} elsif ( $reftype =~ /ARRAY/o ) {    # vec1, vec2
+			} elsif ( $reftype eq 'ARRAY' ) {    # vec1, vec2
 				$this->private::setQuaternion( eval { Math::Quaternion::rotation( $arg1, $arg2 ) }
 					  || new Math::Quaternion() );
 			} else {
@@ -218,29 +246,24 @@ sub setZ {
 	$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
 }
 
-=head2 setAxis(x,y,z)
-
-
-=cut
-
 =head2 setAxis([x,y,z])
 
 Sets axis of rotation from a 3 components array.
 
-	$r->setAxis(1,2,3);
 	$r->setAxis([1,2,3]);
+	$r->setAxis(Math::Vec3(1,2,3));
 
 =cut
 
 sub setAxis {
 	my $this = shift;
-	@{ $this->{axis} } = ref( $_[0] ) =~ /ARRAY/o ? @{ $_[0] } : @_;
+	@{ $this->{axis} } = @{ $_[0] };
 	$this->{quaternion} = Math::Quaternion::rotation( $this->{angle}, $this->{axis} );
 }
 
 =head2 setAngle(angle)
 
-Sets angle of rotation in L<radiants|http://en.wikipedia.org/wiki/Radian>.
+Sets angle of rotation in L<radiants|http://en.wikipedia.org/wiki/Radian> [0, 2 PI].
 
 	$r->setAngle(4);
 
@@ -294,25 +317,15 @@ sub getValue {
 	);
 }
 
-=head2 x
-
-=cut
-
 =head2 getX
 
 Returns the first value of the axis vector.
 
-	$x = $r->x
 	$x = $r->getX;
 
 =cut
 
-sub x    { $_[0]->{axis}->[0] }
 sub getX { $_[0]->{axis}->[0] }
-
-=head2 y
-
-=cut
 
 =head2 getY
 
@@ -323,87 +336,54 @@ Returns the second value of the axis vector.
 
 =cut
 
-sub y    { $_[0]->{axis}->[1] }
 sub getY { $_[0]->{axis}->[1] }
-
-=head2 z
-
-=cut
 
 =head2 getZ
 
 Returns the third value of the axis vector
 
-	$z = $r->z;
 	$z = $r->getZ;
 
 =cut
 
-sub z    { $_[0]->{axis}->[2] }
 sub getZ { $_[0]->{axis}->[2] }
-
-=head2 axis
-
-Returns the axis of rotation as an $array.
-This function is experimental
-
-	$axis = $r->axis;
-
-=cut
-
-sub axis { $_[0]->{axis} }
 
 =head2 getAxis
 
-Returns the axis of rotation as an @array.
+Returns the axis of rotation as an L<Math::Vec3> object.
 
-	@axis = $r->getAxis;
-
-=cut
-
-sub getAxis { @{ $_[0]->{axis} } }
-
-=head2 angle
+	$axis = $r->getAxis;
 
 =cut
+
+sub getAxis { new Math::Vec3( [ @{ $_[0]->{axis} } ] ) }
 
 =head2 getAngle
 
-Returns corresponding 3D rotation angle in L<radiants|http://en.wikipedia.org/wiki/Radian>.
+Returns corresponding 3D rotation angle in L<radiants|http://en.wikipedia.org/wiki/Radian> [0, 2 PI].
 
-	$angle = $r->angle;
 	$angle = $r->getAngle;
 
 =cut
 
-sub angle    { $_[0]->{angle} }
 sub getAngle { $_[0]->{angle} }
-
-=head2 quaternion
-
-Returns corresponding L<quaternion|Math::Quaternion>.
-This function is experimental
-
-=cut
-
-sub quaternion { $_[0]->{quaternion} }
 
 =head2 getQuaternion
 
-Returns a copy of the corresponding L<quaternion|Math::Quaternion>.
+Returns corresponding L<quaternion|Math::Quaternion>.
+This function is experimental
 	
 	$q = $r->getQuaternion;
 
 =cut
 
-sub getQuaternion { new Math::Quaternion( $_[0]->{quaternion} ) }
+sub getQuaternion { $_[0]->{quaternion} }
 
 =head2 inverse
 
 Returns a Math::Rotation object whose value is the inverse of this object's rotation.
 	
 	$i = $r->inverse;
-	$i = -$r;
 	$i = ~$r;
 
 =cut
@@ -419,8 +399,6 @@ Returns an Math::Rotation whose value is the object multiplied by the passed Mat
 	$r = $r1 * $r2;
 
 	$r1 *= $r1;
-
-	$r = $r1 + $r2;
 
 =cut
 
@@ -449,7 +427,7 @@ sub multVec {
 	my $this = shift;
 	if ( @_ < 3 ) {
 		my $ref = ref( $_[0] );
-		if ( $ref =~ /ARRAY/o || $ref->isa("Math::Vec3") ) {
+		if ( $ref eq 'ARRAY' || $ref->isa("Math::Vec3") ) {
 			my @v = $this->{quaternion}->rotate_vector( @{ $_[0] } );
 			return ref( $_[0] ) eq "ARRAY" ? [@v] : $_[0]->new(@v);
 		} else {
@@ -474,46 +452,22 @@ For t = 1, the value is destRotation.
 
 sub slerp { $_[0]->private::new_from_quaternion( $_[0]->{quaternion}->slerp( $_[1]->{quaternion}, $_[2] ) ) }
 
-=head2 neq(rotation)
-
-	my $bool = $r1 == $r2;
-
-=cut
-
-sub neq {
+sub _neq {
 	my ( $a, $b ) = @_;
 	return $a eq $b;
 }
 
-=head2 eq(rotation)
-
-	my $bool = $r1 eq $r2;
-
-=cut
-
-sub eq {
+sub _eq {
 	my ( $a, $b ) = @_;
 	return "$a" eq $b;
 }
 
-=head2 nne(rotation)
-
-	my $bool = $r1 != $r2;
-
-=cut
-
-sub nne {
+sub _nne {
 	my ( $a, $b ) = @_;
 	return $a ne $b;
 }
 
-=head2 ne(rotation)
-
-	my $bool = $r1 ne $r2;
-
-=cut
-
-sub ne {
+sub _ne {
 	my ( $a, $b ) = @_;
 	return "$a" ne $b;
 }
@@ -561,3 +515,4 @@ This is free software; you can redistribute it and/or modify it
 under the same terms as L<Perl|perl> itself.
 
 =cut
+

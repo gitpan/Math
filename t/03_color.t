@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 74;
+use Test::More tests => 71;
 use strict;
 
 BEGIN {
@@ -27,26 +27,26 @@ is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getX, "0.1", "$v getX" );
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getY, "0.2", "$v getY" );
 is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getZ, "0.3", "$v getZ" );
 
-is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->x, "0.1", "$v x" );
-is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->y, "0.2", "$v y" );
-is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->z, "0.3", "$v z" );
+is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getX, "0.1", "$v x" );
+is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getY, "0.2", "$v y" );
+is( $v = Math::Color->new( 0.1, 0.2, 0.3 )->getZ, "0.3", "$v z" );
 
 is( $v = new Math::Color( 0.1, 0.2, 0.3 ), "0.1 0.2 0.3", "$v new Math::Color()" );
-is( $v->setRed(2),   "2", "$v x" );
-is( $v->setGreen(3), "3", "$v y" );
-is( $v->setBlue(4),  "4", "$v z" );
+$v->setRed(2);
+$v->setGreen(3);
+$v->setBlue(4);
 
-ok( $v->x == $v->getRed, "$v x" );
-ok( $v->x == $v->red,    "$v x" );
-ok( $v->x == $v->r,      "$v x" );
+ok( $v->getX == $v->getRed, "$v x" );
+ok( $v->getX == $v->getRed, "$v x" );
+ok( $v->getX == $v->getRed, "$v x" );
 
-ok( $v->y == $v->getGreen, "$v y" );
-ok( $v->y == $v->green,    "$v y" );
-ok( $v->y == $v->g,        "$v y" );
+ok( $v->getY == $v->getGreen, "$v y" );
+ok( $v->getY == $v->getGreen, "$v y" );
+ok( $v->getY == $v->getGreen, "$v y" );
 
-ok( $v->z == $v->getBlue, "$v z" );
-ok( $v->z == $v->blue,    "$v z" );
-ok( $v->z == $v->b,       "$v z" );
+ok( $v->getZ == $v->getBlue, "$v z" );
+ok( $v->getZ == $v->getBlue, "$v z" );
+ok( $v->getZ == $v->getBlue, "$v z" );
 
 is( $v->[0], "2", "$v [0]" );
 is( $v->[1], "3", "$v [1]" );
@@ -66,7 +66,7 @@ ok( $v != new Math::Color( 0, 0.2, 0.3 ), "$v !=" );
 is( $v1 = new Math::Color( 0.1, 0.2, 0.3 ), "0.1 0.2 0.3", "$v1 v1" );
 is( $v2 = new Math::Color( 0.2, 0.3, 0.4 ), "0.2 0.3 0.4", "$v2 v2" );
 
-is( $v = -$v1,      "0 0 0",         "$v -" );
+is( $v = ~$v1,      "0.9 0.8 0.7",         "$v ~" );
 is( $v = $v1 + $v2, "0.3 0.5 0.7",   "$v +" );
 is( $v = $v1 - $v2, "0 0 0",         "$v -" );
 is( $v = $v1 * 2,   "0.2 0.4 0.6",   "$v *" );
