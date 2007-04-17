@@ -19,6 +19,7 @@ t/02_vec2.t
 t/02_vec3.t
 t/02_vec4.t
 t/03_color.t
+t/03_image.t
 t/03_rotation.t
 t/04_colorrgba.t
 t/05_notations.t

@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.235';
+our $VERSION = '0.239';
 
 use Math ();
 use Math::Color;
@@ -24,6 +24,8 @@ Math::ColorRGBA - Perl class to represent rgba colors
 L<Math::Color>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 
@@ -143,7 +145,7 @@ b is given on [0, 1].
 
 =head2 setAlpha(alpha)
 
-Sets the first value of the vector
+Sets the fourth value of the color. a is given on [0, 1].
 
 	$v1->setAlpha(1);
 
@@ -207,7 +209,6 @@ Returns the fourth value of the color.
 =head2 setHSV(h,s,v,a)
 
 h is given on [0, 2 PI]. s, v are given on [0, 1].
-RGB are each returned on [0, 1].
 
 	$c->setHSV(1/12,1,1);  # 1 0.5 0
 	$c->setHSV(h,s,v);
@@ -238,7 +239,7 @@ sub getHSV { ($_[0]->getRGB->getHSV, 0) }
 =head2 inverse
 
 Returns the inverse of the color.
-Inverse the first three componets (r,g,b) of the color.
+Inverses the RGB components. Alpha is left unchanged.
 This is used to overload the '~' operator.
 
 	$v = new Math::ColorRGBA(0, 0.1, 1, 0.123);

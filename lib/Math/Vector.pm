@@ -3,10 +3,12 @@ package Math::Vector;
 use strict;
 use warnings;
 
-our $VERSION = '1.71';
+our $VERSION = '1.714';
 
 use Math ();
 use Scalar::Util qw(reftype);
+
+#use base 'Math::Object';
 
 =head1 NAME
 
@@ -17,6 +19,8 @@ Math::Vector - Abstract base class for vector classes
 -+- L<Math::Vector>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 
@@ -53,6 +57,8 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 	'eq'		=>   Stringwise eq
 	'ne'		=>   Stringwise ne
 	
+	'int'		=>   Performs a componentwise int.
+	
 	'abs'		=>   Performs a componentwise abs.
 	
 	'""'		=>   Returns a string representation of the vector.
@@ -64,9 +70,10 @@ use overload
 
   "&" => sub {
 	my ( $a, $b, $r ) = @_;
-	map { printf "%s\n", $a->[$_] } ( 0 .. $#{ $a->getDefaultValue } );
-	map { printf "%s\n", $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } );
-	$a->new( [ map { $a->[$_] & $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+	$r ?
+	  $b->new( [ map { $b->[$_] & $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+	  :
+	  $a->new( [ map { $a->[$_] & $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
   },
   #"|",
   #"^",
@@ -92,7 +99,8 @@ use overload
   'eq'  => sub { "$_[0]" eq $_[1] },
   'ne'  => sub { "$_[0]" ne $_[1] },
 
-  'abs' => \&abs,
+  #'int' => sub { $_[0]->new( [ map { CORE::int($_) } @{ $_[0] } ] ) },
+  'abs' => sub { $_[0]->new( [ map { CORE::abs($_) } @{ $_[0] } ] ) },
 
   '""' => \&toString,
   ;
@@ -101,13 +109,13 @@ use overload
 
 =head2 new
 
-	my $v = new Math::VecX; 					  
-	my $v2 = new Math::VecX(1,2);
-	my @v3 = @$v; 
+	my $b = new Math::VecX; 					  
+	my $c = new Math::VecX(1,2, @a);
+	my @d = @$c; 
 	
-If you call new() with a reference to an array, it will be used as reference.
+If you call new() with a reference to an array, it is used as reference internally.
 
-	my $v3 = new Math::VecX([1,2]); 
+	my $f = new Math::VecX([1,2, @a]); 
 
 =cut
 
@@ -145,33 +153,15 @@ sub new {
 
 Makes a copy
 	
-	$v2 = $v1->copy;
+	$c = $v->copy;
 
 =cut
 
 sub copy { $_[0]->new( [ $_[0]->getValue ] ) }
 
-=head2 getArray
-
-Returns the reference to the array.
-
-	$a = $v1->getArray;
-
-=cut
-
-sub getArray { $_[0] }
-
-=head2 setValue(x,y,z)
-
-Sets the value of the vector
-
-	$v1->setValue(1,2);
-
-=cut
-
 =head2 getValue
 
-Returns the value of the vector (x, y) as a 2 components array.
+Returns the value of the vector as array.
 
 	@v = $v1->getValue;
 
@@ -199,21 +189,14 @@ sub setValue {
 	return;
 }
 
-=head2 abs()
-
-Performs a componentwise abs.
-This is used to overload the 'abs' operator.
-
-=cut
-
-sub abs { $_[0]->new( [ map { CORE::abs($_) } @{ $_[0] } ] ) }
-
-=head2 rotate(n)
+=head2 rotate(steps)
 
 Performs a componentwise rotation.
+A positiv number performs a clockwise rotation.
+A negativ number performs a counter-clockwise rotation.
 
 	$v = $vec->rotate(1);
-	$v = $vec->rotate(-2);
+	$v = $vec->rotate(2);
 
 =cut
 

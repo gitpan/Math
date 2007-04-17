@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.325';
+our $VERSION = '0.329';
 
 use base 'Math::Vector';
 
@@ -20,6 +20,8 @@ Math::Vec2 - Perl class to represent 2d vectors
 -+- L<Math::Vector> -+- L<Math::Vec2>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 
@@ -149,7 +151,6 @@ Sets the first value of the vector
 
 	$v1->setX(1);
 
-	$v1->x   = 1;
 	$v1->[0] = 1;
 
 =cut
@@ -162,7 +163,6 @@ Sets the second value of the vector
 
 	$v1->setY(2);
 
-	$v1->y   = 2;
 	$v1->[1] = 2;
 
 =cut
@@ -174,7 +174,6 @@ sub setY { $_[0]->[1] = $_[1]; return }
 Returns the first value of the vector.
 
 	$x = $v1->getX;
-	$x = $v1->x;
 	$x = $v1->[0];
 
 =cut
@@ -186,7 +185,6 @@ sub getX { $_[0]->[0] }
 Returns the second value of the vector.
 
 	$y = $v1->getY;
-	$y = $v1->y;
 	$y = $v1->[1];
 
 =cut
@@ -194,6 +192,8 @@ Returns the second value of the vector.
 sub getY { $_[0]->[1] }
 
 =head2 negate
+
+This is used to overload the 'neg' operator.
 
 	$v = $v1->negate;
 	$v = -$v1;
@@ -209,6 +209,8 @@ sub negate {
 }
 
 =head2 add(vec2)
+
+This is used to overload the '+' operator.
 
 	$v = $v1->add($v2);
 	$v = $v1 + $v2;
@@ -233,6 +235,8 @@ sub _add {
 }
 
 =head2 subtract(vec2)
+
+This is used to overload the '-' operator.
 
 	$v = $v1->subtract($v2);
 	$v = $v1 - $v2;
@@ -392,6 +396,8 @@ sub __pow {
 
 =head2 dot(vec2)
 
+This is used to overload the '.' operator.
+
 	$s = $v1->dot($v2);
 	$s = $v1 . $v2;
 	$s = $v1 . [ 2, 3 ];
@@ -410,6 +416,7 @@ sub dot {
 =head2 length
 
 Returns the length of the vector
+This is used to overload the '+0' operator.
 
 	$l = $v1->length;
 

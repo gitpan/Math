@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 19;
+use Test::More tests => 18;
 use strict;
 
 BEGIN {
@@ -35,8 +35,7 @@ is( $v = $v1 . $v2, "40", "$v new Math::Vec4()" );
 is( $v = $v1 x $v2, "-4 -2 0 6", "$v new Math::Vec4()" );
 like( $v->length, "/^7\.4/", "$v new Math::Vec4()" );
 
-$v->getArray->[0] = 2345;
-is( ref $v->getArray, "Math::Vec4", "$v new Math::Vec4()" );
+$v->[0] = 2345;
 is( $v, "2345 -2 0 6", "$v new Math::Vec4()" );
 
 #is( $v & [ 1, -2, 1, 1 ], "2345 -2 0 6", "$v new Math::Vec4()" );

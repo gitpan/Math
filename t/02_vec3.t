@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Test::More tests => 94;
+use Test::More tests => 86;
 use strict;
 
 BEGIN {
@@ -115,14 +115,6 @@ is( $v = Math::Vec3->new( 1, 2, 3 )->rotate(-3), "1 2 3", "$v << 3" );
 # is( ref ~$v1, "Math::Vec3", "$v1 ~" );
 
 is( $v = Math::Vec3->new( 2,  3,  4 ),       "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  3,  4 )->abs,  "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  -3, 4 )->abs,  "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, -3, 4 )->abs,  "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, 3,  4 )->abs,  "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  3,  -4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( 2,  -3, -4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, -3, -4 )->abs, "2 3 4", "$v abs" );
-is( $v = Math::Vec3->new( -2, 3,  -4 )->abs, "2 3 4", "$v abs" );
 
 is( $v = abs( Math::Vec3->new( 2,  3,  4 ) ),  "2 3 4", "$v abs" );
 is( $v = abs( Math::Vec3->new( 2,  -3, 4 ) ),  "2 3 4", "$v abs" );

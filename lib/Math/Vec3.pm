@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.325';
+our $VERSION = '0.329';
 
 use base 'Math::Vector';
 
@@ -20,6 +20,8 @@ Math::Vec3 - Perl class to represent 3d vectors
 -+- L<Math::Vector> -+- L<Math::Vec3>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 
@@ -212,6 +214,8 @@ sub getZ { $_[0]->[2] }
 
 =head2 negate
 
+This is used to overload the 'neg' operator.
+
 	$v = $v1->negate;
 	$v = -$v1;
 
@@ -227,6 +231,8 @@ sub negate {
 }
 
 =head2 add(Vec3)
+
+This is used to overload the '+' operator.
 
 	$v = $v1->add($v2);
 	$v = $v1 + $v2;
@@ -253,6 +259,8 @@ sub _add {
 }
 
 =head2 subtract(Vec3)
+
+This is used to overload the '-' operator.
 
 	$v = $v1->subtract($v2);
 	$v = $v1 - $v2;
@@ -431,6 +439,8 @@ sub __pow {
 
 =head2 dot(Vec3)
 
+This is used to overload the '.' operator.
+
 	$s = $v1->dot($v2);
 	$s = $v1 . $v2;
 	$s = $v1 . [ 2, 3, 4 ];
@@ -448,6 +458,8 @@ sub dot {
 }
 
 =head2 cross(vec3)
+
+This is used to overload the 'x' operator.
 
 	$v = $v1->cross($v2);
 	$v = $v1 x $v2;
@@ -484,6 +496,7 @@ sub _cross {
 =head2 length
 
 Returns the length of the vector
+This is used to overload the '0+' operator.
 
 	$l = $v1->length;
 

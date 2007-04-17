@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.325';
+our $VERSION = '0.329';
 
 use Math ();
 
@@ -18,6 +18,8 @@ Math::Color - Perl class to represent colors
 -+- L<Math::Vector> -+- L<Math::Vec3> -+- L<Math::Color>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 

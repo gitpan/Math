@@ -10,7 +10,7 @@ use Scalar::Util;
 
 #use Exporter;
 
-our $VERSION = '0.325';
+our $VERSION = '0.329';
 
 =head1 NAME
 
@@ -27,6 +27,8 @@ Math::Rotation - Perl class to represent rotations
 L<Math::Quaternion>, L<Math::Vec3>
 
 =head1 SEE ALSO
+
+L<PDL>
 
 L<Math>
 
@@ -382,6 +384,7 @@ sub getQuaternion { new Math::Quaternion( $_[0]->{quaternion} ) }
 =head2 inverse
 
 Returns a Math::Rotation object whose value is the inverse of this object's rotation.
+This is used to overload the '~' operator.
 	
 	$i = $r->inverse;
 	$i = ~$r;
@@ -394,6 +397,7 @@ sub inverse { $_[0]->private::new_from_quaternion( $_[0]->{quaternion}->inverse 
 =head2 multiply(rotation)
 
 Returns an Math::Rotation whose value is the object multiplied by the passed Math::Rotation.
+This is used to overload the '*' operator.
 	
 	$r = $r1->multiply($r2);
 	$r = $r1 * $r2;
@@ -411,6 +415,7 @@ sub multiply { $_[0]->private::new_from_quaternion( $_[1]->{quaternion}->multipl
 =head2 multVec([x,y,z])
 
 Returns an array whose value is the 3D vector [x,y,z] multiplied by the matrix corresponding to this object's rotation.
+This is used to overload the '*' operator.
 
 	$v = $r->multVec([1,2,3]);
 	@v = $r->multVec(1,2,3);
