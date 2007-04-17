@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.529';
+our $VERSION = '0.531';
 
 our @POSIX = qw(
   acos
@@ -72,13 +72,15 @@ Math - constants and functions
 
 =head1 SEE ALSO
 
-L<perlfunc>
+L<perlfunc> Perl built-in functions
+
+L<PDL> for scientific and bulk numeric data processing and display
 
 L<POSIX>
 
 L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
 
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Vec4>, L<Math::Rotation>
 
 =head1 Constants
 

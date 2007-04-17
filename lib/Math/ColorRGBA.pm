@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.239';
+our $VERSION = '0.241';
 
 use Math ();
 use Math::Color;
@@ -25,7 +25,7 @@ L<Math::Color>
 
 =head1 SEE ALSO
 
-L<PDL>
+L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 

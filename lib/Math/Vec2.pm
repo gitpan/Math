@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.329';
+our $VERSION = '0.331';
 
 use base 'Math::Vector';
 
@@ -21,7 +21,7 @@ Math::Vec2 - Perl class to represent 2d vectors
 
 =head1 SEE ALSO
 
-L<PDL>
+L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 

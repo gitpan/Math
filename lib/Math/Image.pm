@@ -3,7 +3,7 @@ package Math::Image;
 use strict;
 use warnings;
 
-our $VERSION = '0.005';
+our $VERSION = '0.007';
 
 use PDL;
 
@@ -21,7 +21,7 @@ Math::Image - Perl class to represent an image
 
 =head1 SEE ALSO
 
-L<PDL>
+L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 
