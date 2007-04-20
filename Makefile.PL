@@ -11,6 +11,7 @@ WriteMakefile(
 		Math::Trig       => 0,
 		Math::Quaternion => 0,
 		Scalar::Util     => 0,
+		PDL              => 0,
 	},                                  # e.g., Module::Name => 1.1
 
 	#ABSTRACT_FROM => 'lib/Math/Color.pm',

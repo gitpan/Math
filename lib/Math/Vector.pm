@@ -3,7 +3,7 @@ package Math::Vector;
 use strict;
 use warnings;
 
-our $VERSION = '1.716';
+our $VERSION = '1.719';
 
 use Math ();
 use Scalar::Util qw(reftype);
@@ -39,6 +39,13 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head2 Summary
 	
+	'&'		=>   Performs a componentwise and.
+	'|'		=>   Performs a componentwise or.
+	'^'		=>   Performs a componentwise xor.
+
+	'<<'		=>   Left shift.
+	'>>'		=>   Right shift.
+
 	'!'		=>   Returns true if the length of this vector is 0
 	
 	'<'		=>   Numerical gt. Compares the length of this vector with a vector or a scalar value.
@@ -58,7 +65,6 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 	'ne'		=>   Stringwise ne
 	
 	'int'		=>   Performs a componentwise int.
-	
 	'abs'		=>   Performs a componentwise abs.
 	
 	'""'		=>   Returns a string representation of the vector.
@@ -68,20 +74,14 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 use overload
   '=' => \&copy,
 
-  "&" => sub {
-	my ( $a, $b, $r ) = @_;
-	$r ?
-	  $b->new( [ map { $b->[$_] & $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
-	  :
-	  $a->new( [ map { $a->[$_] & $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
-  },
-  #"|",
-  #"^",
+  "&" => \&_and,
+  "|" => \&_or,
+  "^" => \&_xor,
 
-  #'>>' => \&rotate,
-  #'<<' => sub { $_[0]->rotate( -$_[1] ) },
+  '<<' => \&_lshift,
+  '>>' => \&_rshift,
 
-  #'~' => sub { $_[0]->new( [ CORE::reverse @{ $_[0] } ] ) },
+  '~' => sub { $_[0]->new( [ map { ~$_ } @{ $_[0] } ] ) },
 
   '<'   => sub { $_[1] > $_[0]->length },
   '<='  => sub { $_[1] >= $_[0]->length },
@@ -99,7 +99,7 @@ use overload
   'eq'  => sub { "$_[0]" eq $_[1] },
   'ne'  => sub { "$_[0]" ne $_[1] },
 
-  #'int' => sub { $_[0]->new( [ map { CORE::int($_) } @{ $_[0] } ] ) },
+  'int' => sub { $_[0]->new( [ map { CORE::int($_) } @{ $_[0] } ] ) },
   'abs' => sub { $_[0]->new( [ map { CORE::abs($_) } @{ $_[0] } ] ) },
 
   '""' => \&toString,
@@ -187,6 +187,86 @@ sub setValue {
 	} 0 .. $#{ $this->getDefaultValue };
 
 	return;
+}
+
+sub _lshift {
+	my ( $a, $b, $r ) = @_;
+	$r ? (
+		ref $b ?
+		  $b->new( [ map { $b->[$_] << $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+		:
+		  $b->new( [ map { $_ << $a } @$b ] )
+	  ) : (
+		ref $b ?
+		  $a->new( [ map { $a->[$_] << $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+		:
+		  $a->new( [ map { $_ << $b } @$a ] )
+
+	  )
+}
+
+sub _rshift {
+	my ( $a, $b, $r ) = @_;
+	$r ? (
+		ref $b ?
+		  $b->new( [ map { $b->[$_] >> $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+		:
+		  $b->new( [ map { $_ >> $a } @$b ] )
+	  ) : (
+		ref $b ?
+		  $a->new( [ map { $a->[$_] >> $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+		:
+		  $a->new( [ map { $_ >> $b } @$a ] )
+
+	  )
+}
+
+sub _and {
+	my ( $a, $b, $r ) = @_;
+	$r ? (
+		ref $b ?
+		  $b->new( [ map { $b->[$_] & $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+		:
+		  $b->new( [ map { $_ & $a } @$b ] )
+	  ) : (
+		ref $b ?
+		  $a->new( [ map { $a->[$_] & $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+		:
+		  $a->new( [ map { $_ & $b } @$a ] )
+
+	  )
+}
+
+sub _or {
+	my ( $a, $b, $r ) = @_;
+	$r ? (
+		ref $b ?
+		  $b->new( [ map { $b->[$_] | $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+		:
+		  $b->new( [ map { $_ | $a } @$b ] )
+	  ) : (
+		ref $b ?
+		  $a->new( [ map { $a->[$_] | $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+		:
+		  $a->new( [ map { $_ | $b } @$a ] )
+
+	  )
+}
+
+sub _xor {
+	my ( $a, $b, $r ) = @_;
+	$r ? (
+		ref $b ?
+		  $b->new( [ map { $b->[$_] ^ $a->[$_] } ( 0 .. $#{ $b->getDefaultValue } ) ] )
+		:
+		  $b->new( [ map { $_ ^ $a } @$b ] )
+	  ) : (
+		ref $b ?
+		  $a->new( [ map { $a->[$_] ^ $b->[$_] } ( 0 .. $#{ $a->getDefaultValue } ) ] )
+		:
+		  $a->new( [ map { $_ ^ $b } @$a ] )
+
+	  )
 }
 
 =head2 rotate(steps)

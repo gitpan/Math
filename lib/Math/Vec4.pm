@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.331';
+our $VERSION = '0.334';
 
 use base 'Math::Vector';
 
