@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.534';
+our $VERSION = '0.536';
 
 our @POSIX = qw(
   acos
@@ -78,9 +78,7 @@ L<PDL> for scientific and bulk numeric data processing and display
 
 L<POSIX>
 
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
-
-L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Vec4>, L<Math::Rotation>
+L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>, L<Math::Vectors>
 
 =head1 Constants
 
@@ -1033,6 +1031,8 @@ L<Math::VecStat>
 
 L<Math::Vector>
 
+L<Math::Vectors>
+
 L<Math::Vector::SortIndexes>
 
 L<Math::VectorReal>
@@ -1075,11 +1075,13 @@ L<Math::ematica>
 
 =head1 SEE ALSO
 
+L<perlfunc> Perl built-in functions
+
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<POSIX>
 
-L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>
-
-L<Math::Color>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
+L<Math::Complex>, L<Math::Trig>, L<Math::Quaternion>, L<Math::Vectors>
 
 =head1 BUGS & SUGGESTIONS
 

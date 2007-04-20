@@ -3,9 +3,9 @@ package Math::Image;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.012';
 
-use PDL;
+#use PDL;
 
 #use constant getDefaultValue => [ 0, 0, 0 ];
 
@@ -24,6 +24,8 @@ Math::Image - Perl class to represent an image
 L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -230,7 +232,11 @@ sub toString {
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 

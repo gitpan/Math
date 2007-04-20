@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.334';
+our $VERSION = '0.336';
 
 use base 'Math::Vector';
 
@@ -24,6 +24,8 @@ Math::Vec2 - Perl class to represent 2d vectors
 L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -442,7 +444,11 @@ sub sum { $_[0]->[0] + $_[0]->[1] }
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 

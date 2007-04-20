@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.334';
+our $VERSION = '0.336';
 
 use base 'Math::Vector';
 
@@ -29,7 +29,9 @@ L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 
-L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Vec4> L<Math::Rotation>
+L<Math::Vectors>
+
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
@@ -591,9 +593,13 @@ sub length {
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
 
-L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Vec4>, L<Math::Rotation>
+L<Math::Vectors>
+
+L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 BUGS & SUGGESTIONS
 

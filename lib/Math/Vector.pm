@@ -3,7 +3,7 @@ package Math::Vector;
 use strict;
 use warnings;
 
-our $VERSION = '1.719';
+our $VERSION = '1.721';
 
 use Math ();
 use Scalar::Util qw(reftype);
@@ -23,6 +23,8 @@ Math::Vector - Abstract base class for vector classes
 L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 

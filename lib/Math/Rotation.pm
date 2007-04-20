@@ -10,7 +10,7 @@ use Scalar::Util;
 
 #use Exporter;
 
-our $VERSION = '0.334';
+our $VERSION = '0.336';
 
 =head1 NAME
 
@@ -32,11 +32,13 @@ L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 
+L<Math::Vectors>
+
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
-	use Math::Rotation;
+	use Math::Vectors;
 	my $r = new Math::Rotation; # Make a new unit rotation
 
 	# Make a rotation about the axis (0,1,0)
@@ -498,9 +500,11 @@ sub toString {
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
 
-L<Math::Quaternion>
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 

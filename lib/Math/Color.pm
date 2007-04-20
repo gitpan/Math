@@ -3,7 +3,7 @@ package Math::Color;
 use strict;
 use warnings;
 
-our $VERSION = '0.334';
+our $VERSION = '0.336';
 
 use Math ();
 
@@ -23,11 +23,13 @@ L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
 
+L<Math::Vectors>
+
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
 	
-	use Math::Color;
+	use Math::Vectors;
 	my $c = new Math::Color;  # Make a new Color
 
 	my $c1 = new Math::Color(0,1,0);
@@ -261,15 +263,17 @@ freely interpolated in strings.
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 BUGS & SUGGESTIONS
 
-If you run into a miscalculation, need some sort of feature or an additional
-L<holiday|Date::Holidays::AT>, or if you know of any new changes to the funky math, 
-please drop the author a note.
+If you run into a miscalculation or need some sort of feature please drop the author a note.
 
 =head1 ARRANGED BY
 

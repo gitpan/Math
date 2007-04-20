@@ -8,6 +8,7 @@ lib/Math/Vec2.pm
 lib/Math/Vec3.pm
 lib/Math/Vec4.pm
 lib/Math/Vector.pm
+lib/Math/Vectors.pm
 Makefile.PL
 MANIFEST			This list of files
 README
@@ -23,4 +24,5 @@ t/03_image.t
 t/03_rotation.t
 t/04_colorrgba.t
 t/05_notations.t
+t/05_vectors.t
 META.yml                                 Module meta-data (added by MakeMaker)

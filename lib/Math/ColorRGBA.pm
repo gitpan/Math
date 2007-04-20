@@ -3,7 +3,7 @@ package Math::ColorRGBA;
 use strict;
 use warnings;
 
-our $VERSION = '0.244';
+our $VERSION = '0.246';
 
 use Math ();
 use Math::Color;
@@ -28,6 +28,8 @@ L<Math::Color>
 L<PDL> for scientific and bulk numeric data processing and display
 
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
@@ -495,7 +497,11 @@ freely interpolated in strings.
 
 =head1 SEE ALSO
 
+L<PDL> for scientific and bulk numeric data processing and display
+
 L<Math>
+
+L<Math::Vectors>
 
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
