@@ -3,7 +3,7 @@ package Math::Vector;
 use strict;
 use warnings;
 
-our $VERSION = '1.721';
+our $VERSION = '1.723';
 
 use Math ();
 use Scalar::Util qw(reftype);

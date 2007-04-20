@@ -10,7 +10,7 @@ use Scalar::Util;
 
 #use Exporter;
 
-our $VERSION = '0.336';
+our $VERSION = '0.338';
 
 =head1 NAME
 

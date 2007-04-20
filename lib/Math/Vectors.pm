@@ -3,7 +3,7 @@ package Math::Vectors;
 use strict;
 use warnings;
 
-our $VERSION = '0.0021';
+our $VERSION = '0.0041';
 
 use Math::Color;
 use Math::ColorRGBA;
