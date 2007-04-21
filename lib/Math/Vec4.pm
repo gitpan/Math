@@ -7,7 +7,7 @@ use Math ();
 
 #use Exporter;
 
-our $VERSION = '0.338';
+our $VERSION = '0.341';
 
 use base 'Math::Vector';
 
@@ -603,9 +603,7 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head1 BUGS & SUGGESTIONS
 
-If you run into a miscalculation, need some sort of feature or an additional
-L<holiday|Date::Holidays::AT>, or if you know of any new changes to the funky math, 
-please drop the author a note.
+If you run into a miscalculation please drop the author a note.
 
 =head1 ARRANGED BY
 

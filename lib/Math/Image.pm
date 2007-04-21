@@ -3,7 +3,7 @@ package Math::Image;
 use strict;
 use warnings;
 
-our $VERSION = '0.014';
+our $VERSION = '0.017';
 
 #use PDL;
 
@@ -242,9 +242,7 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 
 =head1 BUGS & SUGGESTIONS
 
-If you run into a miscalculation, need some sort of feature or an additional
-L<holiday|Date::Holidays::AT>, or if you know of any new changes to the funky math, 
-please drop the author a note.
+If you run into a miscalculation please drop the author a note.
 
 =head1 ARRANGED BY
 

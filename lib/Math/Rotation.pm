@@ -10,7 +10,7 @@ use Scalar::Util;
 
 #use Exporter;
 
-our $VERSION = '0.338';
+our $VERSION = '0.341';
 
 =head1 NAME
 
@@ -37,7 +37,9 @@ L<Math::Vectors>
 L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>, L<Math::Rotation>
 
 =head1 SYNOPSIS
-	
+
+Bild L<Rotation|http://www.ceres.dti.ne.jp/~kekenken/main/3d/script/04_0_object.htm#SFRotation>
+
 	use Math::Vectors;
 	my $r = new Math::Rotation; # Make a new unit rotation
 
@@ -52,8 +54,6 @@ L<Math::Color>, L<Math::ColorRGBA>, L<Math::Image>, L<Math::Vec2>, L<Math::Vec3>
 	my $r5 = $r2 + $r3;
 	my $r6 = -$r5;
 	
-	~-$r2 == $r2;
-
 =head1 DESCRIPTION
 
 =head2 Default value

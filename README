@@ -1,19 +1,19 @@
-Math::Roration version 0.00.2
-=======================================
-
-la la la
+Math
+====
 
 INSTALLATION
 
-To install this module type the following:
+To install this module type the following in a terminal:
 
-   sudo cpan -i Math
-	
+	cpan -i Math
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-   Math::Quaternion
+	Math::Trig
+	Math::Quaternion
+	Scalar::Util
 
 SEE ALSO
 

@@ -3,7 +3,7 @@ package Math::Vectors;
 use strict;
 use warnings;
 
-our $VERSION = '0.0041';
+our $VERSION = '0.0071';
 
 use Math::Color;
 use Math::ColorRGBA;
@@ -15,11 +15,7 @@ use Math::Vec4;
 
 =head1 NAME
 
-Math::Color - Perl class to represent colors
-
-=head1 TREE
-
--+- L<Math::Vector> -+- L<Math::Vec3> -+- L<Math::Color>
+Math::Vectors - Bundle
 
 =head1 SEE ALSO
 
