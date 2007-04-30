@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.541';
+our $VERSION = '0.5412';
 
 our @POSIX = qw(
   acos
@@ -13,6 +13,7 @@ our @POSIX = qw(
   fmod
   round
   log10
+  pow
   tan
 );
 
@@ -38,7 +39,6 @@ our @FUNCTIONS = qw(
   min
   clamp
   random
-  pow
   pro
   sum
   even
@@ -196,12 +196,6 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 
 	Returns 1 if number is odd otherwise 0
 
-=head2 pow(base, exponent)
-
-	Returns base to the exponent power (i.e. base exponent)
-	
-	$base ** $exponent == pow($base, $exponent);
-
 =head2 pro(number, number1, number2, ...)
 
 	Returns the product of its arguments
@@ -209,23 +203,37 @@ Note number, number1, number2, base, and exponent indicate any expression with a
 	pro(1,2,3) == 1 * 2 * 3;
 	my $product = pro(@array);
 
-=head2 random()
+=head2 pow
 
-	Returns a pseudo-random number between 0 and 1.
+Computes $x raised to the power $exponent .
 
-=head2 random(number)
+	$ret = POSIX::pow( $x, $exponent );
 
-	Returns a pseudo-random number between 0 and number.
+You can also use the ** operator, see L<perlop>.
 
-=head2 random(number1, number2)
+=head2 random
 
-	Returns a pseudo-random number between number1 and number2.
+Returns a pseudo-random number between 0 and 1.
 
-=head2 round(number)
+	$ret = Math::random();
 
-	Returns the value of number rounded to the nearest integer
+Returns a pseudo-random number between 0 and $number1.
 
-=head2 round(number1, digits)
+	$ret = Math::random($number1);
+
+Returns a pseudo-random number between number1 and number2.
+
+	$ret = Math::random($number1, $number2);
+
+=head2 round
+
+Returns the value of $number rounded to the nearest integer
+
+	$ret = Math::round($number);
+
+Returns the value of $number rounded to the nearest float point number.
+
+	$ret = round($number, $digits);
 
 	round(0.123456, 2) == 0.12;
 

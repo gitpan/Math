@@ -1,15 +1,15 @@
 --- #YAML:1.0
 name:                Math
-version:             0.541
-abstract:            Contains some vector math
+version:             0.5412
+abstract:            ~
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.32
 distribution_type:   module
 requires:     
-    Math::Quaternion:              0
-    Math::Trig:                    0
+    base:                          0
+    constant:                      0
+    Exporter:                      0
     POSIX:                         0
-    Scalar::Util:                  0
     Test::More:                    0
 meta-spec:
     url:     http://module-build.sourceforge.net/META-spec-v1.2.html

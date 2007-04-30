@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+#package 01_math2
 use Test::More tests => 899;
 use strict;
 
