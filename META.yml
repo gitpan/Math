@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Math
-version:             0.5412
+version:             0.5425
 abstract:            ~
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.32

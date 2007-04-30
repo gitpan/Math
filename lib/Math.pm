@@ -2,7 +2,7 @@ package Math;
 use strict;
 use warnings;
 
-our $VERSION = '0.5412';
+our $VERSION = '0.5425';
 
 our @POSIX = qw(
   acos
@@ -46,7 +46,13 @@ our @FUNCTIONS = qw(
   sig
 );
 
-our @EXPORT = ( @CONSTANTS, @FUNCTIONS, @POSIX );
+our @EXPORT_OK = ( @CONSTANTS, @FUNCTIONS, @POSIX );
+
+our %EXPORT_TAGS = (
+	all       => \@EXPORT_OK,
+	constants => \@CONSTANTS,
+	functions => [ @FUNCTIONS, @POSIX ],
+);
 
 =head1 NAME
 
@@ -54,7 +60,7 @@ Math - constants and functions
 
 =head1 SYNOPSIS
 
-	use Math;
+	use Math ':all';
 
 	printf "2.71828182845905 = %s\n", E;
 	printf "1.5707963267949  = %s\n", PI1_2;
@@ -65,7 +71,7 @@ Math - constants and functions
 
 	or 
 
-	use Math ();
+	use Math;
 
 	printf "%s\n", Math::PI;
 	printf "%s\n", Math::round(0.5);
@@ -269,10 +275,10 @@ Returns the value of $number rounded to the nearest float point number.
 
 =cut
 
-sub abs   { CORE::abs( $_[0] ) }
+sub abs { CORE::abs( $_[0] ) }
 sub atan2 { CORE::atan2( $_[0], $_[1] ) }
 
-sub cos   { CORE::cos( $_[0] ) }
+sub cos { CORE::cos( $_[0] ) }
 
 sub exp { CORE::exp( $_[0] ) }
 sub log { CORE::log( $_[0] ) }

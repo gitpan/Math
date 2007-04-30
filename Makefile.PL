@@ -25,7 +25,7 @@ BEGIN {
 __END__
 
 #clean
-cd '/home/holger/perl/cpan/Weed'
+cd '/home/holger/perl/cpan/Math'
 perl Makefile.PL | grep OK
 sudo make clean | grep OK
 sudo rm Makefile.old 2>&1 | grep OK

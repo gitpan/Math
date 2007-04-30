@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#package 01_math2
+#package 02_math
 use Test::More tests => 899;
 use strict;
 
@@ -9,7 +9,7 @@ BEGIN {
 	unshift @INC, '../lib';
 }
 
-use Math;
+use Math ':all';
 use POSIX ();
 
 my ( $v, $v1, $v2 );
